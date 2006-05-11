@@ -1,12 +1,14 @@
 package Business::DK::Postalcode;
 
-# $Id: Postalcode.pm,v 1.1 2006-04-23 10:21:24 jonasbn Exp $
+# $Id: Postalcode.pm,v 1.2 2006-05-11 11:17:25 jonasbn Exp $
 
 use strict;
 use Tree::Simple;
 use Data::Dumper;
 use vars qw($VERSION @ISA @EXPORT_OK);
 require Exporter;
+
+use constant VERBOSE => 0;
 
 $VERSION = '0.01';
 @ISA = qw(Exporter);
@@ -110,7 +112,7 @@ sub _build_tree {
 
 		my $oldtree = $tree;
 	
-		my @digits = split(//, $number, 4);	
+		my @digits = split(//, $postalcode, 4);	
 		for(my $i = 0; $i < scalar(@digits); $i++) {
 	
 			print STDERR "We have digit: ".$digits[$i]."\n" if VERBOSE;;
