@@ -1,6 +1,6 @@
 package Business::DK::Postalcode;
 
-# $Id: Postalcode.pm,v 1.2 2006-05-11 11:17:25 jonasbn Exp $
+# $Id: Postalcode.pm,v 1.3 2008-09-09 19:17:24 jonasbn Exp $
 
 use strict;
 use Tree::Simple;
@@ -9,6 +9,7 @@ use vars qw($VERSION @ISA @EXPORT_OK);
 require Exporter;
 
 use constant VERBOSE => 0;
+use constant DEBUG => 0;
 
 $VERSION = '0.01';
 @ISA = qw(Exporter);
@@ -56,12 +57,111 @@ sub create_regex {
 			_build_tree($tree, $_);
 		}
 	}
-	#$tree->traverse(sub {
-	#	my ($_tree) = @_;
-	#	print STDERR (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
-	#});
 
 	my $regex = [];
+	
+	my $end = '';
+	my $no_of_children = $tree->getChildCount();
+	
+	print STDERR "root has $no_of_children\n";
+
+	$tree->traverse(sub {
+		my ($_tree) = shift;
+		print STDERR (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
+		
+		$no_of_children = $_tree->getChildCount();
+		if ($no_of_children > 1) {
+			$_tree->insertChild(0, Tree::Simple->new('('));
+			$_tree->addChild(Tree::Simple->new(')'));
+			
+			_branch(\$end, \$no_of_children);
+		} elsif ($_tree->isLeaf() && $_tree->getNodeValue() =~ m/^\d+$/) {
+
+			print STDERR "We have a leaf\n" if VERBOSE;
+			#$_tree->insertChild(0, Tree::Simple->new('(?:'));
+			$_tree->addChild(Tree::Simple->new($end));
+			$end = '';
+		}
+		
+		if ($_tree->getNodeValue() =~ m/^\d+$/) {
+			$_tree->setNodeValue('(?:'.$_tree->getNodeValue().')');
+		}
+		
+		if (DEBUG) {
+			print STDERR "examining: ".$_tree->getNodeValue()."\n";
+			print STDERR "\$no_of_children = $no_of_children\n";
+			print STDERR "\$end = $end\n";	
+		}
+		if (DEBUG) {
+			print STDERR "\$regex = ".join("", @{$regex})."\n";	
+			print STDERR "\n";
+		}
+	});
+
+	$tree->traverse(sub {
+		my ($_tree) = shift;
+		push(@{$regex}, $_tree->getNodeValue());
+	});
+
+	my $result = join("", @{$regex});
+	return \$result;
+}
+
+sub create_regex_old {
+	my ($postalcodes) = @_;
+
+	my $tree = Tree::Simple->new("0", Tree::Simple->ROOT);
+	if (scalar @{$postalcodes}) {
+		foreach my $postalcode (@{$postalcodes}) {
+			_build_tree($tree, $postalcode);
+		}
+	} else {
+		while (<DATA>) {
+			_build_tree($tree, $_);
+		}
+	}
+
+	my $regex = [];
+	
+	#push(@{$regex}, '(');
+	
+	my $end = '';
+	my $no_of_children = 0;
+	my $branch = 0;
+
+	$tree->traverse(sub {
+		my ($_tree) = shift;
+		print (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
+		
+		$no_of_children = $_tree->getChildCount();
+		if (DEBUG) {
+			print STDERR "examining: ".$_tree->getNodeValue()."\n";
+			print STDERR "\$no_of_children = $no_of_children\n";
+			print STDERR "\$branch = $branch\n";
+			print STDERR "\$end = $end\n";	
+		}
+		if ($branch) {
+			_branch(\$_tree->getNodeValue(), \$branch, \$end, $regex);
+		}
+				
+		if ($no_of_children > 1) {
+			$branch++;
+			_tokenize(\$_tree->getNodeValue(), $regex);			
+			#_terminate(\$_tree->getNodeValue(), \$end, $regex);
+
+		} else {
+			_tokenize(\$_tree->getNodeValue(), $regex);
+			#_terminate(\$_tree->getNodeValue(), \$end, $regex);
+		}
+		
+		if ($_tree->getDepth == 3) {
+			_terminate(\$_tree->getNodeValue(), \$end, $regex);
+		}
+		if (DEBUG) {
+			print STDERR "\$regex = ".join("", @{$regex})."\n";	
+			print STDERR "\n";
+		}
+	});
 
 	my $result = join("", @{$regex});
 	return \$result;
@@ -69,6 +169,8 @@ sub create_regex {
 
 sub _tokenize {
 	my ($key, $regex) = @_;
+
+	print STDERR "_tokenize\n" if DEBUG;
 	
 	my $token = "(?$$key)";
 	
@@ -78,10 +180,9 @@ sub _tokenize {
 }
 
 sub _terminate {
-	my ($key, $branch, $end, $regex) = @_;
+	my ($key, $end, $regex) = @_;
 
-	print STDERR "_terminate\n";
-	#print STDERR Dumper \@_;
+	print STDERR "_terminate\n" if DEBUG;
 
 	push @{$regex}, $$end;
 	$$end = '';
@@ -90,18 +191,17 @@ sub _terminate {
 }
 
 sub _branch {
-	my ($key, $branch, $end, $regex) = @_;
+	my ($end, $branch) = @_;
 
-	$$branch--;
-
-	print STDERR "_branch\n";
+	print STDERR "_branch: $$branch\n" if DEBUG;
 	
-	push @{$regex}, '(';
-	if ($branch > 1) {
+	if ($$branch > 1) {
 		$$end = '|';
 	} else {
-		$$end = ''; 
+		$$end = ')'; 
 	}
+	$$branch--;
+
 	return;
 }
 

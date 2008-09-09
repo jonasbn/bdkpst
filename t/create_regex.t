@@ -1,4 +1,4 @@
-# $Id: create_regex.t,v 1.1 2006-04-23 10:21:24 jonasbn Exp $
+# $Id: create_regex.t,v 1.2 2008-09-09 19:17:27 jonasbn Exp $
 
 use strict;
 use Data::Dumper;
@@ -18,7 +18,7 @@ my $regex;
 ok($regex = create_regex(get_all_postalcodes(@data)));
 
 #test 3
-is($$regex, '((?0)(?5)(?5)(?5))');
+is($$regex, '(?:0)(?:5)(?:5)(?:5)');
 
 
 @data = qw(
@@ -30,7 +30,7 @@ is($$regex, '((?0)(?5)(?5)(?5))');
 ok($regex = create_regex(get_all_postalcodes(@data)));
 
 #test 5
-is($$regex, '((?0)((?8)(?0)(?0)|(?5)(?5)(?5)))');
+is($$regex, '(?:0)((?:5)(?:5)(?:5)|(?:8)(?:0)(?:0))');
 
 @data = qw(
 0555	Scanning		Data Scanning A/S "L¾s Ind"-service	False	1	
@@ -44,7 +44,7 @@ is($$regex, '((?0)((?8)(?0)(?0)|(?5)(?5)(?5)))');
 ok($regex = create_regex(get_all_postalcodes(@data)));
 
 #test 7
-is($$regex, '(0(?:8((?:0(?:0))|(?:7(?:7))))|(?:5(?:5(?:5))))');
+is($$regex, '((?:0)((?:5)(?:5)(?:5)|(?:8)((?:0)(?:0)|(?:7)(?:7)))|(?:1)(?:6)(?:6)((?:5)|(?:6)))');
 
 #print STDERR "\nfor postalcodes: ".Dumper(get_all_postalcodes(@data))."\n";
 
