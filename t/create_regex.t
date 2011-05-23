@@ -26,6 +26,8 @@ is($$regex, '(?:0)(?:5)(?:5)(?:5)');
 0800	H¿je Taastrup	Girostr¿get 1	BG-Bank A/S	True	1	
 );
 
+#__END__
+
 #test 4
 ok($regex = create_regex(get_all_postalcodes(@data)));
 
@@ -50,5 +52,5 @@ is($$regex, '((?:0)((?:5)(?:5)(?:5)|(?:8)((?:0)(?:0)|(?:7)(?:7)))|(?:1)(?:6)(?:6
 
 #test 8 .. 
 foreach my $postalcode (@{get_all_postalcodes(@data)}) {
-	ok($postalcode =~ m/$regex/cg, "$postalcode tested");
+	ok($postalcode =~ m/$$regex/, "$postalcode tested against $$regex");
 }

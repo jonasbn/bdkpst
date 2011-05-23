@@ -47,7 +47,7 @@ sub _retrieve_postalcode {
 sub create_regex {
 	my ($postalcodes) = @_;
 
-	my $tree = Tree::Simple->new("0", Tree::Simple->ROOT);
+	my $tree = Tree::Simple->new('ROOT', Tree::Simple->ROOT);
 	if (scalar @{$postalcodes}) {
 		foreach my $postalcode (@{$postalcodes}) {
 			_build_tree($tree, $postalcode);
@@ -58,27 +58,38 @@ sub create_regex {
 		}
 	}
 
-	my $regex = [];
+    my $regex = [];
 	
 	my $end = '';
 	my $no_of_children = $tree->getChildCount();
 	
-	print STDERR "root has $no_of_children\n";
+	print STDERR "root has $no_of_children number of children\n" if DEBUG;
 
 	$tree->traverse(sub {
 		my ($_tree) = shift;
-		print STDERR (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
 		
 		$no_of_children = $_tree->getChildCount();
 		if ($no_of_children > 1) {
 			$_tree->insertChild(0, Tree::Simple->new('('));
 			$_tree->addChild(Tree::Simple->new(')'));
 			
+            
+            #my $parent;
+            #if (not $_tree->isLeaf) {
+            my $parent = $_tree->getParent();
+            #}
+                        
+            if ($parent && $parent->isRoot) {
+                $parent->insertChild(0, Tree::Simple->new('('));
+
+                $_tree->addChild(Tree::Simple->new('|'));
+                $_tree->addSibling(Tree::Simple->new(')'));
+            }
 			_branch(\$end, \$no_of_children);
+            
 		} elsif ($_tree->isLeaf() && $_tree->getNodeValue() =~ m/^\d+$/) {
 
 			print STDERR "We have a leaf\n" if VERBOSE;
-			#$_tree->insertChild(0, Tree::Simple->new('(?:'));
 			$_tree->addChild(Tree::Simple->new($end));
 			$end = '';
 		}
@@ -87,83 +98,25 @@ sub create_regex {
 			$_tree->setNodeValue('(?:'.$_tree->getNodeValue().')');
 		}
 		
-		if (DEBUG) {
+		if (1) {
 			print STDERR "examining: ".$_tree->getNodeValue()."\n";
 			print STDERR "\$no_of_children = $no_of_children\n";
 			print STDERR "\$end = $end\n";	
 		}
-		if (DEBUG) {
-			print STDERR "\$regex = ".join("", @{$regex})."\n";	
-			print STDERR "\n";
-		}
 	});
+
+	$tree->traverse(sub {
+		my ($_tree) = @_;
+		print STDERR (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
+	});
+
 
 	$tree->traverse(sub {
 		my ($_tree) = shift;
 		push(@{$regex}, $_tree->getNodeValue());
 	});
 
-	my $result = join("", @{$regex});
-	return \$result;
-}
-
-sub create_regex_old {
-	my ($postalcodes) = @_;
-
-	my $tree = Tree::Simple->new("0", Tree::Simple->ROOT);
-	if (scalar @{$postalcodes}) {
-		foreach my $postalcode (@{$postalcodes}) {
-			_build_tree($tree, $postalcode);
-		}
-	} else {
-		while (<DATA>) {
-			_build_tree($tree, $_);
-		}
-	}
-
-	my $regex = [];
-	
-	#push(@{$regex}, '(');
-	
-	my $end = '';
-	my $no_of_children = 0;
-	my $branch = 0;
-
-	$tree->traverse(sub {
-		my ($_tree) = shift;
-		print (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
-		
-		$no_of_children = $_tree->getChildCount();
-		if (DEBUG) {
-			print STDERR "examining: ".$_tree->getNodeValue()."\n";
-			print STDERR "\$no_of_children = $no_of_children\n";
-			print STDERR "\$branch = $branch\n";
-			print STDERR "\$end = $end\n";	
-		}
-		if ($branch) {
-			_branch(\$_tree->getNodeValue(), \$branch, \$end, $regex);
-		}
-				
-		if ($no_of_children > 1) {
-			$branch++;
-			_tokenize(\$_tree->getNodeValue(), $regex);			
-			#_terminate(\$_tree->getNodeValue(), \$end, $regex);
-
-		} else {
-			_tokenize(\$_tree->getNodeValue(), $regex);
-			#_terminate(\$_tree->getNodeValue(), \$end, $regex);
-		}
-		
-		if ($_tree->getDepth == 3) {
-			_terminate(\$_tree->getNodeValue(), \$end, $regex);
-		}
-		if (DEBUG) {
-			print STDERR "\$regex = ".join("", @{$regex})."\n";	
-			print STDERR "\n";
-		}
-	});
-
-	my $result = join("", @{$regex});
+	my $result = join('', @{$regex});
 	return \$result;
 }
 
@@ -193,7 +146,7 @@ sub _terminate {
 sub _branch {
 	my ($end, $branch) = @_;
 
-	print STDERR "_branch: $$branch\n" if DEBUG;
+	print STDERR "### _branch: $$branch\n" if 1;
 	
 	if ($$branch > 1) {
 		$$end = '|';
@@ -302,588 +255,588 @@ by the Artistic file in the standard perl distribution
 __DATA__
 
 Postnr.	Bynavn			Gade	Firma	Provins	Land	
-0555	Scanning		Data Scanning A/S, "Læs Ind"-service	True	1	
-0555	Scanning		Data Scanning A/S, "Læs Ind"-service	False	1	
-0800	Høje Taastrup	Girostrøget 1	BG-Bank A/S	True	1	
-0877	Valby	Vigerslev Allé 18	Aller Press (konkurrencer)	False	1	
-0900	København C		Københavns Postcenter + erhvervskunder	False	1	
-0910	København C	Ufrankerede svarforsendelser 		False	1	
-0929	København C	Ufrankerede svarforsendelser		False	1	
-1000	København K	Købmagergade 33	Købmagergade Postkontor	False	1	
-1001	København K	Postboks		False	1	
-1002	København K	Postboks		False	1	
-1003	København K	Postboks		False	1	
-1004	København K	Postboks		False	1	
-1005	København K	Postboks		False	1	
-1006	København K	Postboks		False	1	
-1007	København K	Postboks		False	1	
-1008	København K	Postboks		False	1	
-1009	København K	Postboks		False	1	
-1010	København K	Postboks		False	1	
-1011	København K	Postboks		False	1	
-1012	København K	Postboks		False	1	
-1013	København K	Postboks		False	1	
-1014	København K	Postboks		False	1	
-1015	København K	Postboks		False	1	
-1016	København K	Postboks		False	1	
-1017	København K	Postboks		False	1	
-1018	København K	Postboks		False	1	
-1019	København K	Postboks		False	1	
-1020	København K	Postboks		False	1	
-1021	København K	Postboks		False	1	
-1022	København K	Postboks		False	1	
-1023	København K	Postboks		False	1	
-1024	København K	Postboks		False	1	
-1025	København K	Postboks		False	1	
-1026	København K	Postboks		False	1	
-1045	København K	Ufrankerede svarforsendelser		False	1	
-1050	København K	Kongens Nytorv		False	1	
-1051	København K	Nyhavn		False	1	
-1052	København K	Herluf Trolles Gade		False	1	
-1053	København K	Cort Adelers Gade		False	1	
-1054	København K	Peder Skrams Gade		False	1	
-1055	København K	Tordenskjoldsgade		False	1	
-1055	København K	August Bournonvilles Passage		False	1	
-1056	København K	Heibergsgade		False	1	
-1057	København K	Holbergsgade		False	1	
-1058	København K	Havnegade		False	1	
-1059	København K	Niels Juels Gade		False	1	
-1060	København K	Holmens Kanal		False	1	
-1061	København K	Ved Stranden		False	1	
-1062	København K	Boldhusgade		False	1	
-1063	København K	Laksegade		False	1	
-1064	København K	Asylgade		False	1	
-1065	København K	Fortunstræde		False	1	
-1066	København K	Admiralgade		False	1	
-1067	København K	Nikolaj Plads		False	1	
-1068	København K	Nikolajgade		False	1	
-1069	København K	Bremerholm		False	1	
-1070	København K	Vingårdstræde		False	1	
-1071	København K	Dybensgade		False	1	
-1072	København K	Lille Kirkestræde		False	1	
-1073	København K	Store Kirkestræde		False	1	
-1074	København K	Lille Kongensgade		False	1	
-1092	København K	Holmens Kanal 2-12	Danske Bank A/S	False	1	
-1093	København K	Havnegade 5	Danmarks Nationalbank	False	1	
-1095	København K	Kongens Nytorv 13	Magasin du Nord	False	1	
-1098	København K	Esplanaden 50	A.P. Møller	False	1	
-1100	København K	Østergade		False	1	
-1101	København K	Ny Østergade		False	1	
-1102	København K	Pistolstræde		False	1	
-1103	København K	Hovedvagtsgade		False	1	
-1104	København K	Ny Adelgade		False	1	
-1105	København K	Kristen Bernikows Gade		False	1	
-1106	København K	Antonigade		False	1	
-1107	København K	Grønnegade		False	1	
-1110	København K	Store Regnegade		False	1	
-1111	København K	Christian IX's Gade		False	1	
-1112	København K	Pilestræde		False	1	
-1113	København K	Silkegade		False	1	
-1114	København K	Kronprinsensgade		False	1	
-1115	København K	Klareboderne		False	1	
-1116	København K	Møntergade		False	1	
-1117	København K	Gammel Mønt		False	1	
-1118	København K	Sværtegade		False	1	
-1119	København K	Landemærket		False	1	
-1120	København K	Vognmagergade		False	1	
-1121	København K	Lønporten		False	1	
-1122	København K	Sjæleboderne		False	1	
-1123	København K	Gothersgade		False	1	
-1124	København K	Åbenrå		False	1	
-1125	København K	Suhmsgade		False	1	
-1126	København K	Pustervig		False	1	
-1127	København K	Hauser Plads		False	1	
-1128	København K	Hausergade		False	1	
-1129	København K	Sankt Gertruds Stræde		False	1	
-1130	København K	Rosenborggade		False	1	
-1131	København K	Tornebuskegade		False	1	
-1140	København K	Møntergade 19	Dagbladet Børsen	False	1	
-1147	København K	Pilestræde 34	Berlingske Tidende	False	1	
-1148	København K	Vognmagergade 11	Gutenberghus	False	1	
-1150	København K	Købmagergade		False	1	
-1151	København K	Valkendorfsgade		False	1	
-1152	København K	Løvstræde		False	1	
-1153	København K	Niels Hemmingsens Gade		False	1	
-1154	København K	Gråbrødretorv		False	1	
-1155	København K	Kejsergade		False	1	
-1156	København K	Gråbrødrestræde		False	1	
-1157	København K	Klosterstræde		False	1	
-1158	København K	Skoubogade		False	1	
-1159	København K	Skindergade		False	1	
-1160	København K	Amagertorv		False	1	
-1161	København K	Vimmelskaftet		False	1	
-1162	København K	Jorcks Passage		False	1	
-1163	København K	Klostergården		False	1	
-1164	København K	Nygade		False	1	
-1165	København K	Nørregade		False	1	
-1166	København K	Dyrkøb		False	1	
-1167	København K	Bispetorvet		False	1	
-1168	København K	Frue Plads		False	1	
-1169	København K	Store Kannikestræde		False	1	
-1170	København K	Lille Kannikestræde		False	1	
-1171	København K	Fiolstræde		False	1	
-1172	København K	Krystalgade		False	1	
-1173	København K	Peder Hvitfeldts Stræde		False	1	
-1174	København K	Rosengården		False	1	
-1175	København K	Kultorvet		False	1	
-1200	København K	Højbro Plads		False	1	
-1201	København K	Læderstræde		False	1	
-1202	København K	Gammel Strand		False	1	
-1203	København K	Nybrogade		False	1	
-1204	København K	Magstræde		False	1	
-1205	København K	Snaregade		False	1	
-1206	København K	Naboløs		False	1	
-1207	København K	Hyskenstræde		False	1	
-1208	København K	Kompagnistræde		False	1	
-1209	København K	Badstuestræde		False	1	
-1210	København K	Knabrostræde		False	1	
-1211	København K	Brolæggerstræde		False	1	
-1212	København K	Vindebrogade		False	1	
-1213	København K	Bertel Thorvaldsens Plads		False	1	
-1214	København K	Søren Kierkegaards Plads		False	1	
-1214	København K	Tøjhusgade		False	1	
-1215	København K	Børsgade		False	1	
-1216	København K	Slotsholmsgade		False	1	
-1217	København K	Børsen		False	1	
-1218	København K	Christiansborg Ridebane		False	1	
-1218	København K	Proviantpassagen		False	1	
-1218	København K	Christiansborg		False	1	
-1218	København K	Rigsdagsgården		False	1	
-1218	København K	Christiansborg Slotsplads		False	1	
-1218	København K	Prins Jørgens Gård		False	1	
-1219	København K	Christians Brygge ulige nr. + 2-22		False	1	
-1220	København K	Frederiksholms Kanal		False	1	
-1240	København K	Christiansborg	Folketinget	False	1	
-1250	København K	Sankt Annæ Plads		False	1	
-1251	København K	Kvæsthusgade		False	1	
-1252	København K	Kvæsthusbroen		False	1	
-1253	København K	Toldbodgade		False	1	
-1254	København K	Lille Strandstræde		False	1	
-1255	København K	Store Strandstræde		False	1	
-1256	København K	Amaliegade		False	1	
-1257	København K	Amalienborg		False	1	
-1258	København K	Larsens Plads		False	1	
-1259	København K	Nordre Toldbod		False	1	
-1259	København K	Trekroner		False	1	
-1260	København K	Bredgade		False	1	
-1261	København K	Palægade		False	1	
-1263	København K	Esplanaden		False	1	
-1263	København K	Churchillparken		False	1	
-1264	København K	Store Kongensgade		False	1	
-1265	København K	Frederiksgade		False	1	
-1266	København K	Bornholmsgade		False	1	
-1267	København K	Hammerensgade		False	1	
-1268	København K	Jens Kofods Gade		False	1	
-1270	København K	Grønningen		False	1	
-1271	København K	Poul Ankers Gade		False	1	
-1291	København K	Sankt Annæ Plads 28	J. Lauritzen A/S	False	1	
-1300	København K	Borgergade		False	1	
-1301	København K	Landgreven		False	1	
-1302	København K	Dronningens Tværgade		False	1	
-1303	København K	Hindegade		False	1	
-1304	København K	Adelgade		False	1	
-1306	København K	Kronprinsessegade		False	1	
-1307	København K	Sølvgade		False	1	
-1307	København K	Georg Brandes Plads		False	1	
-1308	København K	Klerkegade		False	1	
-1309	København K	Rosengade		False	1	
-1310	København K	Fredericiagade		False	1	
-1311	København K	Olfert Fischers Gade		False	1	
-1312	København K	Gammelvagt		False	1	
-1313	København K	Sankt Pauls Gade		False	1	
-1314	København K	Sankt Pauls Plads		False	1	
-1315	København K	Rævegade		False	1	
-1316	København K	Rigensgade		False	1	
-1317	København K	Stokhusgade		False	1	
-1318	København K	Krusemyntegade		False	1	
-1319	København K	Gernersgade		False	1	
-1320	København K	Haregade		False	1	
-1321	København K	Tigergade		False	1	
-1322	København K	Suensonsgade		False	1	
-1323	København K	Hjertensfrydsgade		False	1	
-1324	København K	Elsdyrsgade		False	1	
-1325	København K	Delfingade		False	1	
-1326	København K	Krokodillegade		False	1	
-1327	København K	Vildandegade		False	1	
-1328	København K	Svanegade		False	1	
-1329	København K	Timiansgade		False	1	
-1349	København K	Sølvgade 40	DSB	False	1	
-1350	København K	Øster Voldgade		False	1	
-1352	København K	Rørholmsgade		False	1	
-1353	København K	Øster Farimagsgade 1-19 + 2-2D		False	1	
-1354	København K	Ole Suhrs Gade		False	1	
-1355	København K	Gammeltoftsgade		False	1	
-1356	København K	Bartholinsgade		False	1	
-1357	København K	Øster Søgade 1 - 36		False	1	
-1358	København K	Nørre Voldgade		False	1	
-1359	København K	Ahlefeldtsgade		False	1	
-1360	København K	Frederiksborggade		False	1	
-1361	København K	Israels Plads		False	1	
-1361	København K	Linnésgade		False	1	
-1362	København K	Rømersgade		False	1	
-1363	København K	Vendersgade		False	1	
-1364	København K	Nørre Farimagsgade		False	1	
-1365	København K	Schacksgade		False	1	
-1366	København K	Nansensgade		False	1	
-1367	København K	Kjeld Langes Gade		False	1	
-1368	København K	Turesensgade		False	1	
-1369	København K	Gyldenløvesgade Lige nr		False	1	
-1370	København K	Nørre Søgade		False	1	
-1371	København K	Søtorvet		False	1	
-1390	København K	Nørre Voldgade 68	BG-Bank	False	1	
-1400	København K	Torvegade		False	1	
-1400	København K	Knippelsbro		False	1	
-1401	København K	Strandgade		False	1	
-1402	København K	Asiatisk Plads		False	1	
-1402	København K	Johan Semps Gade		False	1	
-1402	København K	Nicolai Eigtveds Gade		False	1	
-1402	København K	David Balfours Gade		False	1	
-1402	København K	Hammershøi Kaj		False	1	
-1403	København K	Wilders Plads		False	1	
-1404	København K	Krøyers Plads		False	1	
-1405	København K	Grønlandske Handels Plads		False	1	
-1406	København K	Christianshavns Kanal		False	1	
-1407	København K	Bådsmandsstræde		False	1	
-1408	København K	Wildersgade		False	1	
-1409	København K	Knippelsbrogade		False	1	
-1410	København K	Christianshavns Torv		False	1	
-1411	København K	Langebrogade		False	1	
-1411	København K	Applebys Plads		False	1	
-1412	København K	Voldgården		False	1	
-1413	København K	Ved Kanalen		False	1	
-1414	København K	Overgaden neden Vandet		False	1	
-1415	København K	Overgaden oven Vandet		False	1	
-1416	København K	Sankt Annæ Gade		False	1	
-1417	København K	Mikkel Vibes Gade		False	1	
-1418	København K	Sofiegade		False	1	
-1419	København K	Store Søndervoldstræde		False	1	
-1420	København K	Dronningensgade		False	1	
-1421	København K	Lille Søndervoldstræde		False	1	
-1422	København K	Prinsessegade		False	1	
-1423	København K	Amagergade		False	1	
-1424	København K	Christianshavns Voldgade		False	1	
-1425	København K	Ved Volden		False	1	
-1426	København K	Voldboligerne		False	1	
-1427	København K	Brobergsgade		False	1	
-1428	København K	Andreas Bjørns Gade		False	1	
-1429	København K	Burmeistersgade		False	1	
-1430	København K	Bodenhoffs Plads		False	1	
-1431	København K	Islands Plads		False	1	
-1432	København K	Margretheholmsvej		False	1	
-1432	København K	Refshalevej		False	1	
-1432	København K	William Wains Gade		False	1	
-1433	København K	Refshaleøen		False	1	
-1433	København K	Quintus		False	1	
-1433	København K	Flakfortet		False	1	
-1433	København K	Lynetten		False	1	
-1433	København K	Margretheholm		False	1	
-1433	København K	Middelgrundsfortet		False	1	
-1433	København K	Christiansholms Ø		False	1	
-1434	København K	Danneskiold-Samsøes Allé		False	1	
-1435	København K	Philip de Langes Allé		False	1	
-1436	København K	Værftsbroen		False	1	
-1436	København K	Søartillerivej		False	1	
-1436	København K	Halvtolv		False	1	
-1436	København K	Trangravsvej		False	1	
-1436	København K	Arsenalvej		False	1	
-1436	København K	Kuglegårdsvej		False	1	
-1436	København K	Kuglegården		False	1	
-1437	København K	Fabrikmestervej		False	1	
-1437	København K	Masteskursvej		False	1	
-1437	København K	Bohlendachvej		False	1	
-1437	København K	Stibolts Kvarter		False	1	
-1437	København K	Takkelloftsvej		False	1	
-1437	København K	Theodor Christensens Plads		False	1	
-1437	København K	Hohlenbergs Kvarter		False	1	
-1437	København K	Galionsvej		False	1	
-1437	København K	Krabbes Kvarter		False	1	
-1437	København K	Kanonbådsvej		False	1	
-1437	København K	Leo Mathisens Vej		False	1	
-1437	København K	Per Knutzons Vej		False	1	
-1437	København K	Eik Skaløes Plads		False	1	
-1437	København K	Schifters Kvarter		False	1	
-1438	København K	Benstrups Kvarter		False	1	
-1438	København K	Judichærs Plads		False	1	
-1438	København K	Judichærs Kvarter		False	1	
-1438	København K	Dokøvej		False	1	
-1438	København K	Ekvipagemestervej		False	1	
-1438	København K	Orlogsværftvej		False	1	
-1439	København K	Takkeladsvej		False	1	
-1439	København K	Elefanten		False	1	
-1439	København K	H.C. Sneedorffs Allé		False	1	
-1439	København K	Eskadrevej		False	1	
-1439	København K	Henrik Spans Vej		False	1	
-1439	København K	Spanteloftvej		False	1	
-1439	København K	Kongebrovej		False	1	
-1439	København K	P. Løvenørns Vej		False	1	
-1439	København K	Henrik Gerners Plads		False	1	
-1439	København K	Krudtløbsvej		False	1	
-1439	København K	Bradbænken		False	1	
-1439	København K	A.H. Vedels Plads		False	1	
-1440	København K	Tinghuset		False	1	
-1440	København K	Blå Karamel		False	1	
-1440	København K	Fredens Ark		False	1	
-1440	København K	Sydområdet		False	1	
-1440	København K	Bjørnekloen		False	1	
-1440	København K	Nordområdet		False	1	
-1440	København K	Mælkebøtten		False	1	
-1440	København K	Fabriksområdet		False	1	
-1440	København K	Løvehuset		False	1	
-1440	København K	Mælkevejen		False	1	
-1440	København K	Psyak		False	1	
-1441	København K	Syddyssen		False	1	
-1441	København K	Midtdyssen		False	1	
-1441	København K	Norddyssen		False	1	
-1448	København K	Asiatisk Plads 2	Udenrigsministeriet	False	1	
-1450	København K	Nytorv		False	1	
-1451	København K	Larslejsstræde		False	1	
-1452	København K	Teglgårdstræde		False	1	
-1453	København K	Sankt Peders Stræde		False	1	
-1454	København K	Larsbjørnsstræde		False	1	
-1455	København K	Studiestræde 1-49 + 2-42		False	1	
-1456	København K	Vestergade		False	1	
-1457	København K	Gammeltorv		False	1	
-1458	København K	Kattesundet		False	1	
-1459	København K	Frederiksberggade		False	1	
-1460	København K	Mikkel Bryggers Gade		False	1	
-1461	København K	Slutterigade		False	1	
-1462	København K	Lavendelstræde		False	1	
-1463	København K	Farvergade		False	1	
-1464	København K	Hestemøllestræde		False	1	
-1465	København K	Gåsegade		False	1	
-1466	København K	Rådhusstræde		False	1	
-1467	København K	Vandkunsten		False	1	
-1468	København K	Løngangstræde		False	1	
-1470	København K	Stormgade 2-16		False	1	
-1471	København K	Ny Vestergade		False	1	
-1472	København K	Ny Kongensgade,  til 17 + til 16		False	1	
-1473	København K	Bryghusgade		False	1	
-1500	København V	Bernstorffsgade 40	Vesterbro Postkontor	False	1	
-1501	København V	Postboks		False	1	
-1502	København V	Postboks		False	1	
-1503	København V	Postboks		False	1	
-1504	København V	Postboks		False	1	
-1505	København V	Postboks		False	1	
-1506	København V	Postboks		False	1	
-1507	København V	Postboks		False	1	
-1508	København V	Postboks		False	1	
-1509	København V	Postboks		False	1	
-1510	København V	Postboks		False	1	
-1532	København V	Kystvejen 26, 2770 Kastrup	Internationalt Postcenter, returforsendelser + consignment	False	1	
-1533	København V	Kystvejen 26, 2770 Kastrup	Internationalt Postcenter	False	1	
-1550	København V	Bag Rådhuset		False	1	
-1550	København V	Rådhuspladsen		False	1	
-1551	København V	Jarmers Plads		False	1	
-1552	København V	Vester Voldgade		False	1	
-1553	København V	H.C. Andersens Boulevard		False	1	
-1553	København V	Langebro		False	1	
-1554	København V	Studiestræde 51-69 + 46-54		False	1	
-1555	København V	Stormgade Ulige nr + 18-20		False	1	
-1556	København V	Dantes Plads		False	1	
-1557	København V	Ny Kongensgade, fra 18 + fra 19		False	1	
-1558	København V	Christiansborggade		False	1	
-1559	København V	Christians Brygge 24 - 30		False	1	
-1560	København V	Kalvebod Brygge		False	1	
-1561	København V	Fisketorvet		False	1	
-1561	København V	Kalvebod Pladsvej		False	1	
-1562	København V	Hambrosgade		False	1	
-1563	København V	Otto Mønsteds Plads		False	1	
-1564	København V	Rysensteensgade		False	1	
-1566	København V	Tietgensgade 37	Post Danmark A/S	False	1	
-1567	København V	Polititorvet		False	1	
-1568	København V	Mitchellsgade		False	1	
-1569	København V	Edvard Falcks Gade		False	1	
-1570	København V	Banegårdspladsen		False	1	
-1570	København V	Københavns Hovedbanegård		False	1	
-1571	København V	Otto Mønsteds Gade		False	1	
-1572	København V	Anker Heegaards Gade		False	1	
-1573	København V	Puggaardsgade		False	1	
-1574	København V	Niels Brocks Gade		False	1	
-1575	København V	Ved Glyptoteket		False	1	
-1576	København V	Stoltenbergsgade		False	1	
-1577	København V	Bernstorffsgade		False	1	
-1590	København V	Jarmers Plads 2	Realkredit Danmark	False	1	
-1592	København V	Bernstorffsgade 17-19	Københavns Socialdirektorat	False	1	
-1599	København V	Rådhuspladsen	Københavns Rådhus	False	1	
-1600	København V	Gyldenløvesgade Ulige nr.		False	1	
-1601	København V	Vester Søgade		False	1	
-1602	København V	Nyropsgade		False	1	
-1603	København V	Dahlerupsgade		False	1	
-1604	København V	Kampmannsgade		False	1	
-1605	København V	Herholdtsgade		False	1	
-1606	København V	Vester Farimagsgade		False	1	
-1607	København V	Staunings Plads		False	1	
-1608	København V	Jernbanegade		False	1	
-1609	København V	Axeltorv		False	1	
-1610	København V	Gammel Kongevej 1-51 + 2-10		False	1	
-1611	København V	Hammerichsgade		False	1	
-1612	København V	Ved Vesterport		False	1	
-1613	København V	Meldahlsgade		False	1	
-1614	København V	Trommesalen		False	1	
-1615	København V	Sankt Jørgens Allé		False	1	
-1616	København V	Stenosgade		False	1	
-1617	København V	Bagerstræde		False	1	
-1618	København V	Tullinsgade		False	1	
-1619	København V	Værnedamsvej Lige nr.		False	1	
-1620	København V	Vesterbros Torv		False	1	
-1620	København V	Vesterbrogade 1-151 + 2-150		False	1	
-1621	København V	Frederiksberg Allé 1 - 13B		False	1	
-1622	København V	Boyesgade Ulige nr		False	1	
-1623	København V	Kingosgade 1-9 + 2-6		False	1	
-1624	København V	Brorsonsgade		False	1	
-1630	København V	Vesterbrogade 3	Tivoli A/S	False	1	
-1631	København V	Herman Triers Plads		False	1	
-1632	København V	Julius Thomsens Gade Lige nr		False	1	
-1633	København V	Kleinsgade		False	1	
-1634	København V	Rosenørns Allé 2-18		False	1	
-1635	København V	Åboulevard 1-13		False	1	
-1639	København V	Gyldenløvesgade 15	Københavns Skatteforvaltning	False	1	
-1640	København V	Dahlerupsgade 6	Københavns Folkeregister	False	1	
-1650	København V	Istedgade		False	1	
-1651	København V	Reventlowsgade		False	1	
-1652	København V	Colbjørnsensgade		False	1	
-1653	København V	Helgolandsgade		False	1	
-1654	København V	Abel Cathrines Gade		False	1	
-1655	København V	Viktoriagade		False	1	
-1656	København V	Gasværksvej		False	1	
-1657	København V	Eskildsgade		False	1	
-1658	København V	Absalonsgade		False	1	
-1659	København V	Svendsgade		False	1	
-1660	København V	Otto Krabbes Plads		False	1	
-1660	København V	Dannebrogsgade		False	1	
-1661	København V	Westend		False	1	
-1662	København V	Saxogade		False	1	
-1663	København V	Oehlenschlægersgade		False	1	
-1664	København V	Kaalundsgade		False	1	
-1665	København V	Valdemarsgade		False	1	
-1666	København V	Matthæusgade		False	1	
-1667	København V	Frederiksstadsgade		False	1	
-1668	København V	Mysundegade		False	1	
-1669	København V	Flensborggade		False	1	
-1670	København V	Enghave Plads		False	1	
-1671	København V	Tove Ditlevsens Plads		False	1	
-1671	København V	Haderslevgade		False	1	
-1672	København V	Broagergade		False	1	
-1673	København V	Ullerupgade		False	1	
-1674	København V	Enghavevej, til 79 + til 78		False	1	
-1675	København V	Kongshøjgade		False	1	
-1676	København V	Sankelmarksgade		False	1	
-1677	København V	Gråstensgade		False	1	
-1699	København V	Staldgade		False	1	
-1700	København V	Halmtorvet		False	1	
-1701	København V	Reverdilsgade		False	1	
-1702	København V	Stampesgade		False	1	
-1703	København V	Lille Colbjørnsensgade		False	1	
-1704	København V	Tietgensgade		False	1	
-1705	København V	Ingerslevsgade		False	1	
-1706	København V	Lille Istedgade		False	1	
-1707	København V	Maria Kirkeplads		False	1	
-1708	København V	Eriksgade		False	1	
-1709	København V	Skydebanegade		False	1	
-1710	København V	Kvægtorvsgade		False	1	
-1711	København V	Flæsketorvet		False	1	
-1712	København V	Høkerboderne		False	1	
-1713	København V	Kvægtorvet		False	1	
-1714	København V	Kødboderne		False	1	
-1715	København V	Slagtehusgade		False	1	
-1716	København V	Slagterboderne		False	1	
-1717	København V	Skelbækgade		False	1	
-1718	København V	Sommerstedgade		False	1	
-1719	København V	Krusågade		False	1	
-1720	København V	Sønder Boulevard		False	1	
-1721	København V	Dybbølsgade		False	1	
-1722	København V	Godsbanegade		False	1	
-1723	København V	Letlandsgade		False	1	
-1724	København V	Estlandsgade		False	1	
-1725	København V	Esbern Snares Gade		False	1	
-1726	København V	Arkonagade		False	1	
-1727	København V	Asger Rygs Gade		False	1	
-1728	København V	Skjalm Hvides Gade		False	1	
-1729	København V	Sigerstedgade		False	1	
-1730	København V	Knud Lavards Gade		False	1	
-1731	København V	Erik Ejegods Gade		False	1	
-1732	København V	Bodilsgade		False	1	
-1733	København V	Palnatokesgade		False	1	
-1734	København V	Heilsgade		False	1	
-1735	København V	Røddinggade		False	1	
-1736	København V	Bevtoftgade		False	1	
-1737	København V	Bustrupgade		False	1	
-1738	København V	Stenderupgade		False	1	
-1739	København V	Enghave Passage		False	1	
-1748	København V	Kammasvej 2		False	1	
-1749	København V	Rahbeks Allé 3-15		False	1	
-1750	København V	Vesterfælledvej		False	1	
-1751	København V	Sundevedsgade		False	1	
-1752	København V	Tøndergade		False	1	
-1753	København V	Ballumgade		False	1	
-1754	København V	Hedebygade		False	1	
-1755	København V	Møgeltøndergade		False	1	
-1756	København V	Amerikavej		False	1	
-1757	København V	Trøjborggade		False	1	
-1758	København V	Lyrskovgade		False	1	
-1759	København V	Rejsbygade		False	1	
-1760	København V	Ny Carlsberg Vej		False	1	
-1761	København V	Ejderstedgade		False	1	
-1762	København V	Slesvigsgade		False	1	
-1763	København V	Dannevirkegade		False	1	
-1764	København V	Alsgade		False	1	
-1765	København V	Angelgade		False	1	
-1766	København V	Slien		False	1	
-1770	København V	Carstensgade		False	1	
-1771	København V	Lundbyesgade		False	1	
-1772	København V	Ernst Meyers Gade		False	1	
-1773	København V	Bissensgade		False	1	
-1774	København V	Küchlersgade		False	1	
-1775	København V	Freundsgade		False	1	
-1777	København V	Jerichausgade		False	1	
-1778	København V	Pasteursvej		False	1	
-1780	København V		Erhvervskunder	False	1	
-1782	København V	Ufrankerede svarforsendelser		False	1	
-1784	København V	Gerdasgade 37	Forlagsgruppen (ufrankerede svarforsendelser)	False	1	
-1785	København V	Rådhuspladsen 33 og 37	Politiken og Ekstrabladet	False	1	
-1786	København V	Vesterbrogade 8	Unibank	False	1	
-1787	København V	H.C. Andersens Boulevard 18	Dansk Industri	False	1	
-1788	København V		Erhvervskunder	False	1	
-1789	København V	H.C. Andersens Boulevard 12	Star Tour A/S	False	1	
-1790	København V		Erhvervskunder	False	1	
-1795	København V	Gerdasgade 35-37	Bogklubforlag	False	1	
-1799	København V	Vester Fælledvej 100	Carlsberg	False	1	
+0555	Scanning		Data Scanning A/S, "LÃ¦s Ind"-service	True	1	
+0555	Scanning		Data Scanning A/S, "LÃ¦s Ind"-service	False	1	
+0800	HÃ¸je Taastrup	GirostrÃ¸get 1	BG-Bank A/S	True	1	
+0877	Valby	Vigerslev AllÃ© 18	Aller Press (konkurrencer)	False	1	
+0900	KÃ¸benhavn C		KÃ¸benhavns Postcenter + erhvervskunder	False	1	
+0910	KÃ¸benhavn C	Ufrankerede svarforsendelser 		False	1	
+0929	KÃ¸benhavn C	Ufrankerede svarforsendelser		False	1	
+1000	KÃ¸benhavn K	KÃ¸bmagergade 33	KÃ¸bmagergade Postkontor	False	1	
+1001	KÃ¸benhavn K	Postboks		False	1	
+1002	KÃ¸benhavn K	Postboks		False	1	
+1003	KÃ¸benhavn K	Postboks		False	1	
+1004	KÃ¸benhavn K	Postboks		False	1	
+1005	KÃ¸benhavn K	Postboks		False	1	
+1006	KÃ¸benhavn K	Postboks		False	1	
+1007	KÃ¸benhavn K	Postboks		False	1	
+1008	KÃ¸benhavn K	Postboks		False	1	
+1009	KÃ¸benhavn K	Postboks		False	1	
+1010	KÃ¸benhavn K	Postboks		False	1	
+1011	KÃ¸benhavn K	Postboks		False	1	
+1012	KÃ¸benhavn K	Postboks		False	1	
+1013	KÃ¸benhavn K	Postboks		False	1	
+1014	KÃ¸benhavn K	Postboks		False	1	
+1015	KÃ¸benhavn K	Postboks		False	1	
+1016	KÃ¸benhavn K	Postboks		False	1	
+1017	KÃ¸benhavn K	Postboks		False	1	
+1018	KÃ¸benhavn K	Postboks		False	1	
+1019	KÃ¸benhavn K	Postboks		False	1	
+1020	KÃ¸benhavn K	Postboks		False	1	
+1021	KÃ¸benhavn K	Postboks		False	1	
+1022	KÃ¸benhavn K	Postboks		False	1	
+1023	KÃ¸benhavn K	Postboks		False	1	
+1024	KÃ¸benhavn K	Postboks		False	1	
+1025	KÃ¸benhavn K	Postboks		False	1	
+1026	KÃ¸benhavn K	Postboks		False	1	
+1045	KÃ¸benhavn K	Ufrankerede svarforsendelser		False	1	
+1050	KÃ¸benhavn K	Kongens Nytorv		False	1	
+1051	KÃ¸benhavn K	Nyhavn		False	1	
+1052	KÃ¸benhavn K	Herluf Trolles Gade		False	1	
+1053	KÃ¸benhavn K	Cort Adelers Gade		False	1	
+1054	KÃ¸benhavn K	Peder Skrams Gade		False	1	
+1055	KÃ¸benhavn K	Tordenskjoldsgade		False	1	
+1055	KÃ¸benhavn K	August Bournonvilles Passage		False	1	
+1056	KÃ¸benhavn K	Heibergsgade		False	1	
+1057	KÃ¸benhavn K	Holbergsgade		False	1	
+1058	KÃ¸benhavn K	Havnegade		False	1	
+1059	KÃ¸benhavn K	Niels Juels Gade		False	1	
+1060	KÃ¸benhavn K	Holmens Kanal		False	1	
+1061	KÃ¸benhavn K	Ved Stranden		False	1	
+1062	KÃ¸benhavn K	Boldhusgade		False	1	
+1063	KÃ¸benhavn K	Laksegade		False	1	
+1064	KÃ¸benhavn K	Asylgade		False	1	
+1065	KÃ¸benhavn K	FortunstrÃ¦de		False	1	
+1066	KÃ¸benhavn K	Admiralgade		False	1	
+1067	KÃ¸benhavn K	Nikolaj Plads		False	1	
+1068	KÃ¸benhavn K	Nikolajgade		False	1	
+1069	KÃ¸benhavn K	Bremerholm		False	1	
+1070	KÃ¸benhavn K	VingÃ¥rdstrÃ¦de		False	1	
+1071	KÃ¸benhavn K	Dybensgade		False	1	
+1072	KÃ¸benhavn K	Lille KirkestrÃ¦de		False	1	
+1073	KÃ¸benhavn K	Store KirkestrÃ¦de		False	1	
+1074	KÃ¸benhavn K	Lille Kongensgade		False	1	
+1092	KÃ¸benhavn K	Holmens Kanal 2-12	Danske Bank A/S	False	1	
+1093	KÃ¸benhavn K	Havnegade 5	Danmarks Nationalbank	False	1	
+1095	KÃ¸benhavn K	Kongens Nytorv 13	Magasin du Nord	False	1	
+1098	KÃ¸benhavn K	Esplanaden 50	A.P. MÃ¸ller	False	1	
+1100	KÃ¸benhavn K	Ã˜stergade		False	1	
+1101	KÃ¸benhavn K	Ny Ã˜stergade		False	1	
+1102	KÃ¸benhavn K	PistolstrÃ¦de		False	1	
+1103	KÃ¸benhavn K	Hovedvagtsgade		False	1	
+1104	KÃ¸benhavn K	Ny Adelgade		False	1	
+1105	KÃ¸benhavn K	Kristen Bernikows Gade		False	1	
+1106	KÃ¸benhavn K	Antonigade		False	1	
+1107	KÃ¸benhavn K	GrÃ¸nnegade		False	1	
+1110	KÃ¸benhavn K	Store Regnegade		False	1	
+1111	KÃ¸benhavn K	Christian IX's Gade		False	1	
+1112	KÃ¸benhavn K	PilestrÃ¦de		False	1	
+1113	KÃ¸benhavn K	Silkegade		False	1	
+1114	KÃ¸benhavn K	Kronprinsensgade		False	1	
+1115	KÃ¸benhavn K	Klareboderne		False	1	
+1116	KÃ¸benhavn K	MÃ¸ntergade		False	1	
+1117	KÃ¸benhavn K	Gammel MÃ¸nt		False	1	
+1118	KÃ¸benhavn K	SvÃ¦rtegade		False	1	
+1119	KÃ¸benhavn K	LandemÃ¦rket		False	1	
+1120	KÃ¸benhavn K	Vognmagergade		False	1	
+1121	KÃ¸benhavn K	LÃ¸nporten		False	1	
+1122	KÃ¸benhavn K	SjÃ¦leboderne		False	1	
+1123	KÃ¸benhavn K	Gothersgade		False	1	
+1124	KÃ¸benhavn K	Ã…benrÃ¥		False	1	
+1125	KÃ¸benhavn K	Suhmsgade		False	1	
+1126	KÃ¸benhavn K	Pustervig		False	1	
+1127	KÃ¸benhavn K	Hauser Plads		False	1	
+1128	KÃ¸benhavn K	Hausergade		False	1	
+1129	KÃ¸benhavn K	Sankt Gertruds StrÃ¦de		False	1	
+1130	KÃ¸benhavn K	Rosenborggade		False	1	
+1131	KÃ¸benhavn K	Tornebuskegade		False	1	
+1140	KÃ¸benhavn K	MÃ¸ntergade 19	Dagbladet BÃ¸rsen	False	1	
+1147	KÃ¸benhavn K	PilestrÃ¦de 34	Berlingske Tidende	False	1	
+1148	KÃ¸benhavn K	Vognmagergade 11	Gutenberghus	False	1	
+1150	KÃ¸benhavn K	KÃ¸bmagergade		False	1	
+1151	KÃ¸benhavn K	Valkendorfsgade		False	1	
+1152	KÃ¸benhavn K	LÃ¸vstrÃ¦de		False	1	
+1153	KÃ¸benhavn K	Niels Hemmingsens Gade		False	1	
+1154	KÃ¸benhavn K	GrÃ¥brÃ¸dretorv		False	1	
+1155	KÃ¸benhavn K	Kejsergade		False	1	
+1156	KÃ¸benhavn K	GrÃ¥brÃ¸drestrÃ¦de		False	1	
+1157	KÃ¸benhavn K	KlosterstrÃ¦de		False	1	
+1158	KÃ¸benhavn K	Skoubogade		False	1	
+1159	KÃ¸benhavn K	Skindergade		False	1	
+1160	KÃ¸benhavn K	Amagertorv		False	1	
+1161	KÃ¸benhavn K	Vimmelskaftet		False	1	
+1162	KÃ¸benhavn K	Jorcks Passage		False	1	
+1163	KÃ¸benhavn K	KlostergÃ¥rden		False	1	
+1164	KÃ¸benhavn K	Nygade		False	1	
+1165	KÃ¸benhavn K	NÃ¸rregade		False	1	
+1166	KÃ¸benhavn K	DyrkÃ¸b		False	1	
+1167	KÃ¸benhavn K	Bispetorvet		False	1	
+1168	KÃ¸benhavn K	Frue Plads		False	1	
+1169	KÃ¸benhavn K	Store KannikestrÃ¦de		False	1	
+1170	KÃ¸benhavn K	Lille KannikestrÃ¦de		False	1	
+1171	KÃ¸benhavn K	FiolstrÃ¦de		False	1	
+1172	KÃ¸benhavn K	Krystalgade		False	1	
+1173	KÃ¸benhavn K	Peder Hvitfeldts StrÃ¦de		False	1	
+1174	KÃ¸benhavn K	RosengÃ¥rden		False	1	
+1175	KÃ¸benhavn K	Kultorvet		False	1	
+1200	KÃ¸benhavn K	HÃ¸jbro Plads		False	1	
+1201	KÃ¸benhavn K	LÃ¦derstrÃ¦de		False	1	
+1202	KÃ¸benhavn K	Gammel Strand		False	1	
+1203	KÃ¸benhavn K	Nybrogade		False	1	
+1204	KÃ¸benhavn K	MagstrÃ¦de		False	1	
+1205	KÃ¸benhavn K	Snaregade		False	1	
+1206	KÃ¸benhavn K	NabolÃ¸s		False	1	
+1207	KÃ¸benhavn K	HyskenstrÃ¦de		False	1	
+1208	KÃ¸benhavn K	KompagnistrÃ¦de		False	1	
+1209	KÃ¸benhavn K	BadstuestrÃ¦de		False	1	
+1210	KÃ¸benhavn K	KnabrostrÃ¦de		False	1	
+1211	KÃ¸benhavn K	BrolÃ¦ggerstrÃ¦de		False	1	
+1212	KÃ¸benhavn K	Vindebrogade		False	1	
+1213	KÃ¸benhavn K	Bertel Thorvaldsens Plads		False	1	
+1214	KÃ¸benhavn K	SÃ¸ren Kierkegaards Plads		False	1	
+1214	KÃ¸benhavn K	TÃ¸jhusgade		False	1	
+1215	KÃ¸benhavn K	BÃ¸rsgade		False	1	
+1216	KÃ¸benhavn K	Slotsholmsgade		False	1	
+1217	KÃ¸benhavn K	BÃ¸rsen		False	1	
+1218	KÃ¸benhavn K	Christiansborg Ridebane		False	1	
+1218	KÃ¸benhavn K	Proviantpassagen		False	1	
+1218	KÃ¸benhavn K	Christiansborg		False	1	
+1218	KÃ¸benhavn K	RigsdagsgÃ¥rden		False	1	
+1218	KÃ¸benhavn K	Christiansborg Slotsplads		False	1	
+1218	KÃ¸benhavn K	Prins JÃ¸rgens GÃ¥rd		False	1	
+1219	KÃ¸benhavn K	Christians Brygge ulige nr. + 2-22		False	1	
+1220	KÃ¸benhavn K	Frederiksholms Kanal		False	1	
+1240	KÃ¸benhavn K	Christiansborg	Folketinget	False	1	
+1250	KÃ¸benhavn K	Sankt AnnÃ¦ Plads		False	1	
+1251	KÃ¸benhavn K	KvÃ¦sthusgade		False	1	
+1252	KÃ¸benhavn K	KvÃ¦sthusbroen		False	1	
+1253	KÃ¸benhavn K	Toldbodgade		False	1	
+1254	KÃ¸benhavn K	Lille StrandstrÃ¦de		False	1	
+1255	KÃ¸benhavn K	Store StrandstrÃ¦de		False	1	
+1256	KÃ¸benhavn K	Amaliegade		False	1	
+1257	KÃ¸benhavn K	Amalienborg		False	1	
+1258	KÃ¸benhavn K	Larsens Plads		False	1	
+1259	KÃ¸benhavn K	Nordre Toldbod		False	1	
+1259	KÃ¸benhavn K	Trekroner		False	1	
+1260	KÃ¸benhavn K	Bredgade		False	1	
+1261	KÃ¸benhavn K	PalÃ¦gade		False	1	
+1263	KÃ¸benhavn K	Esplanaden		False	1	
+1263	KÃ¸benhavn K	Churchillparken		False	1	
+1264	KÃ¸benhavn K	Store Kongensgade		False	1	
+1265	KÃ¸benhavn K	Frederiksgade		False	1	
+1266	KÃ¸benhavn K	Bornholmsgade		False	1	
+1267	KÃ¸benhavn K	Hammerensgade		False	1	
+1268	KÃ¸benhavn K	Jens Kofods Gade		False	1	
+1270	KÃ¸benhavn K	GrÃ¸nningen		False	1	
+1271	KÃ¸benhavn K	Poul Ankers Gade		False	1	
+1291	KÃ¸benhavn K	Sankt AnnÃ¦ Plads 28	J. Lauritzen A/S	False	1	
+1300	KÃ¸benhavn K	Borgergade		False	1	
+1301	KÃ¸benhavn K	Landgreven		False	1	
+1302	KÃ¸benhavn K	Dronningens TvÃ¦rgade		False	1	
+1303	KÃ¸benhavn K	Hindegade		False	1	
+1304	KÃ¸benhavn K	Adelgade		False	1	
+1306	KÃ¸benhavn K	Kronprinsessegade		False	1	
+1307	KÃ¸benhavn K	SÃ¸lvgade		False	1	
+1307	KÃ¸benhavn K	Georg Brandes Plads		False	1	
+1308	KÃ¸benhavn K	Klerkegade		False	1	
+1309	KÃ¸benhavn K	Rosengade		False	1	
+1310	KÃ¸benhavn K	Fredericiagade		False	1	
+1311	KÃ¸benhavn K	Olfert Fischers Gade		False	1	
+1312	KÃ¸benhavn K	Gammelvagt		False	1	
+1313	KÃ¸benhavn K	Sankt Pauls Gade		False	1	
+1314	KÃ¸benhavn K	Sankt Pauls Plads		False	1	
+1315	KÃ¸benhavn K	RÃ¦vegade		False	1	
+1316	KÃ¸benhavn K	Rigensgade		False	1	
+1317	KÃ¸benhavn K	Stokhusgade		False	1	
+1318	KÃ¸benhavn K	Krusemyntegade		False	1	
+1319	KÃ¸benhavn K	Gernersgade		False	1	
+1320	KÃ¸benhavn K	Haregade		False	1	
+1321	KÃ¸benhavn K	Tigergade		False	1	
+1322	KÃ¸benhavn K	Suensonsgade		False	1	
+1323	KÃ¸benhavn K	Hjertensfrydsgade		False	1	
+1324	KÃ¸benhavn K	Elsdyrsgade		False	1	
+1325	KÃ¸benhavn K	Delfingade		False	1	
+1326	KÃ¸benhavn K	Krokodillegade		False	1	
+1327	KÃ¸benhavn K	Vildandegade		False	1	
+1328	KÃ¸benhavn K	Svanegade		False	1	
+1329	KÃ¸benhavn K	Timiansgade		False	1	
+1349	KÃ¸benhavn K	SÃ¸lvgade 40	DSB	False	1	
+1350	KÃ¸benhavn K	Ã˜ster Voldgade		False	1	
+1352	KÃ¸benhavn K	RÃ¸rholmsgade		False	1	
+1353	KÃ¸benhavn K	Ã˜ster Farimagsgade 1-19 + 2-2D		False	1	
+1354	KÃ¸benhavn K	Ole Suhrs Gade		False	1	
+1355	KÃ¸benhavn K	Gammeltoftsgade		False	1	
+1356	KÃ¸benhavn K	Bartholinsgade		False	1	
+1357	KÃ¸benhavn K	Ã˜ster SÃ¸gade 1 - 36		False	1	
+1358	KÃ¸benhavn K	NÃ¸rre Voldgade		False	1	
+1359	KÃ¸benhavn K	Ahlefeldtsgade		False	1	
+1360	KÃ¸benhavn K	Frederiksborggade		False	1	
+1361	KÃ¸benhavn K	Israels Plads		False	1	
+1361	KÃ¸benhavn K	LinnÃ©sgade		False	1	
+1362	KÃ¸benhavn K	RÃ¸mersgade		False	1	
+1363	KÃ¸benhavn K	Vendersgade		False	1	
+1364	KÃ¸benhavn K	NÃ¸rre Farimagsgade		False	1	
+1365	KÃ¸benhavn K	Schacksgade		False	1	
+1366	KÃ¸benhavn K	Nansensgade		False	1	
+1367	KÃ¸benhavn K	Kjeld Langes Gade		False	1	
+1368	KÃ¸benhavn K	Turesensgade		False	1	
+1369	KÃ¸benhavn K	GyldenlÃ¸vesgade Lige nr		False	1	
+1370	KÃ¸benhavn K	NÃ¸rre SÃ¸gade		False	1	
+1371	KÃ¸benhavn K	SÃ¸torvet		False	1	
+1390	KÃ¸benhavn K	NÃ¸rre Voldgade 68	BG-Bank	False	1	
+1400	KÃ¸benhavn K	Torvegade		False	1	
+1400	KÃ¸benhavn K	Knippelsbro		False	1	
+1401	KÃ¸benhavn K	Strandgade		False	1	
+1402	KÃ¸benhavn K	Asiatisk Plads		False	1	
+1402	KÃ¸benhavn K	Johan Semps Gade		False	1	
+1402	KÃ¸benhavn K	Nicolai Eigtveds Gade		False	1	
+1402	KÃ¸benhavn K	David Balfours Gade		False	1	
+1402	KÃ¸benhavn K	HammershÃ¸i Kaj		False	1	
+1403	KÃ¸benhavn K	Wilders Plads		False	1	
+1404	KÃ¸benhavn K	KrÃ¸yers Plads		False	1	
+1405	KÃ¸benhavn K	GrÃ¸nlandske Handels Plads		False	1	
+1406	KÃ¸benhavn K	Christianshavns Kanal		False	1	
+1407	KÃ¸benhavn K	BÃ¥dsmandsstrÃ¦de		False	1	
+1408	KÃ¸benhavn K	Wildersgade		False	1	
+1409	KÃ¸benhavn K	Knippelsbrogade		False	1	
+1410	KÃ¸benhavn K	Christianshavns Torv		False	1	
+1411	KÃ¸benhavn K	Langebrogade		False	1	
+1411	KÃ¸benhavn K	Applebys Plads		False	1	
+1412	KÃ¸benhavn K	VoldgÃ¥rden		False	1	
+1413	KÃ¸benhavn K	Ved Kanalen		False	1	
+1414	KÃ¸benhavn K	Overgaden neden Vandet		False	1	
+1415	KÃ¸benhavn K	Overgaden oven Vandet		False	1	
+1416	KÃ¸benhavn K	Sankt AnnÃ¦ Gade		False	1	
+1417	KÃ¸benhavn K	Mikkel Vibes Gade		False	1	
+1418	KÃ¸benhavn K	Sofiegade		False	1	
+1419	KÃ¸benhavn K	Store SÃ¸ndervoldstrÃ¦de		False	1	
+1420	KÃ¸benhavn K	Dronningensgade		False	1	
+1421	KÃ¸benhavn K	Lille SÃ¸ndervoldstrÃ¦de		False	1	
+1422	KÃ¸benhavn K	Prinsessegade		False	1	
+1423	KÃ¸benhavn K	Amagergade		False	1	
+1424	KÃ¸benhavn K	Christianshavns Voldgade		False	1	
+1425	KÃ¸benhavn K	Ved Volden		False	1	
+1426	KÃ¸benhavn K	Voldboligerne		False	1	
+1427	KÃ¸benhavn K	Brobergsgade		False	1	
+1428	KÃ¸benhavn K	Andreas BjÃ¸rns Gade		False	1	
+1429	KÃ¸benhavn K	Burmeistersgade		False	1	
+1430	KÃ¸benhavn K	Bodenhoffs Plads		False	1	
+1431	KÃ¸benhavn K	Islands Plads		False	1	
+1432	KÃ¸benhavn K	Margretheholmsvej		False	1	
+1432	KÃ¸benhavn K	Refshalevej		False	1	
+1432	KÃ¸benhavn K	William Wains Gade		False	1	
+1433	KÃ¸benhavn K	RefshaleÃ¸en		False	1	
+1433	KÃ¸benhavn K	Quintus		False	1	
+1433	KÃ¸benhavn K	Flakfortet		False	1	
+1433	KÃ¸benhavn K	Lynetten		False	1	
+1433	KÃ¸benhavn K	Margretheholm		False	1	
+1433	KÃ¸benhavn K	Middelgrundsfortet		False	1	
+1433	KÃ¸benhavn K	Christiansholms Ã˜		False	1	
+1434	KÃ¸benhavn K	Danneskiold-SamsÃ¸es AllÃ©		False	1	
+1435	KÃ¸benhavn K	Philip de Langes AllÃ©		False	1	
+1436	KÃ¸benhavn K	VÃ¦rftsbroen		False	1	
+1436	KÃ¸benhavn K	SÃ¸artillerivej		False	1	
+1436	KÃ¸benhavn K	Halvtolv		False	1	
+1436	KÃ¸benhavn K	Trangravsvej		False	1	
+1436	KÃ¸benhavn K	Arsenalvej		False	1	
+1436	KÃ¸benhavn K	KuglegÃ¥rdsvej		False	1	
+1436	KÃ¸benhavn K	KuglegÃ¥rden		False	1	
+1437	KÃ¸benhavn K	Fabrikmestervej		False	1	
+1437	KÃ¸benhavn K	Masteskursvej		False	1	
+1437	KÃ¸benhavn K	Bohlendachvej		False	1	
+1437	KÃ¸benhavn K	Stibolts Kvarter		False	1	
+1437	KÃ¸benhavn K	Takkelloftsvej		False	1	
+1437	KÃ¸benhavn K	Theodor Christensens Plads		False	1	
+1437	KÃ¸benhavn K	Hohlenbergs Kvarter		False	1	
+1437	KÃ¸benhavn K	Galionsvej		False	1	
+1437	KÃ¸benhavn K	Krabbes Kvarter		False	1	
+1437	KÃ¸benhavn K	KanonbÃ¥dsvej		False	1	
+1437	KÃ¸benhavn K	Leo Mathisens Vej		False	1	
+1437	KÃ¸benhavn K	Per Knutzons Vej		False	1	
+1437	KÃ¸benhavn K	Eik SkalÃ¸es Plads		False	1	
+1437	KÃ¸benhavn K	Schifters Kvarter		False	1	
+1438	KÃ¸benhavn K	Benstrups Kvarter		False	1	
+1438	KÃ¸benhavn K	JudichÃ¦rs Plads		False	1	
+1438	KÃ¸benhavn K	JudichÃ¦rs Kvarter		False	1	
+1438	KÃ¸benhavn K	DokÃ¸vej		False	1	
+1438	KÃ¸benhavn K	Ekvipagemestervej		False	1	
+1438	KÃ¸benhavn K	OrlogsvÃ¦rftvej		False	1	
+1439	KÃ¸benhavn K	Takkeladsvej		False	1	
+1439	KÃ¸benhavn K	Elefanten		False	1	
+1439	KÃ¸benhavn K	H.C. Sneedorffs AllÃ©		False	1	
+1439	KÃ¸benhavn K	Eskadrevej		False	1	
+1439	KÃ¸benhavn K	Henrik Spans Vej		False	1	
+1439	KÃ¸benhavn K	Spanteloftvej		False	1	
+1439	KÃ¸benhavn K	Kongebrovej		False	1	
+1439	KÃ¸benhavn K	P. LÃ¸venÃ¸rns Vej		False	1	
+1439	KÃ¸benhavn K	Henrik Gerners Plads		False	1	
+1439	KÃ¸benhavn K	KrudtlÃ¸bsvej		False	1	
+1439	KÃ¸benhavn K	BradbÃ¦nken		False	1	
+1439	KÃ¸benhavn K	A.H. Vedels Plads		False	1	
+1440	KÃ¸benhavn K	Tinghuset		False	1	
+1440	KÃ¸benhavn K	BlÃ¥ Karamel		False	1	
+1440	KÃ¸benhavn K	Fredens Ark		False	1	
+1440	KÃ¸benhavn K	SydomrÃ¥det		False	1	
+1440	KÃ¸benhavn K	BjÃ¸rnekloen		False	1	
+1440	KÃ¸benhavn K	NordomrÃ¥det		False	1	
+1440	KÃ¸benhavn K	MÃ¦lkebÃ¸tten		False	1	
+1440	KÃ¸benhavn K	FabriksomrÃ¥det		False	1	
+1440	KÃ¸benhavn K	LÃ¸vehuset		False	1	
+1440	KÃ¸benhavn K	MÃ¦lkevejen		False	1	
+1440	KÃ¸benhavn K	Psyak		False	1	
+1441	KÃ¸benhavn K	Syddyssen		False	1	
+1441	KÃ¸benhavn K	Midtdyssen		False	1	
+1441	KÃ¸benhavn K	Norddyssen		False	1	
+1448	KÃ¸benhavn K	Asiatisk Plads 2	Udenrigsministeriet	False	1	
+1450	KÃ¸benhavn K	Nytorv		False	1	
+1451	KÃ¸benhavn K	LarslejsstrÃ¦de		False	1	
+1452	KÃ¸benhavn K	TeglgÃ¥rdstrÃ¦de		False	1	
+1453	KÃ¸benhavn K	Sankt Peders StrÃ¦de		False	1	
+1454	KÃ¸benhavn K	LarsbjÃ¸rnsstrÃ¦de		False	1	
+1455	KÃ¸benhavn K	StudiestrÃ¦de 1-49 + 2-42		False	1	
+1456	KÃ¸benhavn K	Vestergade		False	1	
+1457	KÃ¸benhavn K	Gammeltorv		False	1	
+1458	KÃ¸benhavn K	Kattesundet		False	1	
+1459	KÃ¸benhavn K	Frederiksberggade		False	1	
+1460	KÃ¸benhavn K	Mikkel Bryggers Gade		False	1	
+1461	KÃ¸benhavn K	Slutterigade		False	1	
+1462	KÃ¸benhavn K	LavendelstrÃ¦de		False	1	
+1463	KÃ¸benhavn K	Farvergade		False	1	
+1464	KÃ¸benhavn K	HestemÃ¸llestrÃ¦de		False	1	
+1465	KÃ¸benhavn K	GÃ¥segade		False	1	
+1466	KÃ¸benhavn K	RÃ¥dhusstrÃ¦de		False	1	
+1467	KÃ¸benhavn K	Vandkunsten		False	1	
+1468	KÃ¸benhavn K	LÃ¸ngangstrÃ¦de		False	1	
+1470	KÃ¸benhavn K	Stormgade 2-16		False	1	
+1471	KÃ¸benhavn K	Ny Vestergade		False	1	
+1472	KÃ¸benhavn K	Ny Kongensgade,  til 17 + til 16		False	1	
+1473	KÃ¸benhavn K	Bryghusgade		False	1	
+1500	KÃ¸benhavn V	Bernstorffsgade 40	Vesterbro Postkontor	False	1	
+1501	KÃ¸benhavn V	Postboks		False	1	
+1502	KÃ¸benhavn V	Postboks		False	1	
+1503	KÃ¸benhavn V	Postboks		False	1	
+1504	KÃ¸benhavn V	Postboks		False	1	
+1505	KÃ¸benhavn V	Postboks		False	1	
+1506	KÃ¸benhavn V	Postboks		False	1	
+1507	KÃ¸benhavn V	Postboks		False	1	
+1508	KÃ¸benhavn V	Postboks		False	1	
+1509	KÃ¸benhavn V	Postboks		False	1	
+1510	KÃ¸benhavn V	Postboks		False	1	
+1532	KÃ¸benhavn V	Kystvejen 26, 2770 Kastrup	Internationalt Postcenter, returforsendelser + consignment	False	1	
+1533	KÃ¸benhavn V	Kystvejen 26, 2770 Kastrup	Internationalt Postcenter	False	1	
+1550	KÃ¸benhavn V	Bag RÃ¥dhuset		False	1	
+1550	KÃ¸benhavn V	RÃ¥dhuspladsen		False	1	
+1551	KÃ¸benhavn V	Jarmers Plads		False	1	
+1552	KÃ¸benhavn V	Vester Voldgade		False	1	
+1553	KÃ¸benhavn V	H.C. Andersens Boulevard		False	1	
+1553	KÃ¸benhavn V	Langebro		False	1	
+1554	KÃ¸benhavn V	StudiestrÃ¦de 51-69 + 46-54		False	1	
+1555	KÃ¸benhavn V	Stormgade Ulige nr + 18-20		False	1	
+1556	KÃ¸benhavn V	Dantes Plads		False	1	
+1557	KÃ¸benhavn V	Ny Kongensgade, fra 18 + fra 19		False	1	
+1558	KÃ¸benhavn V	Christiansborggade		False	1	
+1559	KÃ¸benhavn V	Christians Brygge 24 - 30		False	1	
+1560	KÃ¸benhavn V	Kalvebod Brygge		False	1	
+1561	KÃ¸benhavn V	Fisketorvet		False	1	
+1561	KÃ¸benhavn V	Kalvebod Pladsvej		False	1	
+1562	KÃ¸benhavn V	Hambrosgade		False	1	
+1563	KÃ¸benhavn V	Otto MÃ¸nsteds Plads		False	1	
+1564	KÃ¸benhavn V	Rysensteensgade		False	1	
+1566	KÃ¸benhavn V	Tietgensgade 37	Post Danmark A/S	False	1	
+1567	KÃ¸benhavn V	Polititorvet		False	1	
+1568	KÃ¸benhavn V	Mitchellsgade		False	1	
+1569	KÃ¸benhavn V	Edvard Falcks Gade		False	1	
+1570	KÃ¸benhavn V	BanegÃ¥rdspladsen		False	1	
+1570	KÃ¸benhavn V	KÃ¸benhavns HovedbanegÃ¥rd		False	1	
+1571	KÃ¸benhavn V	Otto MÃ¸nsteds Gade		False	1	
+1572	KÃ¸benhavn V	Anker Heegaards Gade		False	1	
+1573	KÃ¸benhavn V	Puggaardsgade		False	1	
+1574	KÃ¸benhavn V	Niels Brocks Gade		False	1	
+1575	KÃ¸benhavn V	Ved Glyptoteket		False	1	
+1576	KÃ¸benhavn V	Stoltenbergsgade		False	1	
+1577	KÃ¸benhavn V	Bernstorffsgade		False	1	
+1590	KÃ¸benhavn V	Jarmers Plads 2	Realkredit Danmark	False	1	
+1592	KÃ¸benhavn V	Bernstorffsgade 17-19	KÃ¸benhavns Socialdirektorat	False	1	
+1599	KÃ¸benhavn V	RÃ¥dhuspladsen	KÃ¸benhavns RÃ¥dhus	False	1	
+1600	KÃ¸benhavn V	GyldenlÃ¸vesgade Ulige nr.		False	1	
+1601	KÃ¸benhavn V	Vester SÃ¸gade		False	1	
+1602	KÃ¸benhavn V	Nyropsgade		False	1	
+1603	KÃ¸benhavn V	Dahlerupsgade		False	1	
+1604	KÃ¸benhavn V	Kampmannsgade		False	1	
+1605	KÃ¸benhavn V	Herholdtsgade		False	1	
+1606	KÃ¸benhavn V	Vester Farimagsgade		False	1	
+1607	KÃ¸benhavn V	Staunings Plads		False	1	
+1608	KÃ¸benhavn V	Jernbanegade		False	1	
+1609	KÃ¸benhavn V	Axeltorv		False	1	
+1610	KÃ¸benhavn V	Gammel Kongevej 1-51 + 2-10		False	1	
+1611	KÃ¸benhavn V	Hammerichsgade		False	1	
+1612	KÃ¸benhavn V	Ved Vesterport		False	1	
+1613	KÃ¸benhavn V	Meldahlsgade		False	1	
+1614	KÃ¸benhavn V	Trommesalen		False	1	
+1615	KÃ¸benhavn V	Sankt JÃ¸rgens AllÃ©		False	1	
+1616	KÃ¸benhavn V	Stenosgade		False	1	
+1617	KÃ¸benhavn V	BagerstrÃ¦de		False	1	
+1618	KÃ¸benhavn V	Tullinsgade		False	1	
+1619	KÃ¸benhavn V	VÃ¦rnedamsvej Lige nr.		False	1	
+1620	KÃ¸benhavn V	Vesterbros Torv		False	1	
+1620	KÃ¸benhavn V	Vesterbrogade 1-151 + 2-150		False	1	
+1621	KÃ¸benhavn V	Frederiksberg AllÃ© 1 - 13B		False	1	
+1622	KÃ¸benhavn V	Boyesgade Ulige nr		False	1	
+1623	KÃ¸benhavn V	Kingosgade 1-9 + 2-6		False	1	
+1624	KÃ¸benhavn V	Brorsonsgade		False	1	
+1630	KÃ¸benhavn V	Vesterbrogade 3	Tivoli A/S	False	1	
+1631	KÃ¸benhavn V	Herman Triers Plads		False	1	
+1632	KÃ¸benhavn V	Julius Thomsens Gade Lige nr		False	1	
+1633	KÃ¸benhavn V	Kleinsgade		False	1	
+1634	KÃ¸benhavn V	RosenÃ¸rns AllÃ© 2-18		False	1	
+1635	KÃ¸benhavn V	Ã…boulevard 1-13		False	1	
+1639	KÃ¸benhavn V	GyldenlÃ¸vesgade 15	KÃ¸benhavns Skatteforvaltning	False	1	
+1640	KÃ¸benhavn V	Dahlerupsgade 6	KÃ¸benhavns Folkeregister	False	1	
+1650	KÃ¸benhavn V	Istedgade		False	1	
+1651	KÃ¸benhavn V	Reventlowsgade		False	1	
+1652	KÃ¸benhavn V	ColbjÃ¸rnsensgade		False	1	
+1653	KÃ¸benhavn V	Helgolandsgade		False	1	
+1654	KÃ¸benhavn V	Abel Cathrines Gade		False	1	
+1655	KÃ¸benhavn V	Viktoriagade		False	1	
+1656	KÃ¸benhavn V	GasvÃ¦rksvej		False	1	
+1657	KÃ¸benhavn V	Eskildsgade		False	1	
+1658	KÃ¸benhavn V	Absalonsgade		False	1	
+1659	KÃ¸benhavn V	Svendsgade		False	1	
+1660	KÃ¸benhavn V	Otto Krabbes Plads		False	1	
+1660	KÃ¸benhavn V	Dannebrogsgade		False	1	
+1661	KÃ¸benhavn V	Westend		False	1	
+1662	KÃ¸benhavn V	Saxogade		False	1	
+1663	KÃ¸benhavn V	OehlenschlÃ¦gersgade		False	1	
+1664	KÃ¸benhavn V	Kaalundsgade		False	1	
+1665	KÃ¸benhavn V	Valdemarsgade		False	1	
+1666	KÃ¸benhavn V	MatthÃ¦usgade		False	1	
+1667	KÃ¸benhavn V	Frederiksstadsgade		False	1	
+1668	KÃ¸benhavn V	Mysundegade		False	1	
+1669	KÃ¸benhavn V	Flensborggade		False	1	
+1670	KÃ¸benhavn V	Enghave Plads		False	1	
+1671	KÃ¸benhavn V	Tove Ditlevsens Plads		False	1	
+1671	KÃ¸benhavn V	Haderslevgade		False	1	
+1672	KÃ¸benhavn V	Broagergade		False	1	
+1673	KÃ¸benhavn V	Ullerupgade		False	1	
+1674	KÃ¸benhavn V	Enghavevej, til 79 + til 78		False	1	
+1675	KÃ¸benhavn V	KongshÃ¸jgade		False	1	
+1676	KÃ¸benhavn V	Sankelmarksgade		False	1	
+1677	KÃ¸benhavn V	GrÃ¥stensgade		False	1	
+1699	KÃ¸benhavn V	Staldgade		False	1	
+1700	KÃ¸benhavn V	Halmtorvet		False	1	
+1701	KÃ¸benhavn V	Reverdilsgade		False	1	
+1702	KÃ¸benhavn V	Stampesgade		False	1	
+1703	KÃ¸benhavn V	Lille ColbjÃ¸rnsensgade		False	1	
+1704	KÃ¸benhavn V	Tietgensgade		False	1	
+1705	KÃ¸benhavn V	Ingerslevsgade		False	1	
+1706	KÃ¸benhavn V	Lille Istedgade		False	1	
+1707	KÃ¸benhavn V	Maria Kirkeplads		False	1	
+1708	KÃ¸benhavn V	Eriksgade		False	1	
+1709	KÃ¸benhavn V	Skydebanegade		False	1	
+1710	KÃ¸benhavn V	KvÃ¦gtorvsgade		False	1	
+1711	KÃ¸benhavn V	FlÃ¦sketorvet		False	1	
+1712	KÃ¸benhavn V	HÃ¸kerboderne		False	1	
+1713	KÃ¸benhavn V	KvÃ¦gtorvet		False	1	
+1714	KÃ¸benhavn V	KÃ¸dboderne		False	1	
+1715	KÃ¸benhavn V	Slagtehusgade		False	1	
+1716	KÃ¸benhavn V	Slagterboderne		False	1	
+1717	KÃ¸benhavn V	SkelbÃ¦kgade		False	1	
+1718	KÃ¸benhavn V	Sommerstedgade		False	1	
+1719	KÃ¸benhavn V	KrusÃ¥gade		False	1	
+1720	KÃ¸benhavn V	SÃ¸nder Boulevard		False	1	
+1721	KÃ¸benhavn V	DybbÃ¸lsgade		False	1	
+1722	KÃ¸benhavn V	Godsbanegade		False	1	
+1723	KÃ¸benhavn V	Letlandsgade		False	1	
+1724	KÃ¸benhavn V	Estlandsgade		False	1	
+1725	KÃ¸benhavn V	Esbern Snares Gade		False	1	
+1726	KÃ¸benhavn V	Arkonagade		False	1	
+1727	KÃ¸benhavn V	Asger Rygs Gade		False	1	
+1728	KÃ¸benhavn V	Skjalm Hvides Gade		False	1	
+1729	KÃ¸benhavn V	Sigerstedgade		False	1	
+1730	KÃ¸benhavn V	Knud Lavards Gade		False	1	
+1731	KÃ¸benhavn V	Erik Ejegods Gade		False	1	
+1732	KÃ¸benhavn V	Bodilsgade		False	1	
+1733	KÃ¸benhavn V	Palnatokesgade		False	1	
+1734	KÃ¸benhavn V	Heilsgade		False	1	
+1735	KÃ¸benhavn V	RÃ¸ddinggade		False	1	
+1736	KÃ¸benhavn V	Bevtoftgade		False	1	
+1737	KÃ¸benhavn V	Bustrupgade		False	1	
+1738	KÃ¸benhavn V	Stenderupgade		False	1	
+1739	KÃ¸benhavn V	Enghave Passage		False	1	
+1748	KÃ¸benhavn V	Kammasvej 2		False	1	
+1749	KÃ¸benhavn V	Rahbeks AllÃ© 3-15		False	1	
+1750	KÃ¸benhavn V	VesterfÃ¦lledvej		False	1	
+1751	KÃ¸benhavn V	Sundevedsgade		False	1	
+1752	KÃ¸benhavn V	TÃ¸ndergade		False	1	
+1753	KÃ¸benhavn V	Ballumgade		False	1	
+1754	KÃ¸benhavn V	Hedebygade		False	1	
+1755	KÃ¸benhavn V	MÃ¸geltÃ¸ndergade		False	1	
+1756	KÃ¸benhavn V	Amerikavej		False	1	
+1757	KÃ¸benhavn V	TrÃ¸jborggade		False	1	
+1758	KÃ¸benhavn V	Lyrskovgade		False	1	
+1759	KÃ¸benhavn V	Rejsbygade		False	1	
+1760	KÃ¸benhavn V	Ny Carlsberg Vej		False	1	
+1761	KÃ¸benhavn V	Ejderstedgade		False	1	
+1762	KÃ¸benhavn V	Slesvigsgade		False	1	
+1763	KÃ¸benhavn V	Dannevirkegade		False	1	
+1764	KÃ¸benhavn V	Alsgade		False	1	
+1765	KÃ¸benhavn V	Angelgade		False	1	
+1766	KÃ¸benhavn V	Slien		False	1	
+1770	KÃ¸benhavn V	Carstensgade		False	1	
+1771	KÃ¸benhavn V	Lundbyesgade		False	1	
+1772	KÃ¸benhavn V	Ernst Meyers Gade		False	1	
+1773	KÃ¸benhavn V	Bissensgade		False	1	
+1774	KÃ¸benhavn V	KÃ¼chlersgade		False	1	
+1775	KÃ¸benhavn V	Freundsgade		False	1	
+1777	KÃ¸benhavn V	Jerichausgade		False	1	
+1778	KÃ¸benhavn V	Pasteursvej		False	1	
+1780	KÃ¸benhavn V		Erhvervskunder	False	1	
+1782	KÃ¸benhavn V	Ufrankerede svarforsendelser		False	1	
+1784	KÃ¸benhavn V	Gerdasgade 37	Forlagsgruppen (ufrankerede svarforsendelser)	False	1	
+1785	KÃ¸benhavn V	RÃ¥dhuspladsen 33 og 37	Politiken og Ekstrabladet	False	1	
+1786	KÃ¸benhavn V	Vesterbrogade 8	Unibank	False	1	
+1787	KÃ¸benhavn V	H.C. Andersens Boulevard 18	Dansk Industri	False	1	
+1788	KÃ¸benhavn V		Erhvervskunder	False	1	
+1789	KÃ¸benhavn V	H.C. Andersens Boulevard 12	Star Tour A/S	False	1	
+1790	KÃ¸benhavn V		Erhvervskunder	False	1	
+1795	KÃ¸benhavn V	Gerdasgade 35-37	Bogklubforlag	False	1	
+1799	KÃ¸benhavn V	Vester FÃ¦lledvej 100	Carlsberg	False	1	
 1800	Frederiksberg C	Vesterbrogade, fra 152 og 153		False	1	
-1801	Frederiksberg C	Rahbeks Allé 2-36 + 17-23		False	1	
-1802	Frederiksberg C	Halls Allé		False	1	
-1803	Frederiksberg C	Brøndsteds Allé		False	1	
-1804	Frederiksberg C	Bakkegårds Allé		False	1	
+1801	Frederiksberg C	Rahbeks AllÃ© 2-36 + 17-23		False	1	
+1802	Frederiksberg C	Halls AllÃ©		False	1	
+1803	Frederiksberg C	BrÃ¸ndsteds AllÃ©		False	1	
+1804	Frederiksberg C	BakkegÃ¥rds AllÃ©		False	1	
 1805	Frederiksberg C	Kammasvej 1-3 + 4		False	1	
-1806	Frederiksberg C	Jacobys Allé		False	1	
-1807	Frederiksberg C	Schlegels Allé		False	1	
-1808	Frederiksberg C	Asmussens Allé		False	1	
+1806	Frederiksberg C	Jacobys AllÃ©		False	1	
+1807	Frederiksberg C	Schlegels AllÃ©		False	1	
+1808	Frederiksberg C	Asmussens AllÃ©		False	1	
 1809	Frederiksberg C	Frydendalsvej		False	1	
 1810	Frederiksberg C	Platanvej		False	1	
-1811	Frederiksberg C	Asgårdsvej		False	1	
+1811	Frederiksberg C	AsgÃ¥rdsvej		False	1	
 1812	Frederiksberg C	Kochsvej		False	1	
 1813	Frederiksberg C	Henrik Ibsens Vej		False	1	
 1814	Frederiksberg C	Carit Etlars Vej		False	1	
-1815	Frederiksberg C	Paludan Müllers Vej		False	1	
+1815	Frederiksberg C	Paludan MÃ¼llers Vej		False	1	
 1816	Frederiksberg C	Engtoftevej		False	1	
 1817	Frederiksberg C	Carl Bernhards Vej		False	1	
 1818	Frederiksberg C	Kingosgade 8-12 + 11-17		False	1	
-1819	Frederiksberg C	Værnedamsvej Ulige nr.		False	1	
-1820	Frederiksberg C	Frederiksberg Allé 15-65 + 2-104		False	1	
+1819	Frederiksberg C	VÃ¦rnedamsvej Ulige nr.		False	1	
+1820	Frederiksberg C	Frederiksberg AllÃ© 15-65 + 2-104		False	1	
 1822	Frederiksberg C	Boyesgade Lige nr		False	1	
 1823	Frederiksberg C	Haveselskabetsvej		False	1	
-1824	Frederiksberg C	Sankt Thomas Allé		False	1	
+1824	Frederiksberg C	Sankt Thomas AllÃ©		False	1	
 1825	Frederiksberg C	Hauchsvej		False	1	
 1826	Frederiksberg C	Alhambravej		False	1	
 1827	Frederiksberg C	Mynstersvej		False	1	
-1828	Frederiksberg C	Martensens Allé		False	1	
-1829	Frederiksberg C	Madvigs Allé		False	1	
+1828	Frederiksberg C	Martensens AllÃ©		False	1	
+1829	Frederiksberg C	Madvigs AllÃ©		False	1	
 1835	Frederiksberg C	Postboks	inkl. Frederiksberg C Postkontor	False	1	
 1850	Frederiksberg C	Gammel Kongevej 85-179 + 60-178		False	1	
 1851	Frederiksberg C	Nyvej		False	1	
 1852	Frederiksberg C	Amicisvej		False	1	
 1853	Frederiksberg C	Maglekildevej		False	1	
 1854	Frederiksberg C	Dr. Priemes Vej		False	1	
-1855	Frederiksberg C	Hollændervej		False	1	
+1855	Frederiksberg C	HollÃ¦ndervej		False	1	
 1856	Frederiksberg C	Edisonsvej		False	1	
 1857	Frederiksberg C	Hortensiavej		False	1	
 1860	Frederiksberg C	Christian Winthers Vej		False	1	
@@ -894,8 +847,8 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 1865	Frederiksberg C	Grundtvigs Sidevej		False	1	
 1866	Frederiksberg C	Henrik Steffens Vej		False	1	
 1867	Frederiksberg C	Acaciavej		False	1	
-1868	Frederiksberg C	Bianco Lunos Allé		False	1	
-1870	Frederiksberg C	Bülowsvej		False	1	
+1868	Frederiksberg C	Bianco Lunos AllÃ©		False	1	
+1870	Frederiksberg C	BÃ¼lowsvej		False	1	
 1871	Frederiksberg C	Thorvaldsensvej		False	1	
 1872	Frederiksberg C	Bomhoffs Have		False	1	
 1873	Frederiksberg C	Helenevej		False	1	
@@ -904,19 +857,19 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 1876	Frederiksberg C	Kastanievej		False	1	
 1877	Frederiksberg C	Lindevej		False	1	
 1878	Frederiksberg C	Uraniavej		False	1	
-1879	Frederiksberg C	H.C. Ørsteds Vej		False	1	
+1879	Frederiksberg C	H.C. Ã˜rsteds Vej		False	1	
 1900	Frederiksberg C	Vodroffsvej		False	1	
-1901	Frederiksberg C	Tårnborgvej		False	1	
-1902	Frederiksberg C	Lykkesholms Allé		False	1	
+1901	Frederiksberg C	TÃ¥rnborgvej		False	1	
+1902	Frederiksberg C	Lykkesholms AllÃ©		False	1	
 1903	Frederiksberg C	Sankt Knuds Vej		False	1	
-1904	Frederiksberg C	Forhåbningsholms Allé		False	1	
+1904	Frederiksberg C	ForhÃ¥bningsholms AllÃ©		False	1	
 1905	Frederiksberg C	Svanholmsvej		False	1	
-1906	Frederiksberg C	Schønbergsgade		False	1	
-1908	Frederiksberg C	Prinsesse Maries Allé		False	1	
-1909	Frederiksberg C	Vodroffs Tværgade		False	1	
+1906	Frederiksberg C	SchÃ¸nbergsgade		False	1	
+1908	Frederiksberg C	Prinsesse Maries AllÃ©		False	1	
+1909	Frederiksberg C	Vodroffs TvÃ¦rgade		False	1	
 1910	Frederiksberg C	Danasvej		False	1	
 1911	Frederiksberg C	Niels Ebbesens Vej		False	1	
-1912	Frederiksberg C	Svend Trøsts Vej		False	1	
+1912	Frederiksberg C	Svend TrÃ¸sts Vej		False	1	
 1913	Frederiksberg C	Carl Plougs Vej		False	1	
 1914	Frederiksberg C	Vodroffslund		False	1	
 1915	Frederiksberg C	Danas Plads		False	1	
@@ -924,9 +877,9 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 1917	Frederiksberg C	Sveasvej		False	1	
 1920	Frederiksberg C	Forchhammersvej		False	1	
 1921	Frederiksberg C	Sankt Markus Plads		False	1	
-1922	Frederiksberg C	Sankt Markus Allé		False	1	
-1923	Frederiksberg C	Johnstrups Allé		False	1	
-1924	Frederiksberg C	Steenstrups Allé		False	1	
+1922	Frederiksberg C	Sankt Markus AllÃ©		False	1	
+1923	Frederiksberg C	Johnstrups AllÃ©		False	1	
+1924	Frederiksberg C	Steenstrups AllÃ©		False	1	
 1925	Frederiksberg C	Julius Thomsens Plads		False	1	
 1926	Frederiksberg C	Martinsvej		False	1	
 1927	Frederiksberg C	Suomisvej		False	1	
@@ -934,116 +887,116 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 1931	Frederiksberg C	Ufrankerede svarforsendelser 		False	1	
 1950	Frederiksberg C	Hostrupsvej		False	1	
 1951	Frederiksberg C	Christian Richardts Vej		False	1	
-1952	Frederiksberg C	Falkonervænget		False	1	
+1952	Frederiksberg C	FalkonervÃ¦nget		False	1	
 1953	Frederiksberg C	Sankt Nikolaj Vej		False	1	
 1954	Frederiksberg C	Hostrups Have		False	1	
-1955	Frederiksberg C	Dr. Abildgaards Allé		False	1	
-1956	Frederiksberg C	L.I. Brandes Allé		False	1	
-1957	Frederiksberg C	N.J. Fjords Allé		False	1	
+1955	Frederiksberg C	Dr. Abildgaards AllÃ©		False	1	
+1956	Frederiksberg C	L.I. Brandes AllÃ©		False	1	
+1957	Frederiksberg C	N.J. Fjords AllÃ©		False	1	
 1958	Frederiksberg C	Rolighedsvej		False	1	
-1959	Frederiksberg C	Falkonergårdsvej		False	1	
-1960	Frederiksberg C	Åboulevard 15-55		False	1	
+1959	Frederiksberg C	FalkonergÃ¥rdsvej		False	1	
+1960	Frederiksberg C	Ã…boulevard 15-55		False	1	
 1961	Frederiksberg C	J.M. Thieles Vej		False	1	
 1962	Frederiksberg C	Fuglevangsvej		False	1	
 1963	Frederiksberg C	Bille Brahes Vej		False	1	
 1964	Frederiksberg C	Ingemannsvej		False	1	
 1965	Frederiksberg C	Erik Menveds Vej		False	1	
 1966	Frederiksberg C	Steenwinkelsvej		False	1	
-1967	Frederiksberg C	Svanemosegårdsvej		False	1	
-1970	Frederiksberg C	Rosenørns Allé 1-65 + 20-70		False	1	
-1971	Frederiksberg C	Adolph Steens Allé		False	1	
+1967	Frederiksberg C	SvanemosegÃ¥rdsvej		False	1	
+1970	Frederiksberg C	RosenÃ¸rns AllÃ© 1-65 + 20-70		False	1	
+1971	Frederiksberg C	Adolph Steens AllÃ©		False	1	
 1972	Frederiksberg C	Worsaaesvej		False	1	
-1973	Frederiksberg C	Jakob Dannefærds Vej		False	1	
+1973	Frederiksberg C	Jakob DannefÃ¦rds Vej		False	1	
 1974	Frederiksberg C	Julius Thomsens Gade Ulige nr		False	1	
-1999	Frederiksberg C	Rosenørns Allé 22	Danmarks Radio	False	1	
+1999	Frederiksberg C	RosenÃ¸rns AllÃ© 22	Danmarks Radio	False	1	
 2000	Frederiksberg			False	1	
-2100	København Ø			False	1	
-2200	København N			False	1	
-2300	København S			False	1	
-2400	København NV			False	1	
-2450	København SV			False	1	
+2100	KÃ¸benhavn Ã˜			False	1	
+2200	KÃ¸benhavn N			False	1	
+2300	KÃ¸benhavn S			False	1	
+2400	KÃ¸benhavn NV			False	1	
+2450	KÃ¸benhavn SV			False	1	
 2500	Valby			False	1	
 2600	Glostrup			True	1	
-2605	Brøndby			True	1	
-2610	Rødovre			True	1	
+2605	BrÃ¸ndby			True	1	
+2610	RÃ¸dovre			True	1	
 2620	Albertslund			True	1	
-2625	Vallensbæk			True	1	
+2625	VallensbÃ¦k			True	1	
 2630	Taastrup			True	1	
 2633	Taastrup		Erhvervskunder	True	1	
-2635	Ishøj			True	1	
+2635	IshÃ¸j			True	1	
 2640	Hedehusene			True	1	
 2650	Hvidovre			True	1	
-2660	Brøndby Strand			True	1	
-2665	Vallensbæk Strand			True	1	
+2660	BrÃ¸ndby Strand			True	1	
+2665	VallensbÃ¦k Strand			True	1	
 2670	Greve			True	1	
-2680	Solrød Strand			True	1	
+2680	SolrÃ¸d Strand			True	1	
 2690	Karlslunde			True	1	
-2700	Brønshøj			False	1	
-2720	Vanløse			False	1	
+2700	BrÃ¸nshÃ¸j			False	1	
+2720	VanlÃ¸se			False	1	
 2730	Herlev			True	1	
 2740	Skovlunde			True	1	
 2750	Ballerup			True	1	
-2760	Måløv			True	1	
-2765	Smørum			True	1	
+2760	MÃ¥lÃ¸v			True	1	
+2765	SmÃ¸rum			True	1	
 2770	Kastrup			True	1	
-2791	Dragør			True	1	
+2791	DragÃ¸r			True	1	
 2800	Kongens Lyngby			True	1	
 2820	Gentofte			True	1	
 2830	Virum			True	1	
 2840	Holte			True	1	
-2850	Nærum			True	1	
-2860	Søborg			True	1	
-2870	Dyssegård 			True	1	
-2880	Bagsværd			True	1	
+2850	NÃ¦rum			True	1	
+2860	SÃ¸borg			True	1	
+2870	DyssegÃ¥rd 			True	1	
+2880	BagsvÃ¦rd			True	1	
 2900	Hellerup			True	1	
 2920	Charlottenlund			True	1	
 2930	Klampenborg			True	1	
 2942	Skodsborg			True	1	
-2950	Vedbæk			True	1	
+2950	VedbÃ¦k			True	1	
 2960	Rungsted Kyst			True	1	
-2970	Hørsholm			True	1	
+2970	HÃ¸rsholm			True	1	
 2980	Kokkedal			True	1	
-2990	Nivå			True	1	
-3000	Helsingør			True	1	
-3050	Humlebæk			True	1	
-3060	Espergærde			True	1	
+2990	NivÃ¥			True	1	
+3000	HelsingÃ¸r			True	1	
+3050	HumlebÃ¦k			True	1	
+3060	EspergÃ¦rde			True	1	
 3070	Snekkersten			True	1	
-3080	Tikøb			True	1	
-3100	Hornbæk			True	1	
-3120	Dronningmølle			True	1	
-3140	Ålsgårde			True	1	
-3150	Hellebæk			True	1	
+3080	TikÃ¸b			True	1	
+3100	HornbÃ¦k			True	1	
+3120	DronningmÃ¸lle			True	1	
+3140	Ã…lsgÃ¥rde			True	1	
+3150	HellebÃ¦k			True	1	
 3200	Helsinge			True	1	
 3210	Vejby			True	1	
 3220	Tisvildeleje			True	1	
-3230	Græsted			True	1	
+3230	GrÃ¦sted			True	1	
 3250	Gilleleje			True	1	
-3300	Frederiksværk			True	1	
-3310	Ølsted			True	1	
-3320	Skævinge			True	1	
-3330	Gørløse			True	1	
+3300	FrederiksvÃ¦rk			True	1	
+3310	Ã˜lsted			True	1	
+3320	SkÃ¦vinge			True	1	
+3330	GÃ¸rlÃ¸se			True	1	
 3360	Liseleje			True	1	
 3370	Melby			True	1	
 3390	Hundested			True	1	
-3400	Hillerød			True	1	
-3450	Allerød			True	1	
-3460	Birkerød			True	1	
+3400	HillerÃ¸d			True	1	
+3450	AllerÃ¸d			True	1	
+3460	BirkerÃ¸d			True	1	
 3480	Fredensborg			True	1	
-3490	Kvistgård			True	1	
-3500	Værløse			True	1	
+3490	KvistgÃ¥rd			True	1	
+3500	VÃ¦rlÃ¸se			True	1	
 3520	Farum			True	1	
 3540	Lynge			True	1	
 3550	Slangerup			True	1	
 3600	Frederikssund			True	1	
-3630	Jægerspris			True	1	
-3650	Ølstykke			True	1	
-3660	Stenløse			True	1	
-3670	Veksø Sjælland			True	1	
-3700	Rønne			True	1	
+3630	JÃ¦gerspris			True	1	
+3650	Ã˜lstykke			True	1	
+3660	StenlÃ¸se			True	1	
+3670	VeksÃ¸ SjÃ¦lland			True	1	
+3700	RÃ¸nne			True	1	
 3720	Aakirkeby			True	1	
-3730	Nexø			True	1	
+3730	NexÃ¸			True	1	
 3740	Svaneke			True	1	
-3751	Østermarie			True	1	
+3751	Ã˜stermarie			True	1	
 3760	Gudhjem			True	1	
 3770	Allinge			True	1	
 3782	Klemensker			True	1	
@@ -1051,135 +1004,135 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 4000	Roskilde			True	1	
 4040	Jyllinge			True	1	
 4050	Skibby			True	1	
-4060	Kirke Såby			True	1	
+4060	Kirke SÃ¥by			True	1	
 4070	Kirke Hyllinge			True	1	
 4100	Ringsted			True	1	
-4105	Ringsted		Midtsjællands Postcenter + erhvervskunder	True	1	
+4105	Ringsted		MidtsjÃ¦llands Postcenter + erhvervskunder	True	1	
 4129	Ringsted	Ufrankerede svarforsendelser		True	1	
-4130	Viby Sjælland			True	1	
+4130	Viby SjÃ¦lland			True	1	
 4140	Borup			True	1	
 4160	Herlufmagle			True	1	
-4171	Glumsø			True	1	
+4171	GlumsÃ¸			True	1	
 4173	Fjenneslev			True	1	
 4174	Jystrup Midtsj			True	1	
-4180	Sorø			True	1	
+4180	SorÃ¸			True	1	
 4190	Munke Bjergby			True	1	
 4200	Slagelse			True	1	
-4220	Korsør			True	1	
-4230	Skælskør			True	1	
+4220	KorsÃ¸r			True	1	
+4230	SkÃ¦lskÃ¸r			True	1	
 4241	Vemmelev			True	1	
 4242	Boeslunde			True	1	
 4243	Rude			True	1	
 4250	Fuglebjerg			True	1	
 4261	Dalmose			True	1	
 4262	Sandved			True	1	
-4270	Høng			True	1	
-4281	Gørlev			True	1	
+4270	HÃ¸ng			True	1	
+4281	GÃ¸rlev			True	1	
 4291	Ruds Vedby			True	1	
 4293	Dianalund			True	1	
 4295	Stenlille			True	1	
 4296	Nyrup			True	1	
-4300	Holbæk			True	1	
+4300	HolbÃ¦k			True	1	
 4320	Lejre			True	1	
-4330	Hvalsø			True	1	
-4340	Tølløse			True	1	
-4350	Ugerløse			True	1	
+4330	HvalsÃ¸			True	1	
+4340	TÃ¸llÃ¸se			True	1	
+4350	UgerlÃ¸se			True	1	
 4360	Kirke Eskilstrup			True	1	
-4370	Store Merløse			True	1	
-4390	Vipperød			True	1	
+4370	Store MerlÃ¸se			True	1	
+4390	VipperÃ¸d			True	1	
 4400	Kalundborg			True	1	
 4420	Regstrup			True	1	
-4440	Mørkøv			True	1	
+4440	MÃ¸rkÃ¸v			True	1	
 4450	Jyderup			True	1	
 4460	Snertinge			True	1	
-4470	Svebølle			True	1	
+4470	SvebÃ¸lle			True	1	
 4480	Store Fuglede			True	1	
-4490	Jerslev Sjælland			True	1	
-4500	Nykøbing Sj			True	1	
+4490	Jerslev SjÃ¦lland			True	1	
+4500	NykÃ¸bing Sj			True	1	
 4520	Svinninge			True	1	
 4532	Gislinge			True	1	
-4534	Hørve			True	1	
-4540	Fårevejle			True	1	
-4550	Asnæs			True	1	
+4534	HÃ¸rve			True	1	
+4540	FÃ¥revejle			True	1	
+4550	AsnÃ¦s			True	1	
 4560	Vig			True	1	
 4571	Grevinge			True	1	
-4572	Nørre Asmindrup			True	1	
-4573	Højby			True	1	
-4581	Rørvig			True	1	
-4583	Sjællands Odde			True	1	
-4591	Føllenslev			True	1	
-4592	Sejerø			True	1	
+4572	NÃ¸rre Asmindrup			True	1	
+4573	HÃ¸jby			True	1	
+4581	RÃ¸rvig			True	1	
+4583	SjÃ¦llands Odde			True	1	
+4591	FÃ¸llenslev			True	1	
+4592	SejerÃ¸			True	1	
 4593	Eskebjerg			True	1	
-4600	Køge			True	1	
+4600	KÃ¸ge			True	1	
 4621	Gadstrup			True	1	
 4622	Havdrup			True	1	
 4623	Lille Skensved			True	1	
-4632	Bjæverskov			True	1	
+4632	BjÃ¦verskov			True	1	
 4640	Fakse			True	1	
-4652	Hårlev			True	1	
+4652	HÃ¥rlev			True	1	
 4653	Karise			True	1	
 4654	Fakse Ladeplads			True	1	
 4660	Store Heddinge			True	1	
-4671	Strøby			True	1	
+4671	StrÃ¸by			True	1	
 4672	Klippinge			True	1	
-4673	Rødvig Stevns			True	1	
-4681	Herfølge			True	1	
+4673	RÃ¸dvig Stevns			True	1	
+4681	HerfÃ¸lge			True	1	
 4682	Tureby			True	1	
-4683	Rønnede			True	1	
+4683	RÃ¸nnede			True	1	
 4684	Holmegaard 			True	1	
 4690	Haslev			True	1	
-4700	Næstved			True	1	
-4720	Præstø			True	1	
-4733	Tappernøje			True	1	
+4700	NÃ¦stved			True	1	
+4720	PrÃ¦stÃ¸			True	1	
+4733	TappernÃ¸je			True	1	
 4735	Mern			True	1	
-4736	Karrebæksminde			True	1	
+4736	KarrebÃ¦ksminde			True	1	
 4750	Lundby			True	1	
 4760	Vordingborg			True	1	
 4771	Kalvehave			True	1	
-4772	Langebæk			True	1	
+4772	LangebÃ¦k			True	1	
 4773	Stensved			True	1	
 4780	Stege			True	1	
 4791	Borre			True	1	
 4792	Askeby			True	1	
-4793	Bogø By			True	1	
-4800	Nykøbing F			True	1	
-4840	Nørre Alslev			True	1	
-4850	Stubbekøbing			True	1	
+4793	BogÃ¸ By			True	1	
+4800	NykÃ¸bing F			True	1	
+4840	NÃ¸rre Alslev			True	1	
+4850	StubbekÃ¸bing			True	1	
 4862	Guldborg			True	1	
 4863	Eskilstrup			True	1	
 4871	Horbelev			True	1	
 4872	Idestrup			True	1	
-4873	Væggerløse			True	1	
+4873	VÃ¦ggerlÃ¸se			True	1	
 4874	Gedser			True	1	
 4880	Nysted			True	1	
 4891	Toreby L			True	1	
 4892	Kettinge			True	1	
-4894	Øster Ulslev			True	1	
+4894	Ã˜ster Ulslev			True	1	
 4895	Errindlev			True	1	
 4900	Nakskov			True	1	
 4912	Harpelunde			True	1	
 4913	Horslunde			True	1	
-4920	Søllested			True	1	
+4920	SÃ¸llested			True	1	
 4930	Maribo			True	1	
 4941	Bandholm			True	1	
 4943	Torrig L			True	1	
-4944	Fejø			True	1	
-4951	Nørreballe			True	1	
+4944	FejÃ¸			True	1	
+4951	NÃ¸rreballe			True	1	
 4952	Stokkemarke			True	1	
 4953	Vesterborg			True	1	
 4960	Holeby			True	1	
-4970	Rødby			True	1	
+4970	RÃ¸dby			True	1	
 4983	Dannemare			True	1	
-4990	Sakskøbing			True	1	
+4990	SakskÃ¸bing			True	1	
 5000	Odense C			True	1	
 5029	Odense C	Ufrankerede svarforsendelser		True	1	
 5090	Odense C		Erhvervskunder	True	1	
 5100	Odense C	Postboks		True	1	
 5200	Odense V			True	1	
 5210	Odense NV			True	1	
-5220	Odense SØ			True	1	
+5220	Odense SÃ˜			True	1	
 5230	Odense M			True	1	
-5240	Odense NØ			True	1	
+5240	Odense NÃ˜			True	1	
 5250	Odense SV			True	1	
 5260	Odense S			True	1	
 5270	Odense N			True	1	
@@ -1197,7 +1150,7 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 5463	Harndrup			True	1	
 5464	Brenderup Fyn			True	1	
 5466	Asperup			True	1	
-5471	Søndersø			True	1	
+5471	SÃ¸ndersÃ¸			True	1	
 5474	Veflinge			True	1	
 5485	Skamby			True	1	
 5491	Blommenslyst			True	1	
@@ -1206,7 +1159,7 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 5540	Ullerslev			True	1	
 5550	Langeskov			True	1	
 5560	Aarup			True	1	
-5580	Nørre Aaby			True	1	
+5580	NÃ¸rre Aaby			True	1	
 5591	Gelsted			True	1	
 5592	Ejby			True	1	
 5600	Faaborg			True	1	
@@ -1221,27 +1174,27 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 5750	Ringe			True	1	
 5762	Vester Skerninge			True	1	
 5771	Stenstrup			True	1	
-5772	Kværndrup			True	1	
-5792	Årslev			True	1	
+5772	KvÃ¦rndrup			True	1	
+5792	Ã…rslev			True	1	
 5800	Nyborg			True	1	
-5853	Ørbæk			True	1	
+5853	Ã˜rbÃ¦k			True	1	
 5854	Gislev			True	1	
 5856	Ryslinge			True	1	
 5863	Ferritslev Fyn			True	1	
-5871	Frørup			True	1	
+5871	FrÃ¸rup			True	1	
 5874	Hesselager			True	1	
-5881	Skårup Fyn			True	1	
+5881	SkÃ¥rup Fyn			True	1	
 5882	Vejstrup			True	1	
 5883	Oure			True	1	
 5884	Gudme			True	1	
 5892	Gudbjerg Sydfyn			True	1	
-5900	Rudkøbing			True	1	
+5900	RudkÃ¸bing			True	1	
 5932	Humble			True	1	
 5935	Bagenkop			True	1	
-5953	Tranekær			True	1	
+5953	TranekÃ¦r			True	1	
 5960	Marstal			True	1	
-5970	Ærøskøbing			True	1	
-5985	Søby Ærø			True	1	
+5970	Ã†rÃ¸skÃ¸bing			True	1	
+5985	SÃ¸by Ã†rÃ¸			True	1	
 6000	Kolding			True	1	
 6040	Egtved			True	1	
 6051	Almind			True	1	
@@ -1249,25 +1202,25 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 6064	Jordrup			True	1	
 6070	Christiansfeld			True	1	
 6091	Bjert			True	1	
-6092	Sønder Stenderup			True	1	
-6093	Sjølund			True	1	
+6092	SÃ¸nder Stenderup			True	1	
+6093	SjÃ¸lund			True	1	
 6094	Hejls			True	1	
 6100	Haderslev			True	1	
 6200	Aabenraa			True	1	
-6230	Rødekro			True	1	
-6240	Løgumkloster			True	1	
+6230	RÃ¸dekro			True	1	
+6240	LÃ¸gumkloster			True	1	
 6261	Bredebro			True	1	
-6270	Tønder			True	1	
-6280	Højer			True	1	
-6300	Gråsten			True	1	
+6270	TÃ¸nder			True	1	
+6280	HÃ¸jer			True	1	
+6300	GrÃ¥sten			True	1	
 6310	Broager			True	1	
 6320	Egernsund			True	1	
 6330	Padborg			True	1	
-6340	Kruså			True	1	
+6340	KrusÃ¥			True	1	
 6360	Tinglev			True	1	
 6372	Bylderup-Bov			True	1	
 6392	Bolderslev			True	1	
-6400	Sønderborg			True	1	
+6400	SÃ¸nderborg			True	1	
 6430	Nordborg			True	1	
 6440	Augustenborg			True	1	
 6470	Sydals			True	1	
@@ -1281,76 +1234,76 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 6580	Vamdrup			True	1	
 6600	Vejen			True	1	
 6621	Gesten			True	1	
-6622	Bække			True	1	
+6622	BÃ¦kke			True	1	
 6623	Vorbasse			True	1	
-6630	Rødding			True	1	
+6630	RÃ¸dding			True	1	
 6640	Lunderskov			True	1	
-6650	Brørup			True	1	
+6650	BrÃ¸rup			True	1	
 6660	Lintrup			True	1	
 6670	Holsted			True	1	
 6682	Hovborg			True	1	
-6683	Føvling			True	1	
-6690	Gørding			True	1	
+6683	FÃ¸vling			True	1	
+6690	GÃ¸rding			True	1	
 6700	Esbjerg			True	1	
 6701	Esbjerg	Postboks		True	1	
-6705	Esbjerg Ø			True	1	
+6705	Esbjerg Ã˜			True	1	
 6710	Esbjerg V			True	1	
 6715	Esbjerg N			True	1	
-6720	Fanø			True	1	
-6731	Tjæreborg			True	1	
+6720	FanÃ¸			True	1	
+6731	TjÃ¦reborg			True	1	
 6740	Bramming			True	1	
 6752	Glejbjerg			True	1	
-6753	Agerbæk			True	1	
+6753	AgerbÃ¦k			True	1	
 6760	Ribe			True	1	
 6771	Gredstedbro			True	1	
-6780	Skærbæk			True	1	
-6792	Rømø			True	1	
+6780	SkÃ¦rbÃ¦k			True	1	
+6792	RÃ¸mÃ¸			True	1	
 6800	Varde			True	1	
-6818	Årre			True	1	
+6818	Ã…rre			True	1	
 6823	Ansager			True	1	
-6830	Nørre Nebel			True	1	
-6840	Oksbøl			True	1	
+6830	NÃ¸rre Nebel			True	1	
+6840	OksbÃ¸l			True	1	
 6851	Janderup Vestj			True	1	
 6852	Billum			True	1	
 6853	Vejers Strand			True	1	
 6854	Henne			True	1	
 6855	Outrup			True	1	
-6857	Blåvand			True	1	
+6857	BlÃ¥vand			True	1	
 6862	Tistrup			True	1	
-6870	Ølgod			True	1	
+6870	Ã˜lgod			True	1	
 6880	Tarm			True	1	
 6893	Hemmet			True	1	
 6900	Skjern			True	1	
-6920	Videbæk			True	1	
-6933	Kibæk			True	1	
+6920	VidebÃ¦k			True	1	
+6933	KibÃ¦k			True	1	
 6940	Lem St			True	1	
-6950	Ringkøbing			True	1	
+6950	RingkÃ¸bing			True	1	
 6960	Hvide Sande			True	1	
 6971	Spjald			True	1	
-6973	Ørnhøj			True	1	
+6973	Ã˜rnhÃ¸j			True	1	
 6980	Tim			True	1	
 6990	Ulfborg			True	1
 7000	Fredericia			True	1	
 7007	Fredericia		Sydjyllands Postcenter + erhvervskunder	True	1	
 7029	Fredericia	Ufrankerede svarforsendelser		True	1	
-7080	Børkop			True	1	
+7080	BÃ¸rkop			True	1	
 7100	Vejle			True	1	
-7120	Vejle Øst			True	1	
+7120	Vejle Ã˜st			True	1	
 7130	Juelsminde			True	1	
 7140	Stouby			True	1	
 7150	Barrit			True	1	
-7160	Tørring			True	1	
+7160	TÃ¸rring			True	1	
 7171	Uldum			True	1	
 7173	Vonge			True	1	
 7182	Bredsten			True	1	
-7183	Randbøl			True	1	
+7183	RandbÃ¸l			True	1	
 7184	Vandel			True	1	
 7190	Billund			True	1	
 7200	Grindsted			True	1	
 7250	Hejnsvig			True	1	
-7260	Sønder Omme			True	1	
+7260	SÃ¸nder Omme			True	1	
 7270	Stakroge			True	1	
-7280	Sønder Felding			True	1	
+7280	SÃ¸nder Felding			True	1	
 7300	Jelling			True	1	
 7321	Gadbjerg			True	1	
 7323	Give			True	1	
@@ -1369,19 +1322,19 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 7490	Aulum			True	1	
 7500	Holstebro			True	1	
 7540	Haderup			True	1	
-7550	Sørvad			True	1	
+7550	SÃ¸rvad			True	1	
 7560	Hjerm			True	1	
 7570	Vemb			True	1	
 7600	Struer			True	1	
 7620	Lemvig			True	1	
-7650	Bøvlingbjerg			True	1	
-7660	Bækmarksbro			True	1	
-7673	Harboøre			True	1	
-7680	Thyborøn			True	1	
+7650	BÃ¸vlingbjerg			True	1	
+7660	BÃ¦kmarksbro			True	1	
+7673	HarboÃ¸re			True	1	
+7680	ThyborÃ¸n			True	1	
 7700	Thisted			True	1	
 7730	Hanstholm			True	1	
-7741	Frøstrup			True	1	
-7742	Vesløs			True	1	
+7741	FrÃ¸strup			True	1	
+7742	VeslÃ¸s			True	1	
 7752	Snedsted			True	1	
 7755	Bedsted Thy			True	1	
 7760	Hurup Thy			True	1	
@@ -1389,45 +1342,45 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 7790	Thyholm			True	1	
 7800	Skive			True	1	
 7830	Vinderup			True	1	
-7840	Højslev			True	1	
+7840	HÃ¸jslev			True	1	
 7850	Stoholm Jyll			True	1	
-7860	Spøttrup			True	1	
+7860	SpÃ¸ttrup			True	1	
 7870	Roslev			True	1	
 7884	Fur			True	1	
-7900	Nykøbing M			True	1	
+7900	NykÃ¸bing M			True	1	
 7950	Erslev			True	1	
 7960	Karby			True	1	
 7970	Redsted M			True	1	
 7980	Vils			True	1	
-7990	Øster Assels			True	1	
-8000	Århus C			True	1	
-8100	Århus C	Postboks		True	1	
-8200	Århus N			True	1	
-8210	Århus V			True	1	
+7990	Ã˜ster Assels			True	1	
+8000	Ã…rhus C			True	1	
+8100	Ã…rhus C	Postboks		True	1	
+8200	Ã…rhus N			True	1	
+8210	Ã…rhus V			True	1	
 8220	Brabrand			True	1	
-8229	Risskov Ø	Ufrankerede svarforsendelser		True	1	
-8230	Åbyhøj			True	1	
+8229	Risskov Ã˜	Ufrankerede svarforsendelser		True	1	
+8230	Ã…byhÃ¸j			True	1	
 8240	Risskov			True	1	
-8245	Risskov Ø		Østjyllands Postcenter + erhvervskunder	True	1	
-8250	Egå			True	1	
+8245	Risskov Ã˜		Ã˜stjyllands Postcenter + erhvervskunder	True	1	
+8250	EgÃ¥			True	1	
 8260	Viby J			True	1	
-8270	Højbjerg			True	1	
+8270	HÃ¸jbjerg			True	1	
 8300	Odder			True	1	
-8305	Samsø			True	1	
+8305	SamsÃ¸			True	1	
 8310	Tranbjerg J			True	1	
-8320	Mårslet			True	1	
+8320	MÃ¥rslet			True	1	
 8330	Beder			True	1	
 8340	Malling			True	1	
 8350	Hundslund			True	1	
 8355	Solbjerg			True	1	
 8361	Hasselager			True	1	
-8362	Hørning			True	1	
+8362	HÃ¸rning			True	1	
 8370	Hadsten			True	1	
 8380	Trige			True	1	
 8381	Tilst			True	1	
 8382	Hinnerup			True	1	
 8400	Ebeltoft			True	1	
-8410	Rønde			True	1	
+8410	RÃ¸nde			True	1	
 8420	Knebel			True	1	
 8444	Balle			True	1	
 8450	Hammel			True	1	
@@ -1437,16 +1390,16 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 8472	Sporup			True	1	
 8500	Grenaa			True	1	
 8520	Lystrup			True	1	
-8530	Hjortshøj			True	1	
-8541	Skødstrup			True	1	
+8530	HjortshÃ¸j			True	1	
+8541	SkÃ¸dstrup			True	1	
 8543	Hornslet			True	1	
-8544	Mørke			True	1	
-8550	Ryomgård			True	1	
+8544	MÃ¸rke			True	1	
+8550	RyomgÃ¥rd			True	1	
 8560	Kolind			True	1	
 8570	Trustrup			True	1	
 8581	Nimtofte			True	1	
 8585	Glesborg			True	1	
-8586	Ørum Djurs			True	1	
+8586	Ã˜rum Djurs			True	1	
 8592	Anholt			True	1	
 8600	Silkeborg			True	1	
 8620	Kjellerup			True	1	
@@ -1456,55 +1409,55 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 8653	Them			True	1	
 8654	Bryrup			True	1	
 8660	Skanderborg			True	1	
-8670	Låsby			True	1	
+8670	LÃ¥sby			True	1	
 8680	Ry			True	1	
 8700	Horsens			True	1	
-8721	Daugård			True	1	
+8721	DaugÃ¥rd			True	1	
 8722	Hedensted			True	1	
-8723	Løsning			True	1	
-8732	Hovedgård			True	1	
-8740	Brædstrup			True	1	
+8723	LÃ¸sning			True	1	
+8732	HovedgÃ¥rd			True	1	
+8740	BrÃ¦dstrup			True	1	
 8751	Gedved			True	1	
-8752	Østbirk			True	1	
+8752	Ã˜stbirk			True	1	
 8762	Flemming			True	1	
-8763	Rask Mølle			True	1	
+8763	Rask MÃ¸lle			True	1	
 8765	Klovborg			True	1	
-8766	Nørre Snede			True	1	
+8766	NÃ¸rre Snede			True	1	
 8781	Stenderup			True	1	
 8783	Hornsyld			True	1	
 8800	Viborg			True	1	
 8830	Tjele			True	1	
-8831	Løgstrup			True	1	
+8831	LÃ¸gstrup			True	1	
 8832	Skals			True	1	
-8840	Rødkærsbro			True	1	
+8840	RÃ¸dkÃ¦rsbro			True	1	
 8850	Bjerringbro			True	1	
 8860	Ulstrup			True	1	
-8870	Langå			True	1	
-8881	Thorsø			True	1	
-8882	Fårvang			True	1	
+8870	LangÃ¥			True	1	
+8881	ThorsÃ¸			True	1	
+8882	FÃ¥rvang			True	1	
 8883	Gjern			True	1	
 8900	Randers			True	1	
-8950	Ørsted			True	1	
-8961	Allingåbro			True	1	
+8950	Ã˜rsted			True	1	
+8961	AllingÃ¥bro			True	1	
 8963	Auning			True	1	
 8970	Havndal			True	1	
 8981	Spentrup			True	1	
 8983	Gjerlev J			True	1	
-8990	Fårup			True	1	
+8990	FÃ¥rup			True	1	
 9000	Aalborg			True	1	
 9020	Aalborg		Erhvervskunder	True	1	
 9029	Aalborg	Ufrankerede svarforsendelser		True	1	
 9100	Aalborg	Postboks		True	1	
 9200	Aalborg SV			True	1	
-9210	Aalborg SØ			True	1	
-9220	Aalborg Øst			True	1	
+9210	Aalborg SÃ˜			True	1	
+9220	Aalborg Ã˜st			True	1	
 9230	Svenstrup J			True	1	
 9240	Nibe			True	1	
 9260	Gistrup			True	1	
 9270	Klarup			True	1	
 9280	Storvorde			True	1	
 9293	Kongerslev			True	1	
-9300	Sæby			True	1	
+9300	SÃ¦by			True	1	
 9310	Vodskov			True	1	
 9320	Hjallerup			True	1	
 9330	Dronninglund			True	1	
@@ -1515,46 +1468,46 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 9380	Vestbjerg			True	1	
 9381	Sulsted			True	1	
 9382	Tylstrup			True	1	
-9400	Nørresundby			True	1	
+9400	NÃ¸rresundby			True	1	
 9430	Vadum			True	1	
 9440	Aabybro			True	1	
 9460	Brovst			True	1	
-9480	Løkken			True	1	
+9480	LÃ¸kken			True	1	
 9490	Pandrup			True	1	
 9492	Blokhus			True	1	
 9493	Saltum			True	1	
 9500	Hobro			True	1	
 9510	Arden			True	1	
-9520	Skørping			True	1	
-9530	Støvring			True	1	
+9520	SkÃ¸rping			True	1	
+9530	StÃ¸vring			True	1	
 9541	Suldrup			True	1	
 9550	Mariager			True	1	
 9560	Hadsund			True	1	
-9574	Bælum			True	1	
+9574	BÃ¦lum			True	1	
 9575	Terndrup			True	1	
 9600	Aars			True	1	
-9610	Nørager			True	1	
+9610	NÃ¸rager			True	1	
 9620	Aalestrup			True	1	
 9631	Gedsted			True	1	
-9632	Møldrup			True	1	
-9640	Farsø			True	1	
-9670	Løgstør			True	1	
+9632	MÃ¸ldrup			True	1	
+9640	FarsÃ¸			True	1	
+9670	LÃ¸gstÃ¸r			True	1	
 9681	Ranum			True	1	
 9690	Fjerritslev			True	1	
-9700	Brønderslev			True	1	
+9700	BrÃ¸nderslev			True	1	
 9740	Jerslev J			True	1	
-9750	Østervrå			True	1	
-9760	Vrå			True	1	
-9800	Hjørring			True	1	
-9830	Tårs			True	1	
+9750	Ã˜stervrÃ¥			True	1	
+9760	VrÃ¥			True	1	
+9800	HjÃ¸rring			True	1	
+9830	TÃ¥rs			True	1	
 9850	Hirtshals			True	1	
 9870	Sindal			True	1	
 9881	Bindslev			True	1	
 9900	Frederikshavn			True	1	
-9940	Læsø			True	1	
+9940	LÃ¦sÃ¸			True	1	
 9970	Strandby			True	1	
 9981	Jerup			True	1	
-9982	Ålbæk			True	1	
+9982	Ã…lbÃ¦k			True	1	
 9990	Skagen			True	1	
 3900	Nuuk			False	2	
 3905	Nuussuaq			False	2	
@@ -1585,11 +1538,11 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 3980	Ittoqqortoormiit			False	2	
 3984	Danmarkshavn			False	2	
 3985	Constable Pynt			False	2	
-100	Tórshavn			False	3	
-110	Tórshavn 	Postboks		False	3	
+100	TÃ³rshavn			False	3	
+110	TÃ³rshavn 	Postboks		False	3	
 160	Argir			False	3	
 165	Argir 	Postboks		False	3	
-175	Kirkjubøur			False	3	
+175	KirkjubÃ¸ur			False	3	
 176	Velbastadur			False	3	
 177	Sydradalur, Streymoy			False	3	
 178	Nordradalur			False	3	
@@ -1597,118 +1550,118 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 185	Kaldbaksbotnur			False	3	
 186	Sund			False	3	
 187	Hvitanes			False	3	
-188	Hoyvík			False	3	
+188	HoyvÃ­k			False	3	
 210	Sandur			False	3	
 215	Sandur	Postboks		False	3	
-220	Skálavík			False	3	
-230	Húsavík			False	3	
+220	SkÃ¡lavÃ­k			False	3	
+230	HÃºsavÃ­k			False	3	
 235	Dalur			False	3	
 236	Skarvanes			False	3	
 240	Skopun			False	3	
-260	Skúvoy			False	3	
-270	Nólsoy			False	3	
+260	SkÃºvoy			False	3	
+270	NÃ³lsoy			False	3	
 280	Hestur			False	3	
 285	Koltur			False	3	
-286	Stóra Dimun			False	3	
+286	StÃ³ra Dimun			False	3	
 330	Stykkid			False	3	
 335	Leynar			False	3	
-336	Skællingur			False	3	
-340	Kvívík			False	3	
+336	SkÃ¦llingur			False	3	
+340	KvÃ­vÃ­k			False	3	
 350	Vestmanna			False	3	
 355	Vestmanna	Postboks		False	3	
-358	Válur			False	3	
-360	Sandavágur			False	3	
-370	Midvágur			False	3	
-375	Midvágur	Postboks		False	3	
-380	Sørvágur			False	3	
+358	VÃ¡lur			False	3	
+360	SandavÃ¡gur			False	3	
+370	MidvÃ¡gur			False	3	
+375	MidvÃ¡gur	Postboks		False	3	
+380	SÃ¸rvÃ¡gur			False	3	
 385	Vatnsoyrar			False	3	
-386	Bøur			False	3	
-387	Gásadalur			False	3	
+386	BÃ¸ur			False	3	
+387	GÃ¡sadalur			False	3	
 388	Mykines			False	3	
 400	Oyrarbakki			False	3	
 405	Oyrarbakki	Postboks		False	3	
-410	Kollafjørdur			False	3	
+410	KollafjÃ¸rdur			False	3	
 415	Oyrareingir			False	3	
-416	Signabøur			False	3	
-420	Hósvík			False	3	
-430	Hvalvík			False	3	
+416	SignabÃ¸ur			False	3	
+420	HÃ³svÃ­k			False	3	
+430	HvalvÃ­k			False	3	
 435	Streymnes			False	3	
 436	Saksun			False	3	
-437	Nesvík			False	3	
+437	NesvÃ­k			False	3	
 438	Langasandur			False	3	
-440	Haldarsvík			False	3	
-445	Tjørnuvík			False	3	
+440	HaldarsvÃ­k			False	3	
+445	TjÃ¸rnuvÃ­k			False	3	
 450	Oyri			False	3	
-460	Nordskáli			False	3	
-465	Svináir			False	3	
-466	Ljósá			False	3	
+460	NordskÃ¡li			False	3	
+465	SvinÃ¡ir			False	3	
+466	LjÃ³sÃ¡			False	3	
 470	Eidi			False	3	
 475	Funningur			False	3	
-476	Gjógv			False	3	
-477	Funningsfjørdur			False	3	
-478	Elduvík			False	3	
-480	Skáli			False	3	
-485	Skálafjørdur			False	3	
+476	GjÃ³gv			False	3	
+477	FunningsfjÃ¸rdur			False	3	
+478	ElduvÃ­k			False	3	
+480	SkÃ¡li			False	3	
+485	SkÃ¡lafjÃ¸rdur			False	3	
 490	Strendur			False	3	
 494	innan Glyvur			False	3	
-495	Kolbanargjógv			False	3	
+495	KolbanargjÃ³gv			False	3	
 496	Morskranes			False	3	
 497	Selatrad			False	3	
-510	Gøta			False	3	
-511	Gøtugjógv			False	3	
-512	Nordragøta			False	3	
-513	Sydrugøta			False	3	
-515	Gøta	Postboks		False	3	
-520	Leirvík			False	3	
-530	Fuglafjørdur			False	3	
-535	Fuglafjørdur	Postboks		False	3	
-600	Saltangará			False	3	
-610	Saltangará	Postboks		False	3	
-620	Runavík			False	3	
+510	GÃ¸ta			False	3	
+511	GÃ¸tugjÃ³gv			False	3	
+512	NordragÃ¸ta			False	3	
+513	SydrugÃ¸ta			False	3	
+515	GÃ¸ta	Postboks		False	3	
+520	LeirvÃ­k			False	3	
+530	FuglafjÃ¸rdur			False	3	
+535	FuglafjÃ¸rdur	Postboks		False	3	
+600	SaltangarÃ¡			False	3	
+610	SaltangarÃ¡	Postboks		False	3	
+620	RunavÃ­k			False	3	
 625	Glyvrar			False	3	
 626	Lambareidi			False	3	
 627	Lambi			False	3	
-640	Rituvík			False	3	
-645	Æduvík			False	3	
+640	RituvÃ­k			False	3	
+645	Ã†duvÃ­k			False	3	
 650	Toftir			False	3	
 655	Nes, Eysturoy			False	3	
 656	Saltnes			False	3	
-660	Søldarfjørdur			False	3	
+660	SÃ¸ldarfjÃ¸rdur			False	3	
 665	Skipanes			False	3	
-666	Gøtueidi			False	3	
-690	Oyndarfjørdur			False	3	
+666	GÃ¸tueidi			False	3	
+690	OyndarfjÃ¸rdur			False	3	
 695	Hellur			False	3	
-700	Klaksvík			False	3	
-710	Klaksvík	Postboks		False	3	
+700	KlaksvÃ­k			False	3	
+710	KlaksvÃ­k	Postboks		False	3	
 725	Nordoyri			False	3	
-726	Ánir			False	3	
-727	Árnafjørdur			False	3	
+726	Ãnir			False	3	
+727	ÃrnafjÃ¸rdur			False	3	
 730	Norddepil			False	3	
 735	Depil			False	3	
 736	Nordtoftir			False	3	
-737	Múli			False	3	
+737	MÃºli			False	3	
 740	Hvannasund			False	3	
 750	Vidareidi			False	3	
 765	Svinoy			False	3	
 766	Kirkja			False	3	
-767	Hattarvík			False	3	
+767	HattarvÃ­k			False	3	
 780	Kunoy			False	3	
 785	Haraldssund			False	3	
 795	Sydradalur, Kalsoy			False	3	
-796	Húsar			False	3	
+796	HÃºsar			False	3	
 797	Mikladalur			False	3	
-798	Trøllanes			False	3	
-800	Tvøroyri			False	3	
-810	Tvøroyri	Postboks		False	3	
+798	TrÃ¸llanes			False	3	
+800	TvÃ¸royri			False	3	
+810	TvÃ¸royri	Postboks		False	3	
 825	Frodba			False	3	
-826	Trongisvágur			False	3	
-827	Øravík			False	3	
+826	TrongisvÃ¡gur			False	3	
+827	Ã˜ravÃ­k			False	3	
 850	Hvalba			False	3	
-860	Sandvík			False	3	
-870	Fámjin			False	3	
-900	Vágur			False	3	
-910	Vágur	Postboks		False	3	
-925	Nes, Vágur			False	3	
+860	SandvÃ­k			False	3	
+870	FÃ¡mjin			False	3	
+900	VÃ¡gur			False	3	
+910	VÃ¡gur	Postboks		False	3	
+925	Nes, VÃ¡gur			False	3	
 926	Lopra			False	3	
 927	Akrar			False	3	
 928	Vikarbyrgi			False	3	

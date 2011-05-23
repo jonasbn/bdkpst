@@ -55,6 +55,6 @@ foreach my $postalcode (@{$postalcodes}) {
 if (1) {
 	$tree->traverse(sub {
 		my ($_tree) = @_;
-		print (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
+		print STDERR (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
 	});
 }
