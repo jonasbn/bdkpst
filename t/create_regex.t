@@ -10,15 +10,15 @@ BEGIN { use_ok('Business::DK::Postalcode', qw(create_regex get_all_postalcodes))
 my @data;
 my $regex;
 
-@data = qw(
-0555	Scanning		Data Scanning A/S "L¾s Ind"-service	False	1	
-);
+#@data = qw(
+#0555	Scanning		Data Scanning A/S "L¾s Ind"-service	False	1	
+#);
 
 #test 2
-ok($regex = create_regex(get_all_postalcodes(@data)));
+#ok($regex = create_regex(get_all_postalcodes(@data)));
 
 #test 3
-is($$regex, '(?:0)(?:5)(?:5)(?:5)');
+#is($$regex, '(?:0)(?:5)(?:5)(?:5)');
 
 
 @data = qw(
@@ -26,13 +26,12 @@ is($$regex, '(?:0)(?:5)(?:5)(?:5)');
 0800	H¿je Taastrup	Girostr¿get 1	BG-Bank A/S	True	1	
 );
 
-#__END__
-
 #test 4
 ok($regex = create_regex(get_all_postalcodes(@data)));
 
 #test 5
-is($$regex, '(?:0)((?:5)(?:5)(?:5)|(?:8)(?:0)(?:0))');
+#is($$regex, '(?:0)((?:5)(?:5)(?:5)|(?:8)(?:0)(?:0))');
+is($$regex, '0(555|800)');
 
 @data = qw(
 0555	Scanning		Data Scanning A/S "L¾s Ind"-service	False	1	
@@ -46,7 +45,9 @@ is($$regex, '(?:0)((?:5)(?:5)(?:5)|(?:8)(?:0)(?:0))');
 ok($regex = create_regex(get_all_postalcodes(@data)));
 
 #test 7
-is($$regex, '((?:0)((?:5)(?:5)(?:5)|(?:8)((?:0)(?:0)|(?:7)(?:7)))|(?:1)(?:6)(?:6)((?:5)|(?:6)))');
+#is($$regex, '((?:0)((?:5)(?:5)(?:5)|(?:8)((?:0)(?:0)|(?:7)(?:7)))|(?:1)(?:6)(?:6)((?:5)|(?:6)))');
+
+is($$regex, '(0(555|8(00|77))|166(5|6))');
 
 #print STDERR "\nfor postalcodes: ".Dumper(get_all_postalcodes(@data))."\n";
 

@@ -62,54 +62,44 @@ sub create_regex {
 	
 	my $end = '';
 	my $no_of_children = $tree->getChildCount();
-	
-	print STDERR "root has $no_of_children number of children\n" if DEBUG;
 
 	$tree->traverse(sub {
 		my ($_tree) = shift;
-		
+        
+        if (DEBUG) {
+            print STDERR "\n";
+            $tree->traverse(sub {
+                my ($_tree) = @_;
+                print STDERR (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
+            });
+        }
+        
 		$no_of_children = $_tree->getChildCount();
 		if ($no_of_children > 1) {
-			$_tree->insertChild(0, Tree::Simple->new('('));
-			$_tree->addChild(Tree::Simple->new(')'));
-			
             
-            #my $parent;
-            #if (not $_tree->isLeaf) {
+            my $noc = 1;
+            
+			$_tree->insertChild(0, Tree::Simple->new('('));
+            while ($noc < $no_of_children) {
+                $_tree->insertChild($noc+1, Tree::Simple->new('|'));
+                $noc++;
+            }
+			$_tree->addChild(Tree::Simple->new(')'));
+			            
             my $parent = $_tree->getParent();
-            #}
-                        
-            if ($parent && $parent->isRoot) {
-                $parent->insertChild(0, Tree::Simple->new('('));
+                    
+            if ($parent && $parent->isRoot && $parent->getChildCount > 1) {
+               $parent->insertChild(0, Tree::Simple->new('('));
 
                 $_tree->addChild(Tree::Simple->new('|'));
                 $_tree->addSibling(Tree::Simple->new(')'));
             }
-			_branch(\$end, \$no_of_children);
-            
-		} elsif ($_tree->isLeaf() && $_tree->getNodeValue() =~ m/^\d+$/) {
-
-			print STDERR "We have a leaf\n" if VERBOSE;
-			$_tree->addChild(Tree::Simple->new($end));
-			$end = '';
 		}
 		
-		if ($_tree->getNodeValue() =~ m/^\d+$/) {
-			$_tree->setNodeValue('(?:'.$_tree->getNodeValue().')');
-		}
-		
-		if (1) {
-			print STDERR "examining: ".$_tree->getNodeValue()."\n";
-			print STDERR "\$no_of_children = $no_of_children\n";
-			print STDERR "\$end = $end\n";	
-		}
+		#if ($_tree->getNodeValue() =~ m/^\d+$/) {
+		#	$_tree->setNodeValue('(?:'.$_tree->getNodeValue().')');
+		#}
 	});
-
-	$tree->traverse(sub {
-		my ($_tree) = @_;
-		print STDERR (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
-	});
-
 
 	$tree->traverse(sub {
 		my ($_tree) = shift;
@@ -122,8 +112,6 @@ sub create_regex {
 
 sub _tokenize {
 	my ($key, $regex) = @_;
-
-	print STDERR "_tokenize\n" if DEBUG;
 	
 	my $token = "(?$$key)";
 	
@@ -135,27 +123,10 @@ sub _tokenize {
 sub _terminate {
 	my ($key, $end, $regex) = @_;
 
-	print STDERR "_terminate\n" if DEBUG;
-
 	push @{$regex}, $$end;
 	$$end = '';
 
 	return $$end;
-}
-
-sub _branch {
-	my ($end, $branch) = @_;
-
-	print STDERR "### _branch: $$branch\n" if 1;
-	
-	if ($$branch > 1) {
-		$$end = '|';
-	} else {
-		$$end = ')'; 
-	}
-	$$branch--;
-
-	return;
 }
 
 sub _build_tree {
@@ -168,9 +139,7 @@ sub _build_tree {
 		my @digits = split(//, $postalcode, 4);	
 		for(my $i = 0; $i < scalar(@digits); $i++) {
 	
-			print STDERR "We have digit: ".$digits[$i]."\n" if VERBOSE;;
 			if ($i == 0) {
-				print STDERR "We are resetting to oldtree: $i\n" if VERBOSE;
 				$tree = $oldtree;
 			}
 			
@@ -179,7 +148,6 @@ sub _build_tree {
 			my @children = $tree->getAllChildren();
 			my $child = undef;
 			foreach my $c (@children) {
-				print STDERR "\$c: ".$c->getNodeValue()."\n" if VERBOSE;
 				if ($c->getNodeValue() == $subtree->getNodeValue()) {
 					$child = $c;
 					last;
@@ -187,10 +155,8 @@ sub _build_tree {
 			}
 	
 			if ($child) {
-				print STDERR "We are represented at $i with $digits[$i], we go to next\n" if VERBOSE;
 				$tree = $child;
 			} else {
-				print STDERR "We are adding child ".$subtree->getNodeValue."\n" if VERBOSE;
 				$tree->addChild($subtree);
 				$tree = $subtree;
 			}

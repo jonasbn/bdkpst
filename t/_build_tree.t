@@ -51,10 +51,3 @@ my $postalcodes = Business::DK::Postalcode::get_all_postalcodes();
 foreach my $postalcode (@{$postalcodes}) {
 	ok(Business::DK::Postalcode::_build_tree($tree, $postalcode));
 }
-
-if (1) {
-	$tree->traverse(sub {
-		my ($_tree) = @_;
-		print STDERR (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
-	});
-}
