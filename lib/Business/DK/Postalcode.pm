@@ -8,26 +8,27 @@ use Data::Dumper;
 use vars qw($VERSION @ISA @EXPORT_OK);
 require Exporter;
 
-use constant VERBOSE => 0;
 use constant DEBUG => 0;
+
+our @data = <DATA>;
 
 $VERSION = '0.01';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(get_all_postalcodes get_all_data create_regex);
 
 sub get_all_data {
-	my @data = <DATA>; 
-
 	return \@data;
 }
 
 sub get_all_postalcodes {
-	my @data = @_;
+	my @parameter_data = @_;
 	my @postalcodes = ();
 
-	@data = <DATA> if not @data;
+	if (not @parameter_data) {
+        @parameter_data = @data;
+    }
 
-	foreach my $zipcode (@data) {
+	foreach my $zipcode (@parameter_data) {
 		_retrieve_postalcode(\@postalcodes, $zipcode);
 	}
 
@@ -46,6 +47,8 @@ sub _retrieve_postalcode {
 
 sub create_regex {
 	my ($postalcodes) = @_;
+
+    no strict 'refs';
 
 	my $tree = Tree::Simple->new('ROOT', Tree::Simple->ROOT);
 	if (scalar @{$postalcodes}) {
@@ -90,6 +93,12 @@ sub create_regex {
                     
             if ($parent && $parent->isRoot && $parent->getChildCount > 1) {
                $parent->insertChild(0, Tree::Simple->new('('));
+
+                #$noc = 1;
+                #while ($noc < $no_of_children) {
+                #    $_tree->insertChild($noc+2, Tree::Simple->new('|'));
+                #    $noc++;
+                #}
 
                 $_tree->addChild(Tree::Simple->new('|'));
                 $_tree->addSibling(Tree::Simple->new(')'));
