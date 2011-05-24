@@ -51,6 +51,7 @@ sub create_regex {
     no strict 'refs';
 
 	my $tree = Tree::Simple->new('ROOT', Tree::Simple->ROOT);
+
 	if (scalar @{$postalcodes}) {
 		foreach my $postalcode (@{$postalcodes}) {
 			_build_tree($tree, $postalcode);
@@ -62,10 +63,21 @@ sub create_regex {
 	}
 
     my $regex = [];
-	
-	my $end = '';
-	my $no_of_children = $tree->getChildCount();
+                
+    if ($tree->isRoot && $tree->getChildCount > 1) {
 
+        my $no_of_children = $tree->getChildCount();
+
+        foreach my $child ($tree->getAllChildren()) {                
+            if ($child->getIndex() < $no_of_children) {
+                $child->insertSibling($child->getIndex()+1, Tree::Simple->new('|'));
+            }
+        }
+        $tree->insertChild(0, Tree::Simple->new('('));
+        $tree->addChild(Tree::Simple->new(')'));
+    }
+
+	
 	$tree->traverse(sub {
 		my ($_tree) = shift;
         
@@ -75,35 +87,23 @@ sub create_regex {
                 my ($_tree) = @_;
                 print STDERR (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
             });
-        }
+        }        
+		my $no_of_children = $_tree->getChildCount();
         
-		$no_of_children = $_tree->getChildCount();
-		if ($no_of_children > 1) {
+        if ($no_of_children > 1) {
             
-            my $noc = 1;
+            foreach my $child ($_tree->getAllChildren()) {                
+                if ($child->getIndex() < $no_of_children) {
+                    $child->insertSibling($child->getIndex()+1, Tree::Simple->new('|'));
+                }
+            }
+
+            #first element
+            $_tree->insertChild(0, Tree::Simple->new('('));
             
-			$_tree->insertChild(0, Tree::Simple->new('('));
-            while ($noc < $no_of_children) {
-                $_tree->insertChild($noc+1, Tree::Simple->new('|'));
-                $noc++;
-            }
-			$_tree->addChild(Tree::Simple->new(')'));
-			            
-            my $parent = $_tree->getParent();
-                    
-            if ($parent && $parent->isRoot && $parent->getChildCount > 1) {
-               $parent->insertChild(0, Tree::Simple->new('('));
-
-                #$noc = 1;
-                #while ($noc < $no_of_children) {
-                #    $_tree->insertChild($noc+2, Tree::Simple->new('|'));
-                #    $noc++;
-                #}
-
-                $_tree->addChild(Tree::Simple->new('|'));
-                $_tree->addSibling(Tree::Simple->new(')'));
-            }
-		}
+            #last
+            $_tree->addChild(Tree::Simple->new(')'));
+        }
 		
 		#if ($_tree->getNodeValue() =~ m/^\d+$/) {
 		#	$_tree->setNodeValue('(?:'.$_tree->getNodeValue().')');

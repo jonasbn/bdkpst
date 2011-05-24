@@ -69,8 +69,6 @@ ok($regex = create_regex(get_all_postalcodes(@data)));
 
 is($$regex, '(0(555|877)|1665|4100)');
 
-__END__
-
 #test 9 .. 
 foreach my $postalcode (@{get_all_postalcodes(@data)}) {
 	ok($postalcode =~ m/$$regex/, "$postalcode tested against $$regex");
