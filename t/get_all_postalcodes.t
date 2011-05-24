@@ -16,8 +16,5 @@ ok($postalcodes = get_all_postalcodes());
 #test 3
 is(scalar(@{$postalcodes}), 1283);
 
-print STDERR Dumper $postalcodes;
-
+#test 4
 ok($postalcodes = get_all_postalcodes());
-
-print STDERR Dumper $postalcodes;

@@ -74,14 +74,37 @@ foreach my $postalcode (@{get_all_postalcodes(@data)}) {
 	ok($postalcode =~ m/$$regex/, "$postalcode tested against $$regex");
 }
 
+@data = qw(
+1300	København K	Borgergade		False	1	
+1301	København K	Landgreven		False	1	
+1302	København K	Dronningens Tværgade		False	1	
+1303	København K	Hindegade		False	1	
+1304	København K	Adelgade		False	1	
+1306	København K	Kronprinsessegade		False	1	
+1307	København K	Sølvgade		False	1	
+1307	København K	Georg Brandes Plads		False	1	
+1308	København K	Klerkegade		False	1	
+1309	København K	Rosengade		False	1	
+1310	København K	Fredericiagade		False	1	
+);
+
+#test 7
+ok($regex = create_regex(get_all_postalcodes(@data)));
+
+#test 8
+#is($$regex, '((?:0)((?:5)(?:5)(?:5)|(?:8)((?:0)(?:0)|(?:7)(?:7)))|(?:1)(?:6)(?:6)((?:5)|(?:6)))');
+
+is($$regex, '13(0(0|1|2|3|4|6|7|8|9)|10)');
+
+#test 9 .. 
+foreach my $postalcode (@{get_all_postalcodes(@data)}) {
+	ok($postalcode =~ m/$$regex/, "$postalcode tested against $$regex");
+}
+
 #test 10
 ok($regex = create_regex(get_all_postalcodes()));
-
-print STDERR $$regex;
 
 #test 11
 foreach my $postalcode (@{get_all_postalcodes()}) {
 	ok($postalcode =~ m/$$regex/, "$postalcode tested");
 }
-
-print STDERR $$regex;
