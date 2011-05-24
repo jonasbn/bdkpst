@@ -110,25 +110,6 @@ sub create_regex {
 	return \$result;
 }
 
-sub _tokenize {
-	my ($key, $regex) = @_;
-	
-	my $token = "(?$$key)";
-	
-	push @{$regex}, $token;
-	
-	return $token;
-}
-
-sub _terminate {
-	my ($key, $end, $regex) = @_;
-
-	push @{$regex}, $$end;
-	$$end = '';
-
-	return $$end;
-}
-
 sub _build_tree {
 	my ($tree, $postalcode) = @_;
 
