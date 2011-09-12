@@ -1,6 +1,7 @@
 # $Id: _build_tree.t,v 1.2 2006-05-11 11:24:27 jonasbn Exp $
 
 use strict;
+use warnings;
 use Test::More qw(no_plan);
 use Tree::Simple;
 
