@@ -3,18 +3,47 @@ package Business::DK::Postalcode;
 # $Id: Postalcode.pm 2 2008-09-06 19:38:09Z jonasbn $
 
 use strict;
+use warnings;
 use Tree::Simple;
 use Data::Dumper;
 use vars qw($VERSION @ISA @EXPORT_OK);
 require Exporter;
 
 use constant DEBUG => 0;
+use constant TRUE  => 1;
+use constant FALSE => 0;
 
 our @data = <DATA>;
 
+my @postalcodes;
+my $regex;
+
+
 $VERSION = '0.01';
 @ISA = qw(Exporter);
-@EXPORT_OK = qw(get_all_postalcodes get_all_data create_regex);
+@EXPORT_OK = qw(get_all_postalcodes get_all_data create_regex validate_postalcode validate);
+
+sub validate_postalcode {
+    my $postalcode = shift;
+
+    if (not $regex) {
+        if (not @postalcodes) {
+            @postalcodes = get_all_postalcodes();
+        }
+        $regex = ${create_regex(@postalcodes)};
+    }
+    
+    #my $regex = qr/\A$postalcode\z/;
+    if (grep (/$regex/, qw($postalcode) )) {
+        return TRUE; 
+    } else {
+        return FALSE;
+    }
+}
+
+sub validate {
+    return validate_postalcode($_[0]);
+}
 
 sub get_all_data {
 	return \@data;
@@ -32,7 +61,11 @@ sub get_all_postalcodes {
 		_retrieve_postalcode(\@postalcodes, $zipcode);
 	}
 
-	return \@postalcodes;
+    if (wantarray) {
+        return @postalcodes;
+    } else {
+        return \@postalcodes;
+    }
 }
 
 sub _retrieve_postalcode {
@@ -166,7 +199,7 @@ sub _build_tree {
 
 =head1 NAME
 
-Business::DK::Postalcode -
+Business::DK::Postalcode - validation and generation of Danish postal codes
 
 =head1 SYNOPSIS
 
@@ -198,7 +231,7 @@ Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
 
 =head1 COPYRIGHT
 
-Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006
+Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2011
 
 Business-DK-Postalcode is released under the artistic license
 
