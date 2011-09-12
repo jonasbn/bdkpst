@@ -5,9 +5,8 @@ package Business::DK::Postalcode;
 use strict;
 use warnings;
 use Tree::Simple;
-use Data::Dumper;
-use vars qw($VERSION @ISA @EXPORT_OK);
-require Exporter;
+use vars qw($VERSION @EXPORT_OK);
+use base qw(Exporter);
 
 use constant DEBUG => 0;
 use constant TRUE  => 1;
@@ -15,21 +14,16 @@ use constant FALSE => 0;
 
 our @data = <DATA>;
 
-my $postalcodes;
 my $regex;
 
 $VERSION = '0.01';
-@ISA = qw(Exporter);
 @EXPORT_OK = qw(get_all_postalcodes get_all_data create_regex validate_postalcode validate);
 
 sub validate_postalcode {
     my $postalcode = shift;
 
     if (not $regex) {
-        if (not $postalcodes) {
-            $postalcodes = get_all_postalcodes();
-        }
-        $regex = ${create_regex($postalcodes)};
+        $regex = ${create_regex()};
     }
     
     if ($postalcode =~ m/\A$regex\z/) {
@@ -76,6 +70,10 @@ sub create_regex {
 	my ($postalcodes) = @_;
 
     no strict 'refs';
+
+    if (not $postalcodes) {
+        $postalcodes = get_all_postalcodes();
+    }
 
 	my $tree = Tree::Simple->new('ROOT', Tree::Simple->ROOT);
 
@@ -193,9 +191,56 @@ sub _build_tree {
 
 =head1 NAME
 
-Business::DK::Postalcode - validation and generation of Danish postal codes
+Business::DK::Postalcode - validation of Danish postal codes
 
 =head1 SYNOPSIS
+
+    # basic validation of string
+    use Business::DK::Postalcode qw(validate);
+    
+    if (validate($postalcode)) {
+        print "We have a valid Danish postalcode\n";
+    } else {
+        print "Not a valid Danish postalcode\n";
+    }
+
+
+    # basic validation of string, using less intrusive subroutine
+    use Business::DK::Postalcode qw(validate_postalcode);
+    
+    if (validate_postalcode($postalcode)) {
+        print "We have a valid Danish postalcode\n";
+    } else {
+        print "Not a valid Danish postalcode\n";
+    }
+
+    # extracting a regex for validation of Danish postalcodes
+    use Business::DK::Postalcode qw(create_regex);
+
+    my $regex_ref = ${create_regex()};
+
+    if ($postalcode =~ m/$regex/) {
+        print "We have a valid Danish postalcode\n";
+    } else {
+        print "Not a valid Danish postalcode\n";
+    }
+
+
+    # All postalcodes for use outside this module
+    use Business::DK::Postalcode qw(get_all_postalcodes);
+    
+    my @postalcodes = @{get_all_postalcodes()};
+
+    
+    # All postalcodes and data for use outside this module
+    use Business::DK::Postalcode qw(get_all_data);
+    
+    my $postalcodes = get_all_data();
+    
+    foreach (@{postalcodes}) {
+        printf
+            'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
+    }
 
 =head1 DESCRIPTION
 
