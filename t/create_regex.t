@@ -16,7 +16,7 @@ my $regex;
 );
 
 #test 2
-ok($regex = create_regex(get_all_postalcodes(@data)));
+ok($regex = create_regex((get_all_postalcodes(@data))));
 
 #test 3
 is($$regex, '0555');

@@ -15,9 +15,8 @@ use constant FALSE => 0;
 
 our @data = <DATA>;
 
-my @postalcodes;
+my $postalcodes;
 my $regex;
-
 
 $VERSION = '0.01';
 @ISA = qw(Exporter);
@@ -27,14 +26,13 @@ sub validate_postalcode {
     my $postalcode = shift;
 
     if (not $regex) {
-        if (not @postalcodes) {
-            @postalcodes = get_all_postalcodes();
+        if (not $postalcodes) {
+            $postalcodes = get_all_postalcodes();
         }
-        $regex = ${create_regex(@postalcodes)};
+        $regex = ${create_regex($postalcodes)};
     }
     
-    #my $regex = qr/\A$postalcode\z/;
-    if (grep (/$regex/, qw($postalcode) )) {
+    if ($postalcode =~ m/\A$regex\z/) {
         return TRUE; 
     } else {
         return FALSE;
@@ -61,11 +59,7 @@ sub get_all_postalcodes {
 		_retrieve_postalcode(\@postalcodes, $zipcode);
 	}
 
-    if (wantarray) {
-        return @postalcodes;
-    } else {
-        return \@postalcodes;
-    }
+    return \@postalcodes;
 }
 
 sub _retrieve_postalcode {
@@ -242,8 +236,6 @@ by the Artistic file in the standard perl distribution
 =cut
 
 __DATA__
-
-Postnr.	Bynavn			Gade	Firma	Provins	Land	
 0555	Scanning		Data Scanning A/S, "Læs Ind"-service	True	1	
 0555	Scanning		Data Scanning A/S, "Læs Ind"-service	False	1	
 0800	Høje Taastrup	Girostrøget 1	BG-Bank A/S	True	1	
@@ -1497,163 +1489,4 @@ Postnr.	Bynavn			Gade	Firma	Provins	Land
 9970	Strandby			True	1	
 9981	Jerup			True	1	
 9982	Ålbæk			True	1	
-9990	Skagen			True	1	
-3900	Nuuk			False	2	
-3905	Nuussuaq			False	2	
-3910	Kangerlussuaq			False	2	
-3911	Sisimiut			False	2	
-3912	Maniitsoq			False	2	
-3913	Tasiilaq			False	2	
-3915	Kulusuk			False	2	
-3919	Alluitsup Paa			False	2	
-3920	Qaqortoq			False	2	
-3921	Narsaq			False	2	
-3922	Nanortalik			False	2	
-3923	Narsarsuaq			False	2	
-3924	Ikerasassuaq			False	2	
-3930	Kangilinnguit			False	2	
-3932	Arsuk			False	2	
-3940	Paamiut			False	2	
-3950	Aasiaat			False	2	
-3951	Qasigiannguit			False	2	
-3952	Ilulissat			False	2	
-3953	Qeqertarsuaq			False	2	
-3955	Kangaatsiaq			False	2	
-3961	Uummannaq			False	2	
-3962	Upernavik			False	2	
-3964	Qaarsut			False	2	
-3970	Pituffik			False	2	
-3971	Qaanaaq			False	2	
-3980	Ittoqqortoormiit			False	2	
-3984	Danmarkshavn			False	2	
-3985	Constable Pynt			False	2	
-100	Tórshavn			False	3	
-110	Tórshavn 	Postboks		False	3	
-160	Argir			False	3	
-165	Argir 	Postboks		False	3	
-175	Kirkjubøur			False	3	
-176	Velbastadur			False	3	
-177	Sydradalur, Streymoy			False	3	
-178	Nordradalur			False	3	
-180	Kaldbak			False	3	
-185	Kaldbaksbotnur			False	3	
-186	Sund			False	3	
-187	Hvitanes			False	3	
-188	Hoyvík			False	3	
-210	Sandur			False	3	
-215	Sandur	Postboks		False	3	
-220	Skálavík			False	3	
-230	Húsavík			False	3	
-235	Dalur			False	3	
-236	Skarvanes			False	3	
-240	Skopun			False	3	
-260	Skúvoy			False	3	
-270	Nólsoy			False	3	
-280	Hestur			False	3	
-285	Koltur			False	3	
-286	Stóra Dimun			False	3	
-330	Stykkid			False	3	
-335	Leynar			False	3	
-336	Skællingur			False	3	
-340	Kvívík			False	3	
-350	Vestmanna			False	3	
-355	Vestmanna	Postboks		False	3	
-358	Válur			False	3	
-360	Sandavágur			False	3	
-370	Midvágur			False	3	
-375	Midvágur	Postboks		False	3	
-380	Sørvágur			False	3	
-385	Vatnsoyrar			False	3	
-386	Bøur			False	3	
-387	Gásadalur			False	3	
-388	Mykines			False	3	
-400	Oyrarbakki			False	3	
-405	Oyrarbakki	Postboks		False	3	
-410	Kollafjørdur			False	3	
-415	Oyrareingir			False	3	
-416	Signabøur			False	3	
-420	Hósvík			False	3	
-430	Hvalvík			False	3	
-435	Streymnes			False	3	
-436	Saksun			False	3	
-437	Nesvík			False	3	
-438	Langasandur			False	3	
-440	Haldarsvík			False	3	
-445	Tjørnuvík			False	3	
-450	Oyri			False	3	
-460	Nordskáli			False	3	
-465	Svináir			False	3	
-466	Ljósá			False	3	
-470	Eidi			False	3	
-475	Funningur			False	3	
-476	Gjógv			False	3	
-477	Funningsfjørdur			False	3	
-478	Elduvík			False	3	
-480	Skáli			False	3	
-485	Skálafjørdur			False	3	
-490	Strendur			False	3	
-494	innan Glyvur			False	3	
-495	Kolbanargjógv			False	3	
-496	Morskranes			False	3	
-497	Selatrad			False	3	
-510	Gøta			False	3	
-511	Gøtugjógv			False	3	
-512	Nordragøta			False	3	
-513	Sydrugøta			False	3	
-515	Gøta	Postboks		False	3	
-520	Leirvík			False	3	
-530	Fuglafjørdur			False	3	
-535	Fuglafjørdur	Postboks		False	3	
-600	Saltangará			False	3	
-610	Saltangará	Postboks		False	3	
-620	Runavík			False	3	
-625	Glyvrar			False	3	
-626	Lambareidi			False	3	
-627	Lambi			False	3	
-640	Rituvík			False	3	
-645	Æduvík			False	3	
-650	Toftir			False	3	
-655	Nes, Eysturoy			False	3	
-656	Saltnes			False	3	
-660	Søldarfjørdur			False	3	
-665	Skipanes			False	3	
-666	Gøtueidi			False	3	
-690	Oyndarfjørdur			False	3	
-695	Hellur			False	3	
-700	Klaksvík			False	3	
-710	Klaksvík	Postboks		False	3	
-725	Nordoyri			False	3	
-726	Ánir			False	3	
-727	Árnafjørdur			False	3	
-730	Norddepil			False	3	
-735	Depil			False	3	
-736	Nordtoftir			False	3	
-737	Múli			False	3	
-740	Hvannasund			False	3	
-750	Vidareidi			False	3	
-765	Svinoy			False	3	
-766	Kirkja			False	3	
-767	Hattarvík			False	3	
-780	Kunoy			False	3	
-785	Haraldssund			False	3	
-795	Sydradalur, Kalsoy			False	3	
-796	Húsar			False	3	
-797	Mikladalur			False	3	
-798	Trøllanes			False	3	
-800	Tvøroyri			False	3	
-810	Tvøroyri	Postboks		False	3	
-825	Frodba			False	3	
-826	Trongisvágur			False	3	
-827	Øravík			False	3	
-850	Hvalba			False	3	
-860	Sandvík			False	3	
-870	Fámjin			False	3	
-900	Vágur			False	3	
-910	Vágur	Postboks		False	3	
-925	Nes, Vágur			False	3	
-926	Lopra			False	3	
-927	Akrar			False	3	
-928	Vikarbyrgi			False	3	
-950	Porkeri			False	3	
-960	Hov			False	3	
-970	Sumba			False	3	
+9990	Skagen			True	1

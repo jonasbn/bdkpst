@@ -18,4 +18,5 @@ foreach (1 .. 9999) {
     }
 }
 
-is(scalar @invalids, (10000 -  1283));
+is(scalar @invalids, 8825);
+is(scalar @valids, 1174);

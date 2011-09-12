@@ -3,18 +3,15 @@
 use strict;
 use warnings;
 use Data::Dumper;
-use Test::More tests => 4;
+use Test::More tests => 3;
 
 #test 1
 BEGIN { use_ok('Business::DK::Postalcode', qw(get_all_postalcodes)); }
 
-my $postalcodes;
+my $postalcodes_ref;
 
 #test 2
-ok($postalcodes = get_all_postalcodes());
+ok($postalcodes_ref = get_all_postalcodes());
 
 #test 3
-is(scalar(@{$postalcodes}), 1283);
-
-#test 4
-ok($postalcodes = get_all_postalcodes());
+is(scalar(@{$postalcodes_ref}), 1254);
