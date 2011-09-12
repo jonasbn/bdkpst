@@ -1,6 +1,7 @@
 # $Id: create_regex.t,v 1.2 2008-09-09 19:17:27 jonasbn Exp $
 
 use strict;
+use warnings;
 use Data::Dumper;
 use Test::More qw(no_plan);
 
