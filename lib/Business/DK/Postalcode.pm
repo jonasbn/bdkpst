@@ -244,6 +244,20 @@ Business::DK::Postalcode - validation of Danish postal codes
 
 =head1 DESCRIPTION
 
+=head2 validate_postalcode
+
+=head2 validate
+
+=head2 get_all_data
+
+=head2 get_all_postalcodes
+
+=head2 _retrieve_postalcode
+
+=head2 create_regex
+
+=head2 _build_tree
+
 =head1 BUGS
 
 Please report issues via CPAN RT:
