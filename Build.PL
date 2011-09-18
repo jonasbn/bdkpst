@@ -15,7 +15,6 @@ my $build = Module::Build->new(
     build_requires       => {
         'Test::More'          => '0',    #core
         'Test::Taint'         => '0',
-        'Taint::Runtime'      => '0',
         'Data::FormValidator' => '0',
         'Test::Exception'     => '0',
 		'Test::Kwalitee'     => '0',
