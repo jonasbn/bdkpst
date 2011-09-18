@@ -244,19 +244,43 @@ Business::DK::Postalcode - validation of Danish postal codes
 
 =head1 DESCRIPTION
 
-=head2 validate_postalcode
 
-=head2 validate
 
-=head2 get_all_data
+=head3 METHODS
 
-=head2 get_all_postalcodes
+=head3 validate
 
-=head2 _retrieve_postalcode
+A simple validator for Danish postal codes.
 
-=head2 create_regex
+=head3 validate_postalcode
 
-=head2 _build_tree
+A less intrusive subroutine for import. Acts as a wrapper of L</validate>.
+
+=head3 get_all_data
+
+Returns a reference to a a list of strings.
+
+=head3 get_all_postalcodes
+
+Returns a reference to an array containing all valid Danish postal codes.
+
+=head3 create_regex
+
+=head3 PRIVATE METHODS
+
+=head3 _retrieve_postalcode
+
+=head3 _build_tree
+
+=head1 DEPENDENCIES
+
+=over
+
+=item * L<Exporter>
+
+=item * L<Tree::Simple>
+
+=back
 
 =head1 BUGS
 
