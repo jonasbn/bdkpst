@@ -11,14 +11,14 @@ use Carp qw(croak);
 
 use base 'Exporter';
 
-@EXPORT_OK = qw(valid_postalcode match_valid_postalcode);
+@EXPORT_OK = qw(valid_postalcode match_postalcode);
 
 use constant VALID   => 1;
 use constant INVALID => undef;
 
 $VERSION = '0.01';
 
-sub valid_cpr {
+sub valid_postalcode {
     return sub {
         my $dfv = shift;
 
@@ -40,7 +40,7 @@ sub valid_cpr {
         }
 }
 
-sub match_valid_cpr {
+sub match_postalcode {
     my $dfv = shift;
 
     # if $dfv is a ref then we are called as 'constraint_method'
@@ -94,13 +94,15 @@ This module exposes a set of subroutines which are compatible with
 L<Data::FormValidator>. The module implements contraints as specified in
 L<Data::FormValidator::Constraints>.
 
+For a more through description of Danish postal codes please see: L<Business::DK::Postalcode>.
+
 =head1 SUBROUTINES AND METHODS
 
 =head2 valid_postalcode
 
 Checks whether a Postalcode is valid (see: SYNOPSIS) and L<Business::DK::Postalcode>
 
-=head2 match_valid_postalcode
+=head2 match_postalcode
 
 Untaints a given Postalcode (see: SYNOPSIS and BUGS AND LIMITATIONS)
 
@@ -110,9 +112,9 @@ Data::FormValidator::Constraints::Business::DK::Postalcode exports on request:
 
 =over
 
-=item L</valid_dk_postalcode>
+=item * L</valid_postalcode>
 
-=item L</match_valid_postalcode>
+=item * L</match_postalcode>
 
 =back
 
