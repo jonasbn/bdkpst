@@ -69,6 +69,7 @@ sub _retrieve_postalcode {
 sub create_regex {
 	my ($postalcodes) = @_;
 
+    ## no critic (TestingAndDebugging::ProhibitNoStrict)
     no strict 'refs';
 
     if (not $postalcodes) {
