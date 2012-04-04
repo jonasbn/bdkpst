@@ -1,14 +1,16 @@
-#!/usr/local/bin/perl -T
+#!/usr/local/bin/perl
 
 # $Id$
 
 use strict;
 use warnings;
-use Test::More tests => 13;
+use Test::More tests => 12;
 use Test::Taint;
 use Data::FormValidator;
 
-taint_checking_ok('Is taint checking on');
+use lib qw(lib);
+
+#taint_checking_ok('Is taint checking on');
 
 use_ok( 'Data::FormValidator::Constraints::Business::DK::Postalcode',
     qw(valid_postalcode) );
