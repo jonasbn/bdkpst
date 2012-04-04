@@ -18,11 +18,26 @@ keywords = Id
 [CodeLayout::ProhibitHardTabs]
 allow_leading_tabs = 0
 
-[-ControlStructures::ProhibitCStyleForLoops]
-
 [-ValuesAndExpressions::ProhibitConstantPragma]
-
-[-ValuesAndExpressions::RequireNumberSeparators]
 
 [InputOutput::RequireCheckedSyscalls]
 exclude_functions = print
+
+[-Documentation::RequirePodAtEnd]
+#This one interferes with our DATA section, perhaps DATA should go before POD?
+
+# TODO
+
+[-Documentation::RequirePodLinksIncludeText]
+
+[-ControlStructures::ProhibitCStyleForLoops]
+
+[-RegularExpressions::RequireDotMatchAnything]
+
+[-RegularExpressions::RequireLineBoundaryMatching]
+
+[-ValuesAndExpressions::ProhibitMagicNumbers]
+
+[-ValuesAndExpressions::ProhibitEmptyQuotes]
+
+[-ValuesAndExpressions::ProhibitNoisyQuotes]

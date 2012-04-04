@@ -8,182 +8,210 @@ use Tree::Simple;
 use vars qw($VERSION @EXPORT_OK);
 use base qw(Exporter);
 
-use constant DEBUG => 0;
-use constant TRUE  => 1;
-use constant FALSE => 0;
+use constant DEBUG                => 0;
+use constant TRUE                 => 1;
+use constant FALSE                => 0;
+use constant NUM_OF_DATA_ELEMENTS => 6;
+use constant NUM_OF_DIGITS_IN_POSTALCODE => 4;
 
-our @data = <DATA>;
+## no critic (Variables::ProhibitPackageVars)
+our @postal_data = <DATA>;
 
 my $regex;
 
 $VERSION = '0.01';
-@EXPORT_OK = qw(get_all_postalcodes get_all_data create_regex validate_postalcode validate);
+@EXPORT_OK
+    = qw(get_all_postalcodes get_all_data create_regex validate_postalcode validate);
 
 sub validate_postalcode {
     my $postalcode = shift;
 
-    if (not $regex) {
-        $regex = ${create_regex()};
+    if ( not $regex ) {
+        $regex = ${ create_regex() };
     }
-    
-    if ($postalcode =~ m/\A$regex\z/) {
-        return TRUE; 
+
+    if ($postalcode =~ m{
+        \A #beginning of string
+        $regex #generated regular expression
+        \z #end of string
+        }x
+        )
+    {
+        return TRUE;
     } else {
         return FALSE;
     }
 }
 
+## no critic (Subroutines::RequireArgUnpacking)
 sub validate {
-    return validate_postalcode($_[0]);
+    return validate_postalcode( $_[0] );
 }
 
 sub get_all_data {
-	return \@data;
+    return \@postal_data;
 }
 
 sub get_all_postalcodes {
-	my @parameter_data = @_;
-	my @postalcodes = ();
+    my @parameter_data = @_;
+    my @postalcodes    = ();
 
-	if (not @parameter_data) {
-        @parameter_data = @data;
+    if ( not @parameter_data ) {
+        @parameter_data = @postal_data;
     }
 
-	foreach my $zipcode (@parameter_data) {
-		_retrieve_postalcode(\@postalcodes, $zipcode);
-	}
+    foreach my $zipcode (@parameter_data) {
+        _retrieve_postalcode( \@postalcodes, $zipcode );
+    }
 
     return \@postalcodes;
 }
 
 sub _retrieve_postalcode {
-	my ($postalcodes, $string) = @_;
+    my ( $postalcodes, $string ) = @_;
 
-	my @entries = split(/\t/, $string, 6);
+    my @entries = split /\t/x, $string, NUM_OF_DATA_ELEMENTS;
 
-	if ($entries[0] =~ m/^\d{4}$/) {
-		push @{$postalcodes}, $entries[0];
-	}
+    if ($entries[0] =~ m{
+        ^ #beginning of string
+        \d{4} #four digits
+        $ #end of string
+        }x
+        )
+    {
+        push @{$postalcodes}, $entries[0];
+    }
+
+    return;
 }
 
 sub create_regex {
-	my ($postalcodes) = @_;
+    my ($postalcodes) = @_;
 
-    ## no critic (TestingAndDebugging::ProhibitNoStrict)
-    no strict 'refs';
-
-    if (not $postalcodes) {
+    if ( not $postalcodes ) {
         $postalcodes = get_all_postalcodes();
     }
 
-	my $tree = Tree::Simple->new('ROOT', Tree::Simple->ROOT);
+    my $tree = Tree::Simple->new( 'ROOT', Tree::Simple->ROOT );
 
-	if (scalar @{$postalcodes}) {
-		foreach my $postalcode (@{$postalcodes}) {
-			_build_tree($tree, $postalcode);
-		}
-	} else {
-		while (<DATA>) {
-			_build_tree($tree, $_);
-		}
-	}
+    if ( scalar @{$postalcodes} ) {
+        foreach my $postalcode ( @{$postalcodes} ) {
+            _build_tree( $tree, $postalcode );
+        }
+    } else {
+        while (<DATA>) {
+            _build_tree( $tree, $_ );
+        }
+    }
 
-    my $regex = [];
-                
-    if ($tree->isRoot && $tree->getChildCount > 1) {
+    my $generated_regex = [];
+
+    if ( $tree->isRoot && $tree->getChildCount > 1 ) {
 
         my $no_of_children = $tree->getChildCount();
 
-        foreach my $child ($tree->getAllChildren()) {                
-            if ($child->getIndex() < ($tree->getChildCount()-1)) {
-                $child->insertSibling($child->getIndex()+1, Tree::Simple->new('|'));
+        foreach my $child ( $tree->getAllChildren() ) {
+            if ( $child->getIndex() < ( $tree->getChildCount() - 1 ) ) {
+                $child->insertSibling( $child->getIndex() + 1,
+                    Tree::Simple->new('|') );
             }
         }
-        $tree->insertChild(0, Tree::Simple->new('('));
-        $tree->addChild(Tree::Simple->new(')'));
+        $tree->insertChild( 0, Tree::Simple->new('(') );
+        $tree->addChild( Tree::Simple->new(')') );
     }
 
-	
-	$tree->traverse(sub {
-		my ($_tree) = shift;
-        
-        if (DEBUG) {
-            print STDERR "\n";
-            $tree->traverse(sub {
-                my ($_tree) = @_;
-                print STDERR (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
-            });
-        }        
-		my $no_of_children = $_tree->getChildCount();
-        
-        if ($no_of_children > 1) {
-            
-            foreach my $child ($_tree->getAllChildren()) {
-                if ($child->getIndex() < ($_tree->getChildCount()-1)) {
-                    $child->insertSibling($child->getIndex()+1, Tree::Simple->new('|'));
-                }
+    $tree->traverse(
+        sub {
+            my ($_tree) = shift;
+
+            if (DEBUG) {
+                warn "\n";
+                $tree->traverse(
+                    sub {
+                        my ($traversal_tree) = @_;
+                        warn( "\t" x $traversal_tree->getDepth() )
+                            . $traversal_tree->getNodeValue() . "\n";
+                    }
+                );
             }
+            my $no_of_children = $_tree->getChildCount();
 
-            #first element
-            $_tree->insertChild(0, Tree::Simple->new('('));
-            
-            #last
-            $_tree->addChild(Tree::Simple->new(')'));
+            if ( $no_of_children > 1 ) {
+
+                foreach my $child ( $_tree->getAllChildren() ) {
+                    if ($child->getIndex() < ( $_tree->getChildCount() - 1 ) )
+                    {
+                        $child->insertSibling( $child->getIndex() + 1,
+                            Tree::Simple->new('|') );
+                    }
+                }
+
+                #first element
+                $_tree->insertChild( 0, Tree::Simple->new('(') );
+
+                #last
+                $_tree->addChild( Tree::Simple->new(')') );
+            }
         }
-		
-		#if ($_tree->getNodeValue() =~ m/^\d+$/) {
-		#	$_tree->setNodeValue('(?:'.$_tree->getNodeValue().')');
-		#}
-	});
+    );
 
-	$tree->traverse(sub {
-		my ($_tree) = shift;
-		push(@{$regex}, $_tree->getNodeValue());
-	});
+    $tree->traverse(
+        sub {
+            my ($traversal_tree) = shift;
+            push @{$generated_regex}, $traversal_tree->getNodeValue();
+        }
+    );
 
-	my $result = join('', @{$regex});
-	return \$result;
+    my $result = join '', @{$generated_regex};
+
+    return \$result;
 }
 
 sub _build_tree {
-	my ($tree, $postalcode) = @_;
+    my ( $tree, $postalcode ) = @_;
 
-	if ($postalcode =~ m/^\d{4}$/) {
+    if ($postalcode =~ m{
+        ^ #beginning of string
+        \d{4} #four digits
+        $ #end of string
+        }x
+        )
+    {
 
-		my $oldtree = $tree;
-	
-		my @digits = split(//, $postalcode, 4);	
-		for(my $i = 0; $i < scalar(@digits); $i++) {
-	
-			if ($i == 0) {
-				$tree = $oldtree;
-			}
-			
-			my $subtree = Tree::Simple->new($digits[$i]);
-			
-			my @children = $tree->getAllChildren();
-			my $child = undef;
-			foreach my $c (@children) {
-				if ($c->getNodeValue() == $subtree->getNodeValue()) {
-					$child = $c;
-					last;
-				}
-			}
-	
-			if ($child) {
-				$tree = $child;
-			} else {
-				$tree->addChild($subtree);
-				$tree = $subtree;
-			}
-		}
-		$tree = $oldtree;
+        my $oldtree = $tree;
 
-	} else {
-		warn "$postalcode does not look like a postalcode\n";
-	}
+        my @digits = split //, $postalcode, NUM_OF_DIGITS_IN_POSTALCODE;
+        for ( my $i = 0; $i < scalar @digits; $i++ ) {
 
-	return 1;
+            if ( $i == 0 ) {
+                $tree = $oldtree;
+            }
+
+            my $subtree = Tree::Simple->new( $digits[$i] );
+
+            my @children = $tree->getAllChildren();
+            my $child    = undef;
+            foreach my $c (@children) {
+                if ( $c->getNodeValue() == $subtree->getNodeValue() ) {
+                    $child = $c;
+                    last;
+                }
+            }
+
+            if ($child) {
+                $tree = $child;
+            } else {
+                $tree->addChild($subtree);
+                $tree = $subtree;
+            }
+        }
+        $tree = $oldtree;
+
+    } else {
+        warn "$postalcode does not look like a postalcode\n";
+    }
+
+    return 1;
 }
 
 1;
@@ -193,6 +221,10 @@ sub _build_tree {
 =head1 NAME
 
 Business::DK::Postalcode - validation of Danish postal codes
+
+=head1 VERSION
+
+This documentation describes version 0.01
 
 =head1 SYNOPSIS
 
@@ -247,31 +279,35 @@ Business::DK::Postalcode - validation of Danish postal codes
 
 
 
-=head3 METHODS
+=head1 SUBROUTINES AND METHODS
 
-=head3 validate
+=head2 validate
 
 A simple validator for Danish postal codes.
 
-=head3 validate_postalcode
+=head2 validate_postalcode
 
 A less intrusive subroutine for import. Acts as a wrapper of L</validate>.
 
-=head3 get_all_data
+=head2 get_all_data
 
 Returns a reference to a a list of strings.
 
-=head3 get_all_postalcodes
+=head2 get_all_postalcodes
 
 Returns a reference to an array containing all valid Danish postal codes.
 
-=head3 create_regex
+=head2 create_regex
 
-=head3 PRIVATE METHODS
+=head1 PRIVATE METHODS
 
 =head3 _retrieve_postalcode
 
 =head3 _build_tree
+
+=head1 DIAGNOSTICS
+
+=head1 CONFIGURATION AND ENVIRONMENT
 
 =head1 DEPENDENCIES
 
@@ -283,7 +319,11 @@ Returns a reference to an array containing all valid Danish postal codes.
 
 =back
 
-=head1 BUGS
+=head1 BUGS AND LIMITATIONS
+
+There are no known bugs at this time.
+
+=head1 BUG REPORTING
 
 Please report issues via CPAN RT:
 
@@ -292,6 +332,10 @@ Please report issues via CPAN RT:
 or by sending mail to
 
   bug-Business-DK-Postalcode@rt.cpan.org
+
+=head1 INCOMPATIBILITIES
+  
+=head1 TEST AND QUALITY
 
 =head1 SEE ALSO
 
@@ -303,13 +347,17 @@ or by sending mail to
 
 =back
 
+=head1 TODO
+
 =head1 AUTHOR
 
 Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
 
 =head1 COPYRIGHT
 
-Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2011
+Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2012
+
+=head1 LICENSE
 
 Business-DK-Postalcode is released under the artistic license
 
