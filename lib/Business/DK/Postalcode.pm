@@ -334,8 +334,46 @@ or by sending mail to
   bug-Business-DK-Postalcode@rt.cpan.org
 
 =head1 INCOMPATIBILITIES
-  
+
+There are no known incompatibilities at this time.
+
 =head1 TEST AND QUALITY
+
+=head2 Perl::Critic
+
+This version of the code is complying with Perl::Critic a severity: 1
+
+The following policies have been disabled.
+
+=over
+
+=item * L<Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma>
+
+Constants are good, - see the link below.
+
+=item * L<https://logiclab.jira.com/wiki/display/OPEN/Perl-Critic-Policy-ValuesAndExpressions-ProhibitConstantPragma>
+
+=item * L<Perl::Critic::Policy::Documentation::RequirePodAtEnd>
+
+This one interfers with our DATA section, perhaps DATA should go before POD?
+
+=back
+
+Please see F<t/perlcriticrc> for details.
+
+=head2 TEST COVERAGE
+
+Test coverage report is generated via Devel::Cover via Module::Build.
+
+    ----------------------------------- ------ ------ ------ ------ ------ ------
+    File                                  stmt   bran   cond    sub   time  total
+    ----------------------------------- ------ ------ ------ ------ ------ ------
+    blib/lib/Business/DK/Postalcode.pm    97.3   71.4   66.7  100.0   96.1   92.5
+    ...raints/Business/DK/Postalcode.pm   87.8   50.0   33.3   91.7    3.9   81.2
+    Total                                 94.7   66.7   50.0   96.8  100.0   89.3
+    ----------------------------------- ------ ------ ------ ------ ------ ------
+
+    DEVEL_COVER_OPTIONS=+inc,/Users ./Build testcover
 
 =head1 SEE ALSO
 
@@ -348,6 +386,8 @@ or by sending mail to
 =back
 
 =head1 TODO
+
+Please see the project TODO file.
 
 =head1 AUTHOR
 
