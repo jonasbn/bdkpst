@@ -162,7 +162,7 @@ sub create_regex {
         }
     );
 
-    my $result = join '', @{$generated_regex};
+    my $result = join q{}, @{$generated_regex};
 
     return \$result;
 }
