@@ -36,8 +36,6 @@ exclude_functions = print
 
 [-RegularExpressions::RequireLineBoundaryMatching]
 
-[-ValuesAndExpressions::ProhibitMagicNumbers]
-
 [-ValuesAndExpressions::ProhibitEmptyQuotes]
 
 [-ValuesAndExpressions::ProhibitNoisyQuotes]
