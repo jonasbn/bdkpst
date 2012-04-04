@@ -8,10 +8,10 @@ use Tree::Simple;
 use vars qw($VERSION @EXPORT_OK);
 use base qw(Exporter);
 
-use constant DEBUG                => 0;
-use constant TRUE                 => 1;
-use constant FALSE                => 0;
-use constant NUM_OF_DATA_ELEMENTS => 6;
+use constant DEBUG                       => 0;
+use constant TRUE                        => 1;
+use constant FALSE                       => 0;
+use constant NUM_OF_DATA_ELEMENTS        => 6;
 use constant NUM_OF_DIGITS_IN_POSTALCODE => 4;
 
 ## no critic (Variables::ProhibitPackageVars)
@@ -74,7 +74,7 @@ sub _retrieve_postalcode {
 
     if ($entries[0] =~ m{
         ^ #beginning of string
-        \d{4} #four digits
+        \d{${\NUM_OF_DIGITS_IN_POSTALCODE}} #digits in postalcode
         $ #end of string
         }x
         )
@@ -172,7 +172,7 @@ sub _build_tree {
 
     if ($postalcode =~ m{
         ^ #beginning of string
-        \d{4} #four digits
+        \d{${\NUM_OF_DIGITS_IN_POSTALCODE}} #digits in postalcode
         $ #end of string
         }x
         )
