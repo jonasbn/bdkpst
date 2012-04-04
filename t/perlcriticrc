@@ -6,6 +6,7 @@ verbose = 8
 
 #------------------------------------------------------------------------------
 
+#https://logiclab.jira.com/wiki/display/OPEN/Perl-Critic-Policy-CodeLayout-RequireTidyCode
 [CodeLayout::RequireTidyCode]
 
 [Documentation::RequirePodSections]
@@ -18,6 +19,7 @@ keywords = Id
 [CodeLayout::ProhibitHardTabs]
 allow_leading_tabs = 0
 
+#https://logiclab.jira.com/wiki/display/OPEN/Perl-Critic-Policy-ValuesAndExpressions-ProhibitConstantPragma
 [-ValuesAndExpressions::ProhibitConstantPragma]
 
 [InputOutput::RequireCheckedSyscalls]
