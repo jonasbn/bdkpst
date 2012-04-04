@@ -113,7 +113,7 @@ sub create_regex {
         foreach my $child ( $tree->getAllChildren() ) {
             if ( $child->getIndex() < ( $tree->getChildCount() - 1 ) ) {
                 $child->insertSibling( $child->getIndex() + 1,
-                    Tree::Simple->new('|') );
+                    Tree::Simple->new(q{|}) );
             }
         }
         $tree->insertChild( 0, Tree::Simple->new('(') );
@@ -142,7 +142,7 @@ sub create_regex {
                     if ($child->getIndex() < ( $_tree->getChildCount() - 1 ) )
                     {
                         $child->insertSibling( $child->getIndex() + 1,
-                            Tree::Simple->new('|') );
+                            Tree::Simple->new(q{|}) );
                     }
                 }
 

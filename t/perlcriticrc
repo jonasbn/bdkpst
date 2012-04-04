@@ -37,5 +37,3 @@ exclude_functions = print
 [-RegularExpressions::RequireLineBoundaryMatching]
 
 [-ValuesAndExpressions::ProhibitEmptyQuotes]
-
-[-ValuesAndExpressions::ProhibitNoisyQuotes]
