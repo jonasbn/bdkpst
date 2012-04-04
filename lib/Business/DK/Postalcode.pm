@@ -34,7 +34,7 @@ sub validate_postalcode {
         \A #beginning of string
         $regex #generated regular expression
         \z #end of string
-        }x
+        }xsm
         )
     {
         return TRUE;
@@ -70,13 +70,13 @@ sub get_all_postalcodes {
 sub _retrieve_postalcode {
     my ( $postalcodes, $string ) = @_;
 
-    my @entries = split /\t/x, $string, NUM_OF_DATA_ELEMENTS;
+    my @entries = split /\t/xsm, $string, NUM_OF_DATA_ELEMENTS;
 
     if ($entries[0] =~ m{
         ^ #beginning of string
         \d{${\NUM_OF_DIGITS_IN_POSTALCODE}} #digits in postalcode
         $ #end of string
-        }x
+        }xsm
         )
     {
         push @{$postalcodes}, $entries[0];
@@ -174,13 +174,13 @@ sub _build_tree {
         ^ #beginning of string
         \d{${\NUM_OF_DIGITS_IN_POSTALCODE}} #digits in postalcode
         $ #end of string
-        }x
+        }xsm
         )
     {
 
         my $oldtree = $tree;
 
-        my @digits = split //, $postalcode, NUM_OF_DIGITS_IN_POSTALCODE;
+        my @digits = split //xsm, $postalcode, NUM_OF_DIGITS_IN_POSTALCODE;
         for ( my $i = 0; $i < scalar @digits; $i++ ) {
 
             if ( $i == 0 ) {

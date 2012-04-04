@@ -33,7 +33,3 @@ exclude_functions = print
 [-Documentation::RequirePodLinksIncludeText]
 
 [-ControlStructures::ProhibitCStyleForLoops]
-
-[-RegularExpressions::RequireDotMatchAnything]
-
-[-RegularExpressions::RequireLineBoundaryMatching]
