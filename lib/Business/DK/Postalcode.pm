@@ -124,6 +124,7 @@ sub create_regex {
         sub {
             my ($_tree) = shift;
 
+            #DEBUG section - outputs tree to STDERR
             if (DEBUG) {
                 warn "\n";
                 $tree->traverse(
@@ -149,12 +150,13 @@ sub create_regex {
                 #first element
                 $_tree->insertChild( 0, Tree::Simple->new('(') );
 
-                #last
+                #last element
                 $_tree->addChild( Tree::Simple->new(')') );
             }
         }
     );
 
+    #traverses the tree and creates a flat list of the tree
     $tree->traverse(
         sub {
             my ($traversal_tree) = shift;
@@ -162,6 +164,8 @@ sub create_regex {
         }
     );
 
+    #stringifies the flat list so we have a string representation of the
+    #generated regular expression
     my $result = join q{}, @{$generated_regex};
 
     return \$result;
@@ -242,12 +246,12 @@ This documentation describes version 0.01
     use Business::DK::Postalcode qw(validate_postalcode);
     
     if (validate_postalcode($postalcode)) {
-        print "We have a valid Danish postalcode\n";
+        print "We have a valid Danish postal code\n";
     } else {
-        print "Not a valid Danish postalcode\n";
+        print "Not a valid Danish postal code\n";
     }
 
-    # extracting a regex for validation of Danish postalcodes
+    # extracting a regex for validation of Danish postal codes
     use Business::DK::Postalcode qw(create_regex);
 
     my $regex_ref = ${create_regex()};
@@ -259,13 +263,13 @@ This documentation describes version 0.01
     }
 
 
-    # All postalcodes for use outside this module
+    # All postal codes for use outside this module
     use Business::DK::Postalcode qw(get_all_postalcodes);
     
     my @postalcodes = @{get_all_postalcodes()};
 
     
-    # All postalcodes and data for use outside this module
+    # All postal codes and data for use outside this module
     use Business::DK::Postalcode qw(get_all_data);
     
     my $postalcodes = get_all_data();
@@ -275,9 +279,32 @@ This documentation describes version 0.01
             'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
     }
 
+
+=head1 FEATURES
+
+=over
+
+=item * Providing list of Danish postal codes and related area names 
+
+=back
+
 =head1 DESCRIPTION
 
+=head2 Data
 
+=over
+
+=item * city
+
+=item * street/desc
+
+=item * company
+
+=item * province
+
+=item * country
+
+=back
 
 =head1 SUBROUTINES AND METHODS
 
@@ -285,13 +312,17 @@ This documentation describes version 0.01
 
 A simple validator for Danish postal codes.
 
+Takes a string representing a possible Danish postal code and returns either
+B<1> or B<0> indicating either validity or invalidity.
+
 =head2 validate_postalcode
 
 A less intrusive subroutine for import. Acts as a wrapper of L</validate>.
 
 =head2 get_all_data
 
-Returns a reference to a a list of strings.
+Returns a reference to a a list of strings, separated by tab characters. See
+L</Data> for a description of the fields.
 
 =head2 get_all_postalcodes
 
@@ -299,11 +330,20 @@ Returns a reference to an array containing all valid Danish postal codes.
 
 =head2 create_regex
 
-=head1 PRIVATE METHODS
+This method returns a generated regular expression for validation of a string
+representing a possible Danish postal code.
+
+=head1 PRIVATE SUBROUTINES AND METHODS
 
 =head3 _retrieve_postalcode
 
+Internal method
+
 =head3 _build_tree
+
+Internal method to assist L<create_regex> in generating the regular expression.
+
+Takes a L<Tree::Simple> object and a reference to an array of data elements.
 
 =head1 DIAGNOSTICS
 
@@ -355,7 +395,17 @@ Constants are good, - see the link below.
 
 =item * L<Perl::Critic::Policy::Documentation::RequirePodAtEnd>
 
-This one interfers with our DATA section, perhaps DATA should go before POD?
+This one interfers with our DATA section, perhaps DATA should go before POD,
+well it is not important so I have disabled the policy.
+
+=item * L<Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops>
+
+This would require a re-write of part of the code. Currently I rely on use of the iterator in the F<for> loop, so it would require significant
+changes.
+
+=item * L<Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText>
+
+Temporarily disabled.
 
 =back
 
@@ -363,7 +413,7 @@ Please see F<t/perlcriticrc> for details.
 
 =head2 TEST COVERAGE
 
-Test coverage report is generated via Devel::Cover via Module::Build.
+Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
 
     ----------------------------------- ------ ------ ------ ------ ------ ------
     File                                  stmt   bran   cond    sub   time  total
@@ -373,7 +423,7 @@ Test coverage report is generated via Devel::Cover via Module::Build.
     Total                                 94.7   66.7   50.0   96.8  100.0   89.3
     ----------------------------------- ------ ------ ------ ------ ------ ------
 
-    DEVEL_COVER_OPTIONS=+inc,/Users ./Build testcover
+    $ DEVEL_COVER_OPTIONS=+inc,/Users ./Build testcover
 
 =head1 SEE ALSO
 
@@ -384,6 +434,12 @@ Test coverage report is generated via Devel::Cover via Module::Build.
 =item * L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
 
 =item * L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
+
+=back
+
+=head1 Resources
+
+=over
 
 =item * Website: L<http://logicLAB.jira.com/browse/BDKPST>
 
@@ -403,10 +459,10 @@ Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
 
 =head1 MOTIVATION
 
-I was working on a project where I needed to do some presentation and validation
-of Danish postal codes. I looked at Regex::Common::Zip (see: L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->)
+Back in 2006 I was working on a project where I needed to do some presentation
+and validation of Danish postal codes. I looked at Regex::Common::Zip (see: L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->)
 
-The implementation at the time of writing look as follows:
+The implementation at the time of writing looked as follows:
 
     Denmark     =>  "(?k:(?k:[1-9])(?k:[0-9])(?k:[0-9]{2}))",
     # Postal codes of the form: 'DDDD', with the first
@@ -419,14 +475,18 @@ This pattern holds some issues:
 
 =over
 
-=item * Doing some fast math you can see that you have 9000 valid postal codes
-where the exact number is 1254 and 0 is actually allowed for a set of postal
-codes used by the postal service in Denmark
+=item * Doing some fast math you can see that you will allow 9000 valid postal
+codes where the exact number is 1254 and 0 is actually allowed for a set of
+postal codes used by the postal service in Denmark
 
 =item * Greenland specified as starting with '39' is not a part of Denmark, but
-should be under Greenland and the ISO and CEPT code 'GL'
+should be under Greenland and the ISO code 'GL'
 
 =back
+
+So I decided to write a regular expression, which would be better than the one
+above, but I did not want to maintain it I wanted to write a piece of software,
+which could generate the pattern for me based on a finite data set.
 
 =head1 COPYRIGHT
 
