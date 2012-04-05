@@ -34,6 +34,10 @@ my $build = Module::Build->new(
             bugtracker =>
                 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode',
             repository => 'http://logicLAB.jira.com/svn/BDKPST',
+            ProjectChangelog =>
+                'http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel',
+            ProjectSite => 'http://logicLAB.jira.com/browse/BDKPST',
+            ProjectWiki => 'http://logiclab.jira.com/wiki/display/BDKPST/Home',
         }
     },
 );
