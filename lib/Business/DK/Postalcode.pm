@@ -7,6 +7,7 @@ use warnings;
 use Tree::Simple;
 use vars qw($VERSION @EXPORT_OK);
 use base qw(Exporter);
+use Params::Validate qw(validate_pos SCALAR ARRAYREF OBJECT);
 
 use constant DEBUG                       => 0;
 use constant TRUE                        => 1;
@@ -23,8 +24,13 @@ $VERSION = '0.01';
 @EXPORT_OK
     = qw(get_all_postalcodes get_all_data create_regex validate_postalcode validate);
 
+# TODO: we have to disable this policy here for some reason?
+## no critic (Subroutines::RequireArgUnpacking)
 sub validate_postalcode {
-    my $postalcode = shift;
+    my ($postalcode) = @_;
+
+   #loose check since we are doing actual validation, so we just need a scalar
+    validate_pos( @_, { type => SCALAR }, );
 
     if ( not $regex ) {
         $regex = ${ create_regex() };
@@ -45,6 +51,8 @@ sub validate_postalcode {
 
 ## no critic (Subroutines::RequireArgUnpacking)
 sub validate {
+
+    #validation happens in next step (see: validate_postalcode)
     return validate_postalcode( $_[0] );
 }
 
@@ -53,14 +61,16 @@ sub get_all_data {
 }
 
 sub get_all_postalcodes {
-    my @parameter_data = @_;
-    my @postalcodes    = ();
+    my ($parameter_data) = @_;
+    my @postalcodes = ();
 
-    if ( not @parameter_data ) {
-        @parameter_data = @postal_data;
+    validate_pos( @_, { type => ARRAYREF, optional => 1 }, );
+
+    if ( not $parameter_data ) {
+        @{$parameter_data} = @postal_data;
     }
 
-    foreach my $zipcode (@parameter_data) {
+    foreach my $zipcode ( @{$parameter_data} ) {
         _retrieve_postalcode( \@postalcodes, $zipcode );
     }
 
@@ -70,7 +80,12 @@ sub get_all_postalcodes {
 sub _retrieve_postalcode {
     my ( $postalcodes, $string ) = @_;
 
-    my @entries = split /\t/xsm, $string, NUM_OF_DATA_ELEMENTS;
+    #this is used internally, but we stick it in here just to make sure we
+    #get what we want
+    validate_pos( @_, { type => ARRAYREF }, { type => SCALAR }, );
+
+    ## no critic qw(RegularExpressions::RequireLineBoundaryMatching RegularExpressions::RequireExtendedFormatting RegularExpressions::RequireDotMatchAnything)
+    my @entries = split /\t/x, $string, NUM_OF_DATA_ELEMENTS;
 
     if ($entries[0] =~ m{
         ^ #beginning of string
@@ -87,6 +102,8 @@ sub _retrieve_postalcode {
 
 sub create_regex {
     my ($postalcodes) = @_;
+
+    validate_pos( @_, { type => ARRAYREF, optional => 1 } );
 
     if ( not $postalcodes ) {
         $postalcodes = get_all_postalcodes();
@@ -173,6 +190,13 @@ sub create_regex {
 
 sub _build_tree {
     my ( $tree, $postalcode ) = @_;
+
+    ## no critic qw(RegularExpressions::RequireLineBoundaryMatching RegularExpressions::RequireExtendedFormatting RegularExpressions::RequireDotMatchAnything)
+    validate_pos(
+        @_,
+        { type => OBJECT, isa   => 'Tree::Simple' },
+        { type => SCALAR, regex => qr/^\d+$/, },
+    );
 
     if ($postalcode =~ m{
         ^ #beginning of string

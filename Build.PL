@@ -4,12 +4,13 @@
 
 use Module::Build;
 my $build = Module::Build->new(
-	dist_author        => 'Jonas B. Nielsen, (jonasbn) <jonasbn@cpan.org>',
-	module_name        => 'Business::DK::Postalcode',
-	dist_version_from  => 'lib/Business/DK/Postalcode.pm',
-	dist_abstract      => 'Module contaning danish zipcodes for validation and deployment',
-	license            => 'artistic',
-	create_makefile_pl => 'traditional',
+    dist_author       => 'Jonas B. Nielsen, (jonasbn) <jonasbn@cpan.org>',
+    module_name       => 'Business::DK::Postalcode',
+    dist_version_from => 'lib/Business/DK/Postalcode.pm',
+    dist_abstract =>
+        'Module contaning danish zipcodes for validation and deployment',
+    license              => 'artistic',
+    create_makefile_pl   => 'traditional',
     create_readme        => 1,
     recursive_test_files => 1,
     build_requires       => {
@@ -17,14 +18,15 @@ my $build = Module::Build->new(
         'Test::Taint'         => '0',
         'Data::FormValidator' => '0',
         'Test::Exception'     => '0',
-		'Test::Kwalitee'     => '0',
-		'Test::Perl::Critic'     => '0',
-		'Test::Prereq::Build'     => '0',
+        'Test::Kwalitee'      => '0',
+        'Test::Perl::Critic'  => '0',
+        'Test::Prereq::Build' => '0',
     },
     requires => {
-        'Exporter' => '0',               #core
-        'Carp'     => '0',               #core
-        'Tree::Simple' => '0',
+        'Exporter'         => '0',       #core
+        'Carp'             => '0',       #core
+        'Tree::Simple'     => '0',
+        'Params::Validate' => '0',
     },
     meta_merge => {
         resources => {
