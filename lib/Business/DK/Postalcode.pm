@@ -411,6 +411,38 @@ The following policies have been disabled.
 
 =over
 
+=item * L<Perl::Critic::Policy::Variables::ProhibitPackageVars>
+
+Disabled locally using 'no critic' pragma.
+
+The module  uses a package variable as a cache, this might not prove usefull in
+the long term, so when this is adressed and this might address this policy.
+
+=item * L<Perl::Critic::Policy::Subroutines::RequireArgUnpacking>
+
+Disabled locally using 'no critic' pragma.
+
+This policy is violated when using L<Params::Validate> at some point this will
+be investigated further, this might be an issue due to referral to @_.
+
+=item * L<Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching>
+
+Disabled locally using 'no critic' pragma.
+
+This is disabled for some two basic regular expressions.
+
+=item * L<Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
+
+Disabled locally using 'no critic' pragma.
+
+This is disabled for some two basic regular expressions.
+
+=item * L<Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything>
+
+Disabled locally using 'no critic' pragma.
+
+This is disabled for some two basic regular expressions.
+
 =item * L<Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma>
 
 Constants are good, - see the link below.
@@ -429,7 +461,7 @@ changes.
 
 =item * L<Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText>
 
-Temporarily disabled.
+Temporarily disabled, marked for follow-up
 
 =back
 
