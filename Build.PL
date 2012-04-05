@@ -9,7 +9,7 @@ my $build = Module::Build->new(
     dist_version_from => 'lib/Business/DK/Postalcode.pm',
     dist_abstract =>
         'Module contaning danish zipcodes for validation and deployment',
-    license              => 'artistic',
+    license              => 'artistic_2',
     create_makefile_pl   => 'traditional',
     create_readme        => 1,
     recursive_test_files => 1,
