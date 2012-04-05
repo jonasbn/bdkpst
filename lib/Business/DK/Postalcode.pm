@@ -379,19 +379,54 @@ Test coverage report is generated via Devel::Cover via Module::Build.
 
 =over
 
-=item L<Geo::Postcodes::DK>
+=item * L<Geo::Postcodes::DK>
 
-=item L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
+=item * L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
+
+=item * L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
+
+=item * Website: L<http://logicLAB.jira.com/browse/BDKPST>
+
+=item * Bugtracker: L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode>
+
+=item * SVN repository: L<http://logicLAB.jira.com/svn/BDKPST>
 
 =back
 
 =head1 TODO
 
-Please see the project TODO file.
+Please see the project F<TODO> file.
 
 =head1 AUTHOR
 
 Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
+
+=head1 MOTIVATION
+
+I was working on a project where I needed to do some presentation and validation
+of Danish postal codes. I looked at Regex::Common::Zip (see: L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->)
+
+The implementation at the time of writing look as follows:
+
+    Denmark     =>  "(?k:(?k:[1-9])(?k:[0-9])(?k:[0-9]{2}))",
+    # Postal codes of the form: 'DDDD', with the first
+    # digit representing the distribution region, the
+    # second digit the distribution district. Postal
+    # codes do not start with a zero. Postal codes 
+    # starting with '39' are in Greenland.
+
+This pattern holds some issues:
+
+=over
+
+=item * Doing some fast math you can see that you have 9000 valid postal codes
+where the exact number is 1254 and 0 is actually allowed for a set of postal
+codes used by the postal service in Denmark
+
+=item * Greenland specified as starting with '39' is not a part of Denmark, but
+should be under Greenland and the ISO and CEPT code 'GL'
+
+=back
 
 =head1 COPYRIGHT
 
@@ -399,11 +434,13 @@ Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2012
 
 =head1 LICENSE
 
-Business-DK-Postalcode is released under the artistic license
+Business-DK-Postalcode and related is released under the Artistic License 2.0
 
-The distribution is licensed under the Artistic License, as specified
-by the Artistic file in the standard perl distribution
-(http://www.perl.com/language/misc/Artistic.html).
+=over
+
+=item * http://www.opensource.org/licenses/Artistic-2.0
+
+=back
 
 =cut
 
