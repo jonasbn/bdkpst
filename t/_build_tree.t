@@ -2,8 +2,9 @@
 
 use strict;
 use warnings;
-use Test::More qw(no_plan);
+use Test::More tests => 1263;
 use Tree::Simple;
+use Test::Exception;
 
 my $VERBOSE = 0;
 my $tree;
@@ -52,3 +53,7 @@ my $postalcodes = Business::DK::Postalcode::get_all_postalcodes();
 foreach my $postalcode (@{$postalcodes}) {
 	ok(Business::DK::Postalcode::_build_tree($tree, $postalcode));
 }
+
+#test 13
+$tree = Tree::Simple->new();
+dies_ok { Business::DK::Postalcode::_build_tree($tree, 'BADDATA'); } 'test with bad data';

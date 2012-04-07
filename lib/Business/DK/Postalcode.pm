@@ -111,14 +111,8 @@ sub create_regex {
 
     my $tree = Tree::Simple->new( 'ROOT', Tree::Simple->ROOT );
 
-    if ( scalar @{$postalcodes} ) {
-        foreach my $postalcode ( @{$postalcodes} ) {
-            _build_tree( $tree, $postalcode );
-        }
-    } else {
-        while (<DATA>) {
-            _build_tree( $tree, $_ );
-        }
+    foreach my $postalcode ( @{$postalcodes} ) {
+        _build_tree( $tree, $postalcode );
     }
 
     my $generated_regex = [];
@@ -195,49 +189,38 @@ sub _build_tree {
     validate_pos(
         @_,
         { type => OBJECT, isa   => 'Tree::Simple' },
-        { type => SCALAR, regex => qr/^\d+$/, },
+        { type => SCALAR, regex => qr/\d{${\NUM_OF_DIGITS_IN_POSTALCODE}}/, },
     );
 
-    if ($postalcode =~ m{
-        ^ #beginning of string
-        \d{${\NUM_OF_DIGITS_IN_POSTALCODE}} #digits in postalcode
-        $ #end of string
-        }xsm
-        )
-    {
 
-        my $oldtree = $tree;
+    my $oldtree = $tree;
 
-        my @digits = split //xsm, $postalcode, NUM_OF_DIGITS_IN_POSTALCODE;
-        for ( my $i = 0; $i < scalar @digits; $i++ ) {
+    my @digits = split //xsm, $postalcode, NUM_OF_DIGITS_IN_POSTALCODE;
+    for ( my $i = 0; $i < scalar @digits; $i++ ) {
 
-            if ( $i == 0 ) {
-                $tree = $oldtree;
-            }
+        if ( $i == 0 ) {
+            $tree = $oldtree;
+        }
 
-            my $subtree = Tree::Simple->new( $digits[$i] );
+        my $subtree = Tree::Simple->new( $digits[$i] );
 
-            my @children = $tree->getAllChildren();
-            my $child    = undef;
-            foreach my $c (@children) {
-                if ( $c->getNodeValue() == $subtree->getNodeValue() ) {
-                    $child = $c;
-                    last;
-                }
-            }
-
-            if ($child) {
-                $tree = $child;
-            } else {
-                $tree->addChild($subtree);
-                $tree = $subtree;
+        my @children = $tree->getAllChildren();
+        my $child    = undef;
+        foreach my $c (@children) {
+            if ( $c->getNodeValue() == $subtree->getNodeValue() ) {
+                $child = $c;
+                last;
             }
         }
-        $tree = $oldtree;
 
-    } else {
-        warn "$postalcode does not look like a postalcode\n";
+        if ($child) {
+            $tree = $child;
+        } else {
+            $tree->addChild($subtree);
+            $tree = $subtree;
+        }
     }
+    $tree = $oldtree;
 
     return 1;
 }
