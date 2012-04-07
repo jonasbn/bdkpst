@@ -373,6 +373,8 @@ Takes a L<Tree::Simple> object and a reference to an array of data elements.
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
+This distribution requires no special configuration or environment.
+
 =head1 DEPENDENCIES
 
 =over
@@ -380,6 +382,8 @@ Takes a L<Tree::Simple> object and a reference to an array of data elements.
 =item * L<Exporter>
 
 =item * L<Tree::Simple>
+
+=item * L<Params::Validate>
 
 =back
 
