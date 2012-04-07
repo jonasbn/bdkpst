@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use utf8;
-use Test::More qw(no_plan);
+use Test::More tests => 1283;
 
 #test 1
 BEGIN { use_ok('Business::DK::Postalcode', qw(create_regex get_all_postalcodes)); }
@@ -13,7 +13,7 @@ my @data;
 my $regex;
 
 @data = qw(
-0555	Scanning		Data Scanning A/S "Læs Ind"-service	False	1	
+0555	Scanning		Data Scanning A/S "LÃ¦s Ind"-service	False	1	
 );
 
 #test 2
@@ -24,8 +24,8 @@ is($$regex, '0555');
 
 
 @data = qw(
-0555	Scanning		Data Scanning A/S "Læs Ind"-service	False	1	
-0800	Høje Taastrup	Girostrøget 1	BG-Bank A/S	True	1	
+0555	Scanning		Data Scanning A/S "LÃ¦s Ind"-service	False	1	
+0800	HÃ¸je Taastrup	GirostrÃ¸get 1	BG-Bank A/S	True	1	
 );
 
 #test 4
@@ -41,11 +41,11 @@ foreach my $postalcode (@{get_all_postalcodes(\@data)}) {
 }
 
 @data = qw(
-0555	Scanning		Data Scanning A/S "Læs Ind"-service	False	1	
-0800	Høje Taastrup	Girostrøget 1	BG-Bank A/S	True	1	
-0877	Valby	Vigerslev Allé 18	Aller Press (konkurrencer)	False	1
-1665	København V	Valdemarsgade		False	1	
-1666	København V	Matthæusgade		False	1	
+0555	Scanning		Data Scanning A/S "LÃ¦s Ind"-service	False	1	
+0800	HÃ¸je Taastrup	GirostrÃ¸get 1	BG-Bank A/S	True	1	
+0877	Valby	Vigerslev AllÃ© 18	Aller Press (konkurrencer)	False	1
+1665	KÃ¸benhavn V	Valdemarsgade		False	1	
+1666	KÃ¸benhavn V	MatthÃ¦usgade		False	1	
 );
 
 #test 7
@@ -57,9 +57,9 @@ ok($regex = create_regex(get_all_postalcodes(\@data)));
 is($$regex, '(0(555|8(00|77))|166(5|6))');
 
 @data = qw(
-0555	Scanning		Data Scanning A/S "Læs Ind"-service	False	1	
-0877	Valby	Vigerslev Allé 18	Aller Press (konkurrencer)	False	1
-1665	København V	Valdemarsgade		False	1	
+0555	Scanning		Data Scanning A/S "LÃ¦s Ind"-service	False	1	
+0877	Valby	Vigerslev AllÃ© 18	Aller Press (konkurrencer)	False	1
+1665	KÃ¸benhavn V	Valdemarsgade		False	1	
 4100	Ringsted			True	1	
 );
 
@@ -77,17 +77,17 @@ foreach my $postalcode (@{get_all_postalcodes(\@data)}) {
 }
 
 @data = qw(
-1300	København K	Borgergade		False	1	
-1301	København K	Landgreven		False	1	
-1302	København K	Dronningens Tværgade		False	1	
-1303	København K	Hindegade		False	1	
-1304	København K	Adelgade		False	1	
-1306	København K	Kronprinsessegade		False	1	
-1307	København K	Sølvgade		False	1	
-1307	København K	Georg Brandes Plads		False	1	
-1308	København K	Klerkegade		False	1	
-1309	København K	Rosengade		False	1	
-1310	København K	Fredericiagade		False	1	
+1300	KÃ¸benhavn K	Borgergade		False	1	
+1301	KÃ¸benhavn K	Landgreven		False	1	
+1302	KÃ¸benhavn K	Dronningens TvÃ¦rgade		False	1	
+1303	KÃ¸benhavn K	Hindegade		False	1	
+1304	KÃ¸benhavn K	Adelgade		False	1	
+1306	KÃ¸benhavn K	Kronprinsessegade		False	1	
+1307	KÃ¸benhavn K	SÃ¸lvgade		False	1	
+1307	KÃ¸benhavn K	Georg Brandes Plads		False	1	
+1308	KÃ¸benhavn K	Klerkegade		False	1	
+1309	KÃ¸benhavn K	Rosengade		False	1	
+1310	KÃ¸benhavn K	Fredericiagade		False	1	
 );
 
 #test 7
