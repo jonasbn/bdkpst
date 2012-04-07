@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 use Data::Dumper;
+use utf8;
 use Test::More qw(no_plan);
 
 #test 1
@@ -12,7 +13,7 @@ my @data;
 my $regex;
 
 @data = qw(
-0555	Scanning		Data Scanning A/S "L¾s Ind"-service	False	1	
+0555	Scanning		Data Scanning A/S "Læs Ind"-service	False	1	
 );
 
 #test 2
@@ -23,8 +24,8 @@ is($$regex, '0555');
 
 
 @data = qw(
-0555	Scanning		Data Scanning A/S "L¾s Ind"-service	False	1	
-0800	H¿je Taastrup	Girostr¿get 1	BG-Bank A/S	True	1	
+0555	Scanning		Data Scanning A/S "Læs Ind"-service	False	1	
+0800	Høje Taastrup	Girostrøget 1	BG-Bank A/S	True	1	
 );
 
 #test 4
@@ -40,11 +41,11 @@ foreach my $postalcode (@{get_all_postalcodes(\@data)}) {
 }
 
 @data = qw(
-0555	Scanning		Data Scanning A/S "L¾s Ind"-service	False	1	
-0800	H¿je Taastrup	Girostr¿get 1	BG-Bank A/S	True	1	
-0877	Valby	Vigerslev AllŽ 18	Aller Press (konkurrencer)	False	1
-1665	K¿benhavn V	Valdemarsgade		False	1	
-1666	K¿benhavn V	Matth¾usgade		False	1	
+0555	Scanning		Data Scanning A/S "Læs Ind"-service	False	1	
+0800	Høje Taastrup	Girostrøget 1	BG-Bank A/S	True	1	
+0877	Valby	Vigerslev Allé 18	Aller Press (konkurrencer)	False	1
+1665	København V	Valdemarsgade		False	1	
+1666	København V	Matthæusgade		False	1	
 );
 
 #test 7
@@ -56,9 +57,9 @@ ok($regex = create_regex(get_all_postalcodes(\@data)));
 is($$regex, '(0(555|8(00|77))|166(5|6))');
 
 @data = qw(
-0555	Scanning		Data Scanning A/S "L¾s Ind"-service	False	1	
-0877	Valby	Vigerslev AllŽ 18	Aller Press (konkurrencer)	False	1
-1665	K¿benhavn V	Valdemarsgade		False	1	
+0555	Scanning		Data Scanning A/S "Læs Ind"-service	False	1	
+0877	Valby	Vigerslev Allé 18	Aller Press (konkurrencer)	False	1
+1665	København V	Valdemarsgade		False	1	
 4100	Ringsted			True	1	
 );
 
