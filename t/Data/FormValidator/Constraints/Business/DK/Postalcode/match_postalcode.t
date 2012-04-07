@@ -13,11 +13,11 @@ use lib qw(lib);
 taint_checking_ok('Is taint checking on');
 
 use_ok( 'Data::FormValidator::Constraints::Business::DK::Postalcode',
-    qw(valid_postalcode) );
+    qw(postalcode) );
 
 my $dfv_profile = {
     required           => [qw(postalcode)],
-    constraint_methods => { postalcode => valid_postalcode(), }
+    constraint_methods => { postalcode => postalcode(), }
 };
 
 my $input_hash;
@@ -48,7 +48,7 @@ ok( !$result->has_missing, 'Checking that we have no missings' );
 
 $dfv_profile = {
     required                  => [qw(postalcode)],
-    constraint_methods        => { postalcode => valid_postalcode(), },
+    constraint_methods        => { postalcode => postalcode(), },
     untaint_constraint_fields => 1,
 };
 
