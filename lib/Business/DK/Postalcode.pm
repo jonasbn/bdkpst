@@ -478,6 +478,14 @@ Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
 
 =item * L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
 
+=item * L<Business::DK::CVR>
+
+=item * L<Business::DK::CPR>
+
+=item * L<Business::DK::FI>
+
+=item * L<Business::DK::PO>
+
 =back
 
 =head1 Resources

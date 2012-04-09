@@ -11,7 +11,7 @@ use Carp qw(croak);
 
 use base 'Exporter';
 
-@EXPORT_OK = qw(valid_postalcode match_postalcode postalcode danish_postalcode);
+@EXPORT_OK = qw(valid_postalcode match_postalcode postalcode danish_postalcode postalcode_denmark);
 
 use constant VALID   => 1;
 use constant INVALID => undef;
@@ -19,45 +19,41 @@ use constant INVALID => undef;
 $VERSION = '0.01';
 
 sub postalcode {
-    return valid_postalcode(@_);
+    return sub {
+        return match_postalcode(@_);
+    }
 }
 
 sub danish_postalcode {
-    return valid_postalcode(@_);
+    return sub {
+        return match_postalcode(@_);
+    }
+}
+
+sub postalcode_denmark {
+    return sub {
+        return match_postalcode(@_);
+    }
 }
 
 sub valid_postalcode {
     return sub {
-        my $dfv = shift;
-
-        if ( !blessed $dfv || !$dfv->isa('Data::FormValidator::Results') ) {
-            croak('Must be called using \'constraint_methods\'!');
-        }
-
-        my $postalcode = $dfv->get_current_constraint_value;
-
-        if ( ref $dfv ) {
-            $dfv->name_this('valid_postalcode');
-        }
-
-        if ( validate($postalcode) ) {
-            return VALID;
-        } else {
-            return INVALID;
-        }
-        }
+        return match_postalcode(@_);
+    }
 }
 
 sub match_postalcode {
     my $dfv = shift;
 
-    # if $dfv is a ref then we are called as 'constraint_method'
-    # else as 'constraint'
-
     my $postalcode = ref $dfv ? $dfv->get_current_constraint_value : $dfv;
 
+    if ( ref $dfv ) {
+        $dfv->name_this('match_postalcode');
+    }
+
     if ( validate($postalcode) ) {
-        return $dfv->untainted_constraint_value($postalcode);
+        my ($untainted_postalcode) = $postalcode =~ m/^(\d+)$/;
+        return $dfv->untainted_constraint_value($untainted_postalcode);
     } else {
         return INVALID;
     }
@@ -156,8 +152,9 @@ The module has no known incompatibilities.
 
 =head1 BUGS AND LIMITATIONS
 
-The tests seem to reflect that untainting takes place, but the L</match_valid_postalcode> is not called at all, so
-how this untaiting is expected integrated into L<Data::FormValidator> is still not settled (SEE: TODO)
+The tests seem to reflect that untainting is taking place, but the L</match_postalcode>
+is not called at all, so how this untaiting is expected to be integrated into L<Data::FormValidator>
+is still not clear to ne (SEE: TODO)
 
 =head1 TEST AND QUALITY
 
@@ -185,6 +182,16 @@ Coverage of the test suite is at 57.6%
 
 =item * L<Business::DK::Postalcode>
 
+=item * L<Data::FormValidator::Constraints::Business::DK::CVR>
+
+=item * L<Data::FormValidator::Constraints::Business::DK::CPR>
+
+=item * L<Data::FormValidator::Constraints::Business::DK::FI>
+
+=item * L<Data::FormValidator::Constraints::Business::DK::PO>
+
+=item * L<Data::FormValidator::Constraints::Business::DK::Phonenumber>
+
 =back
 
 =head1 BUG REPORTING
@@ -203,14 +210,17 @@ Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
 
 =head1 COPYRIGHT
 
-Business-DK-Postalcode and related is (C) by Jonas B. Nielsen, (jonasbn) 2006-2011
+Data::FormValidator::Constraints::Business::DK::Postalcode is (C) by
+Jonas B. Nielsen, (jonasbn) 2006-2012
 
 =head1 LICENSE
 
-Business-DK-Postalcode and related is released under the artistic license
+Business-DK-Postalcode and related is released under the Artistic License 2.0
 
-The distribution is licensed under the Artistic License, as specified
-by the Artistic file in the standard perl distribution
-(http://www.perl.com/language/misc/Artistic.html).
+=over
+
+=item * http://www.opensource.org/licenses/Artistic-2.0
+
+=back
 
 =cut
