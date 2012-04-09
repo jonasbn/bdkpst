@@ -4,16 +4,16 @@
 
 use strict;
 use warnings;
-use Test::More tests => 13;
+use Test::More tests => 16;
 use Test::Taint;
 use Data::FormValidator;
 
 use lib qw(lib);
 
-taint_checking_ok('Is taint checking on');
+taint_checking_ok('Is taint checking on?');
 
 use_ok( 'Data::FormValidator::Constraints::Business::DK::Postalcode',
-    qw(postalcode) );
+    qw(postalcode danish_postalcode postalcode_denmark valid_postalcode) );
 
 my $dfv_profile = {
     required           => [qw(postalcode)],
@@ -38,6 +38,8 @@ ok( !$result->has_unknown, 'Checking that we have no unknowns' );
 ok( !$result->has_missing, 'Checking that we have no missings' );
 
 $input_hash = { postalcode => 2300, };
+taint_deeply($input_hash);
+tainted_ok_deeply( $input_hash, 'Checking that our data are tainted' );
 
 ok( $result = Data::FormValidator->check( $input_hash, $dfv_profile ),
     'Calling check' );
@@ -46,13 +48,28 @@ ok( !$result->has_invalid, 'Checking that we have no invalids' );
 ok( !$result->has_unknown, 'Checking that we have no unknowns' );
 ok( !$result->has_missing, 'Checking that we have no missings' );
 
+tainted_ok_deeply( $input_hash, 'Checking that our data are tainted' );
+
+# We now investigate untainting 
+
 $dfv_profile = {
     required                  => [qw(postalcode)],
     constraint_methods        => { postalcode => postalcode(), },
-    untaint_constraint_fields => 1,
+    #untaint_constraint_fields => [qw(postalcode)],
+    untaint_all_constraints   => 1,
 };
 
-ok( $result = Data::FormValidator->check( $input_hash, $dfv_profile ),
+my $input_hash2 = { postalcode => 2300, };
+
+taint_deeply($input_hash2);
+tainted_ok_deeply( $input_hash2, 'Checking that our data are tainted' );
+
+ok( $result = Data::FormValidator->check( $input_hash2, $dfv_profile ),
     'Calling check' );
 
-untainted_ok_deeply( $input_hash, 'Checking that our data are tainted' );
+use Data::Dumper;
+print STDERR Dumper $result;
+
+print STDERR $result->valid('postalcode')."\n";
+
+untainted_ok( $result->valid('postalcode'), 'Checking that our data are untainted' );

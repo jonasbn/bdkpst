@@ -36,14 +36,14 @@ sub validate_postalcode {
         $regex = ${ create_regex() };
     }
 
-    if ($postalcode =~ m{
+    if (my ($untainted_postalcode) = $postalcode =~ m{
         \A #beginning of string
-        $regex #generated regular expression
+        ($regex) #generated regular expression, capturing
         \z #end of string
         }xsm
         )
     {
-        return TRUE;
+        return $untainted_postalcode;
     } else {
         return FALSE;
     }

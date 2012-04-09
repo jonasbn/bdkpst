@@ -51,9 +51,12 @@ sub match_postalcode {
         $dfv->name_this('match_postalcode');
     }
 
-    if ( validate($postalcode) ) {
-        my ($untainted_postalcode) = $postalcode =~ m/^(\d+)$/;
-        return $dfv->untainted_constraint_value($untainted_postalcode);
+    if ( my $untainted_postalcode = validate($postalcode) ) {
+        if ( ref $dfv ) {
+            $dfv->untainted_constraint_value($untainted_postalcode);
+        }
+        
+        return $untainted_postalcode;
     } else {
         return INVALID;
     }
