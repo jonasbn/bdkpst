@@ -25,18 +25,6 @@ sub postalcode {
         }
 }
 
-sub danish_postalcode {
-    return sub {
-        return match_postalcode(@_);
-        }
-}
-
-sub postalcode_denmark {
-    return sub {
-        return match_postalcode(@_);
-        }
-}
-
 sub valid_postalcode {
     return sub {
         return match_postalcode(@_);
