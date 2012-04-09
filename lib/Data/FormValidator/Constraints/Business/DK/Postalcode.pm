@@ -11,7 +11,8 @@ use Carp qw(croak);
 
 use base 'Exporter';
 
-@EXPORT_OK = qw(valid_postalcode match_postalcode postalcode danish_postalcode postalcode_denmark);
+@EXPORT_OK
+    = qw(valid_postalcode match_postalcode postalcode danish_postalcode postalcode_denmark);
 
 use constant VALID   => 1;
 use constant INVALID => undef;
@@ -21,25 +22,25 @@ $VERSION = '0.01';
 sub postalcode {
     return sub {
         return match_postalcode(@_);
-    }
+        }
 }
 
 sub danish_postalcode {
     return sub {
         return match_postalcode(@_);
-    }
+        }
 }
 
 sub postalcode_denmark {
     return sub {
         return match_postalcode(@_);
-    }
+        }
 }
 
 sub valid_postalcode {
     return sub {
         return match_postalcode(@_);
-    }
+        }
 }
 
 sub match_postalcode {
@@ -55,7 +56,7 @@ sub match_postalcode {
         if ( ref $dfv ) {
             $dfv->untainted_constraint_value($untainted_postalcode);
         }
-        
+
         return $untainted_postalcode;
     } else {
         return INVALID;

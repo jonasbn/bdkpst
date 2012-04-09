@@ -36,7 +36,8 @@ sub validate_postalcode {
         $regex = ${ create_regex() };
     }
 
-    if (my ($untainted_postalcode) = $postalcode =~ m{
+    if (my ($untainted_postalcode)
+        = $postalcode =~ m{
         \A #beginning of string
         ($regex) #generated regular expression, capturing
         \z #end of string
@@ -191,7 +192,6 @@ sub _build_tree {
         { type => OBJECT, isa   => 'Tree::Simple' },
         { type => SCALAR, regex => qr/\d{${\NUM_OF_DIGITS_IN_POSTALCODE}}/, },
     );
-
 
     my $oldtree = $tree;
 

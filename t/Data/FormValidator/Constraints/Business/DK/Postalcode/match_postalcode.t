@@ -67,9 +67,4 @@ tainted_ok_deeply( $input_hash2, 'Checking that our data are tainted' );
 ok( $result = Data::FormValidator->check( $input_hash2, $dfv_profile ),
     'Calling check' );
 
-use Data::Dumper;
-print STDERR Dumper $result;
-
-print STDERR $result->valid('postalcode')."\n";
-
 untainted_ok( $result->valid('postalcode'), 'Checking that our data are untainted' );
