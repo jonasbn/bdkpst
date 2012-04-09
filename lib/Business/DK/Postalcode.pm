@@ -258,6 +258,17 @@ This documentation describes version 0.01
         print "Not a valid Danish postal code\n";
     }
 
+    
+    # using the untainted return value
+    use Business::DK::Postalcode qw(validate_postalcode);
+    
+    if (my $untainted = validate_postalcode($postalcode)) {
+        print "We have a valid Danish postal code: $untainted\n";
+    } else {
+        print "Not a valid Danish postal code\n";
+    }
+
+    
     # extracting a regex for validation of Danish postal codes
     use Business::DK::Postalcode qw(create_regex);
 
