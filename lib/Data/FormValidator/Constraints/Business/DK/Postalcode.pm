@@ -14,7 +14,6 @@ use base 'Exporter';
 @EXPORT_OK
     = qw(valid_postalcode match_postalcode postalcode danish_postalcode postalcode_denmark);
 
-use constant VALID   => 1;
 use constant INVALID => undef;
 
 $VERSION = '0.01';
