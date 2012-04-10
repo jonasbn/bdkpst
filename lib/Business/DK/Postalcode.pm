@@ -472,9 +472,9 @@ Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
     ----------------------------------- ------ ------ ------ ------ ------ ------
     File                                  stmt   bran   cond    sub   time  total
     ----------------------------------- ------ ------ ------ ------ ------ ------
-    blib/lib/Business/DK/Postalcode.pm    97.3   71.4   66.7  100.0   96.1   92.5
-    ...raints/Business/DK/Postalcode.pm   87.8   50.0   33.3   91.7    3.9   81.2
-    Total                                 94.7   66.7   50.0   96.8  100.0   89.3
+    blib/lib/Business/DK/Postalcode.pm   100.0   75.0   66.7  100.0   97.4   95.8
+    ...raints/Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0    2.6  100.0
+    Total                                100.0   81.2   66.7  100.0  100.0   96.9
     ----------------------------------- ------ ------ ------ ------ ------ ------
 
     $ DEVEL_COVER_OPTIONS=+inc,/Users ./Build testcover
