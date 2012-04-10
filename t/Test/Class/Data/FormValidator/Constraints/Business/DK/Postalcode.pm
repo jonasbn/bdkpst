@@ -1,5 +1,7 @@
 package Test::Class::Data::FormValidator::Constraints::Business::DK::Postalcode;
 
+# $Id$
+
 use strict;
 use warnings;
 use base qw(Test::Class);
@@ -28,7 +30,7 @@ sub setup : Test(setup) {
     return $self;
 };
 
-sub invalid_data : Test(4) {
+sub invalid_data : Test(5) {
     my $self = shift;
     
     my $dfv_profile = {
@@ -42,11 +44,9 @@ sub invalid_data : Test(4) {
         postalcode  => $self->{invalid_data},
     };
 
-    # Please note, we do not test this step since it fails indicating
-    # the failure, see result evaluation below
-    my $result = Data::FormValidator->check(
+    ok(! (my $result = Data::FormValidator->check(
         $input_hash, $dfv_profile
-    );
+    )), 'the result of check is fail');
     
     ok( !$result->success, 'The data was not conforming to the profile' );    
     
@@ -55,7 +55,32 @@ sub invalid_data : Test(4) {
     ok( !$result->has_missing, 'Checking that we have no missings' );
 };
 
-sub valid_postalcode_valid_data : Test(5) {
+sub invalid_data2 : Test(5) {
+    my $self = shift;
+    
+    my $dfv_profile = {
+        required => [qw(postalcode)],
+        constraints => {
+            postalcode => valid_postalcode(),
+        }
+    };
+
+    my $input_hash = {
+        postalcode  => $self->{invalid_data},
+    };
+
+    ok(! (my $result = Data::FormValidator->check(
+        $input_hash, $dfv_profile
+    )), 'the result of check is fail');
+    
+    ok( !$result->success, 'The data was not conforming to the profile' );    
+    
+    ok( $result->has_invalid,  'Checking that we have invalids' );
+    ok( !$result->has_unknown, 'Checking that we have no unknowns' );
+    ok( !$result->has_missing, 'Checking that we have no missings' );
+};
+
+sub valid_postalcode_valid_data : Test(8) {
     my $self = shift;
     
     my $dfv_profile = {
@@ -68,6 +93,37 @@ sub valid_postalcode_valid_data : Test(5) {
     my $input_hash = {
         postalcode  => $self->{valid_data},
     };
+    taint_deeply($input_hash);
+    tainted_ok_deeply( $input_hash, 'Checking that our data are tainted' );
+    
+    ok(my $result = Data::FormValidator->check(
+        $input_hash, $dfv_profile
+    ), 'Calling check');
+    
+    ok( $result->success, 'The data was conforming with the profile' );    
+    
+    ok( !$result->has_invalid, 'Checking that we have no invalids' );
+    ok( !$result->has_unknown, 'Checking that we have no unknowns' );
+    ok( !$result->has_missing, 'Checking that we have no missings' );
+
+    tainted_ok( $result->valid('postalcode'), 'Checking that our data are tainted' );
+};
+
+sub valid_postalcode_valid_data2 : Test(8) {
+    my $self = shift;
+    
+    my $dfv_profile = {
+        required => [qw(postalcode)],
+        constraints => {
+            postalcode => valid_postalcode(),
+        }
+    };
+
+    my $input_hash = {
+        postalcode  => $self->{valid_data},
+    };
+    taint_deeply($input_hash);
+    tainted_ok_deeply( $input_hash, 'Checking that our data are tainted' );
 
     ok(my $result = Data::FormValidator->check(
         $input_hash, $dfv_profile
@@ -78,7 +134,10 @@ sub valid_postalcode_valid_data : Test(5) {
     ok( !$result->has_invalid, 'Checking that we have no invalids' );
     ok( !$result->has_unknown, 'Checking that we have no unknowns' );
     ok( !$result->has_missing, 'Checking that we have no missings' );
+
+    tainted_ok( $result->valid('postalcode'), 'Checking that our data are tainted' );
 };
+
 
 sub postalcode_valid_data : Test(5) {
     my $self = shift;
