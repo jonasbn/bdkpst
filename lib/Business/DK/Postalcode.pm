@@ -469,15 +469,15 @@ Please see F<t/perlcriticrc> for details.
 
 Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
 
-    ----------------------------------- ------ ------ ------ ------ ------ ------
-    File                                  stmt   bran   cond    sub   time  total
-    ----------------------------------- ------ ------ ------ ------ ------ ------
-    blib/lib/Business/DK/Postalcode.pm   100.0   75.0   66.7  100.0   97.4   95.8
-    ...raints/Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0    2.6  100.0
-    Total                                100.0   81.2   66.7  100.0  100.0   96.9
-    ----------------------------------- ------ ------ ------ ------ ------ ------
+    ---------------------------- ------ ------ ------ ------ ------ ------ ------
+    File                           stmt   bran   cond    sub    pod   time  total
+    ---------------------------- ------ ------ ------ ------ ------ ------ ------
+    ...Business/DK/Postalcode.pm  100.0   87.5   33.3  100.0  100.0   99.4   97.0
+    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0    0.6  100.0
+    Total                         100.0   90.6   33.3  100.0  100.0  100.0   97.8
+    ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
-    $ DEVEL_COVER_OPTIONS=+inc,/Users ./Build testcover
+    $ ./Build testcover
 
 =head1 SEE ALSO
 
@@ -552,7 +552,7 @@ which could generate the pattern for me based on a finite data set.
 
 =head1 COPYRIGHT
 
-Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2012
+Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2013
 
 =head1 LICENSE
 

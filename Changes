@@ -1,3 +1,8 @@
 Changes file for Business-DK-Postalcode
 
 $Id: Changes,v 1.1 2006-04-23 10:21:24 jonasbn Exp $
+
+- 0.01 initial release
+    - Implements validation of Danish postal codes based on inline data set
+    - Implements hook for Data::FormValidator
+    - Please see TODO file for future road map

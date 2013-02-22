@@ -103,6 +103,10 @@ Checks whether a Postalcode is valid (see: SYNOPSIS) and L<Business::DK::Postalc
 
 Untaints a given Postalcode (see: SYNOPSIS and BUGS AND LIMITATIONS)
 
+=head2 postalcode
+
+A simple wrapper for L</match_postalcode>
+
 =head1 EXPORTS
 
 Data::FormValidator::Constraints::Business::DK::Postalcode exports on request:

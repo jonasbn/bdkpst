@@ -43,4 +43,6 @@
 \.komodoproject
 docs
 prototypes
+notes
 ^MYMETA.yml$
+^MYMETA\.json$
