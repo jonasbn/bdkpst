@@ -20,7 +20,7 @@ our @postal_data = <DATA>;
 
 my $regex;
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 @EXPORT_OK
     = qw(get_all_postalcodes get_all_data create_regex validate_postalcode validate);
 
@@ -235,7 +235,7 @@ Business::DK::Postalcode - validation of Danish postal codes
 
 =head1 VERSION
 
-This documentation describes version 0.01
+This documentation describes version 0.02
 
 =head1 SYNOPSIS
 

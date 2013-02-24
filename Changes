@@ -2,7 +2,13 @@ Changes file for Business-DK-Postalcode
 
 $Id: Changes,v 1.1 2006-04-23 10:21:24 jonasbn Exp $
 
-- 0.01 initial release
+- 0.02 bug fix release 2013.02.24, update not necessary
+    - Brushing up the requirements, based on a report on test failure from
+      CPAN testers:
+      http://www.cpantesters.org/cpan/report/448ad398-6c3c-1014-988a-6778d871b27e
+      [BDKPST-16]
+
+- 0.01 initial release 2013.02.22
     - Implements validation of Danish postal codes based on inline data set
     - Implements hook for Data::FormValidator
     - Please see TODO file for future road map
