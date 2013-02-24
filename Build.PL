@@ -21,6 +21,7 @@ my $build = Module::Build->new(
         'Test::Kwalitee'      => '0',
         'Test::Perl::Critic'  => '0',
         'Test::Prereq::Build' => '0',
+        'Test::Class'         => '0',
     },
     requires => {
         'Exporter'         => '0',       #core
