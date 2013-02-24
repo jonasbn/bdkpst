@@ -21,12 +21,18 @@ my $build = Module::Build->new(
         'Test::Kwalitee'      => '0',
         'Test::Perl::Critic'  => '0',
         'Test::Prereq::Build' => '0',
+        'Test::Class'         => '0',
+        'Data::Dumper'        => '0', #core
+        'File::Spec'          => '0',
+        'English'             => '0', #core
+        'Env'                 => '0', #core
     },
     requires => {
         'Exporter'         => '0',       #core
         'Carp'             => '0',       #core
         'Tree::Simple'     => '0',
         'Params::Validate' => '0',
+        'Scalar::Util'     => '0',
     },
     meta_merge => {
         resources => {
