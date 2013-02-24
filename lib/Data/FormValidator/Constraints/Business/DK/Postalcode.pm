@@ -58,7 +58,7 @@ __END__
 
 =head1 NAME
 
-Data::FormValidator::Constraints::Business::DK::Postalcode - constraint for Danish Postalcodes
+Data::FormValidator::Constraints::Business::DK::Postalcode - constraint for Danish Postal codes
 
 =head1 VERSION
 
