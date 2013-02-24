@@ -22,6 +22,10 @@ my $build = Module::Build->new(
         'Test::Perl::Critic'  => '0',
         'Test::Prereq::Build' => '0',
         'Test::Class'         => '0',
+        'Data::Dumper'        => '0', #core
+        'File::Spec'          => '0',
+        'English'             => '0', #core
+        'Env'                 => '0', #core
     },
     requires => {
         'Exporter'         => '0',       #core
