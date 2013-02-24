@@ -1,4 +1,5 @@
 # http://search.cpan.org/~bdfoy/Test-Prereq/lib/Build.pm
+# https://logiclab.jira.com/wiki/display/OPEN/Test-Prereq
 
 # $Id$
 
