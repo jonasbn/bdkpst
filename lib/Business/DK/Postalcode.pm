@@ -567,7 +567,7 @@ Business-DK-Postalcode and related is released under the Artistic License 2.0
 =cut
 
 __DATA__
-0555    Scanning        "Data Scanning A/S, ""Læs Ind""-service"    True    1
+0555    Scanning        Data Scanning A/S   True    1
 0800    Høje Taastrup   Girostrøget 1   BG-Bank A/S True    1
 0877    København C Havneholmen 33  Aller Press (konkurrencer)  False   1
 0892    Sjælland USF P  Ufrankerede svarforsendelser        False   1
