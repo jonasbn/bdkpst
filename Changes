@@ -2,6 +2,9 @@ Changes file for Business-DK-Postalcode
 
 $Id: Changes,v 1.1 2006-04-23 10:21:24 jonasbn Exp $
 
+- 0.03 data release 2013.02.26, update recommended
+	- Updated with data from 10th. january 2013 [BDKPST-18]
+
 - 0.02 bug fix release 2013.02.24, update not necessary
     - Brushing up the requirements, based on a report on test failure from
       CPAN testers:
