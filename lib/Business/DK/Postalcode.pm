@@ -572,6 +572,7 @@ __DATA__
 0877    København C Havneholmen 33  Aller Press (konkurrencer)  False   1
 0892    Sjælland USF P  Ufrankerede svarforsendelser        False   1
 0893    Sjælland USF B  Ufrankerede svarforsendelser        False   1
+0894    Udbetaling      (Post til scanning) False   1
 0897    eBrevsprækken       (Post til scanning) False   1
 0899    Kommuneservice      (Post til scanning) False   1
 0900    København C     Københavns Postcenter + erhvervskunder  False   1
@@ -580,6 +581,7 @@ __DATA__
 0918    Københavns Pakke BRC        (Returpakker)   False   1
 0919    Returprint BRC          False   1
 0929    København C Ufrankerede svarforsendelser        False   1
+0960    Internationalt Postcenter       (Internt)   False   1
 0999    København C     DR Byen False   1
 1000    København K Købmagergade 33 Købmagergade Postkontor False   1
 1001    København K Postboks        False   1
@@ -671,7 +673,7 @@ __DATA__
 1131    København K Tornebuskegade      False   1
 1140    København K Møntergade 19   Dagbladet Børsen    False   1
 1147    København K Pilestræde 34   Berlingske Tidende  False   1
-1148    København K Vognmagergade 11    Gutenberghus    False   1
+1148    København K Vognmagergade 11    Egmont  False   1
 1150    København K Købmagergade        False   1
 1151    København K Valkendorfsgade     False   1
 1152    København K Løvstræde       False   1
@@ -941,6 +943,8 @@ __DATA__
 1508    København V Postboks        False   1
 1509    København V Postboks        False   1
 1510    København V Postboks        False   1
+1512    Returpost       (Internt)   False   1
+1513    Centraltastning     (Internt)   False   1
 1532    København V Kystvejen 26, 2770 Kastrup  Internationalt Postcenter, returforsendelser + consignment  False   1
 1533    København V Kystvejen 26, 2770 Kastrup  Internationalt Postcenter   False   1
 1550    København V Bag Rådhuset        False   1
@@ -1111,7 +1115,7 @@ __DATA__
 1780    København V     Erhvervskunder  False   1
 1782    København V Ufrankerede svarforsendelser        False   1
 1785    København V Rådhuspladsen 33 og 37  Politiken og Ekstrabladet   False   1
-1786    København V Vesterbrogade 8 Unibank False   1
+1786    København V Vesterbrogade 8 Nordea  False   1
 1787    København V H.C. Andersens Boulevard 18 Dansk Industri  False   1
 1790    København V     Erhvervskunder  False   1
 1799    København V Bag Elefanterne     False   1
@@ -1155,7 +1159,7 @@ __DATA__
 1827    Frederiksberg C Mynstersvej     False   1
 1828    Frederiksberg C Martensens Alle     False   1
 1829    Frederiksberg C Madvigs Alle        False   1
-1835    Frederiksberg C Postboks    Inkl. Frederiksberg C Postkontor    False   1
+1835    Frederiksberg C Postboks        False   1
 1850    Frederiksberg C Gammel Kongevej 85-179 og 60-178        False   1
 1851    Frederiksberg C Nyvej       False   1
 1852    Frederiksberg C Amicisvej       False   1
@@ -1235,6 +1239,7 @@ __DATA__
 1974    Frederiksberg C Julius Thomsens Gade ulige nr.      False   1
 2000    Frederiksberg           False   1
 2100    København Ø         False   1
+2150    Nordhavn            False   1
 2200    København N         False   1
 2300    København S         False   1
 2400    København NV            False   1
