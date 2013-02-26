@@ -31,11 +31,11 @@ sub test_validate : Test(5) {
         }
     }
     
-    is(scalar @invalids, 8815);
-    is(scalar @valids, 1184);
+    is(scalar @invalids, 8810);
+    is(scalar @valids, 1189);
 }
 
-sub test_create_regex : Test(2333) {
+sub test_create_regex : Test(3695) {
     my $postalcodes = get_all_postalcodes();
     my $regex = create_regex($postalcodes);
 
@@ -44,7 +44,7 @@ sub test_create_regex : Test(2333) {
     }   
 };
 
-sub test_build_tree : Test(1286) {
+sub test_build_tree : Test(1291) {
         
     my $tree = Tree::Simple->new();
     
