@@ -1685,6 +1685,7 @@ __DATA__
 7993    Sydjylland/Fyn USF B    Ufrankerede svarforsendelser        True    1
 7996    Fakturaservice      (Post til scanning) True    1
 7997    Fakturascanning     (Post til scanning) True    1
+7998    Statsservice        (Post til scanning) True    1
 7999    Kommunepost     (Post til scanning) True    1
 8000    Aarhus C            True    1
 8100    Aarhus C    Postboks        True    1

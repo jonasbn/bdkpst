@@ -14,4 +14,4 @@ my $postalcodes_ref;
 ok($postalcodes_ref = get_all_postalcodes());
 
 #test 3
-is(scalar(@{$postalcodes_ref}), 1283);
+is(scalar(@{$postalcodes_ref}), 1254);
