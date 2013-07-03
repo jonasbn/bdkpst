@@ -2,7 +2,14 @@ Changes file for Business-DK-Postalcode
 
 $Id: Changes,v 1.1 2006-04-23 10:21:24 jonasbn Exp $
 
-- 0.04 data release 2013.02.26, update recommended
+- 0.05 bug fix release 2013.07.27, update not necessary
+    - Adressing test assertions, based on a reports on test failure from CPAN testers
+		- MSWin32-x86-multi-thread / 5.16.0:
+		  FAIL http://www.cpantesters.org/cpan/report/65b2a6f9-7559-1014-ba4a-88b5233f278b
+		- i386-freebsd / 5.18.0:
+          FAIL http://www.cpantesters.org/cpan/report/cbb48d5c-e35a-11e2-9495-f1a5bb320383
+
+- 0.04 data release 2013.07.26, update recommended
 	- Updated with data from 19th. june 2013 [BDKPST-19]
 
 - 0.03 data release 2013.02.26, update recommended
