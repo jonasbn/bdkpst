@@ -20,7 +20,7 @@ our @postal_data = <DATA>;
 
 my $regex;
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 @EXPORT_OK
     = qw(get_all_postalcodes get_all_data create_regex validate_postalcode validate);
 
