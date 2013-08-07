@@ -2,6 +2,9 @@
 
 # $Id: Build.PL,v 1.3 2008-09-09 19:17:21 jonasbn Exp $
 
+use strict;
+use warnings;
+
 use Module::Build;
 
 my $build = Module::Build->new(
