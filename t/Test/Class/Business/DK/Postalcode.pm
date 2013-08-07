@@ -31,8 +31,8 @@ sub test_validate : Test(5) {
         }
     }
     
-    is(scalar @invalids, 8809);
-    is(scalar @valids, 1190);
+    is(scalar @invalids, 8808);
+    is(scalar @valids, 1191);
 }
 
 sub test_create_regex : Test(3695) {
@@ -44,7 +44,7 @@ sub test_create_regex : Test(3695) {
     }   
 };
 
-sub test_build_tree : Test(1292) {
+sub test_build_tree : Test(1293) {
         
     my $tree = Tree::Simple->new();
     
