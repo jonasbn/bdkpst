@@ -6,7 +6,17 @@ Project site changelog:
 
 http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel
 
-0.06 2013 2013-07-27
+0.07 2013-08-07
+
+- Data release, update recommended
+
+- Updated with data from 9th. july 2013 [BDKPST-22]
+
+- Added changes.t implementing Test::CPAN::Changes test. Introducing dependency
+  on Test::CPAN::Changes [BDKPST-23]
+
+
+0.06 2013-07-27
 
 - Maintenance release, update not necessary
 
