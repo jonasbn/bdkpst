@@ -2,7 +2,11 @@
 
 # $Id: Build.PL,v 1.3 2008-09-09 19:17:21 jonasbn Exp $
 
+use strict;
+use warnings;
+
 use Module::Build;
+
 my $build = Module::Build->new(
     dist_author       => 'Jonas B. Nielsen, (jonasbn) <jonasbn@cpan.org>',
     module_name       => 'Business::DK::Postalcode',
@@ -22,6 +26,7 @@ my $build = Module::Build->new(
         'Test::Perl::Critic'  => '0',
         'Test::Prereq::Build' => '0',
         'Test::Class'         => '0',
+        'Test::CPAN::Changes' => '0',
         'Data::Dumper'        => '0', #core
         'File::Spec'          => '0',
         'English'             => '0', #core
