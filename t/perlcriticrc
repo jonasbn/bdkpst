@@ -33,3 +33,6 @@ exclude_functions = print
 [-Documentation::RequirePodLinksIncludeText]
 
 [-ControlStructures::ProhibitCStyleForLoops]
+
+[-Bangs::ProhibitFlagComments]
+
