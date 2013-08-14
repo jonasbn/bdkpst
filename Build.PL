@@ -51,5 +51,7 @@ my $build = Module::Build->new(
             ProjectWiki => 'http://logiclab.jira.com/wiki/display/BDKPST/Home',
         }
     },
+    add_to_cleanup => [ qw(MANIFEST MANIFEST.bak README *.gz META.*) ],
 );
+
 $build->create_build_script();
