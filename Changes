@@ -6,6 +6,17 @@ Project site changelog:
 
 http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel
 
+HEAD
+
+- Improved cleaning step in Build.PL [BDKPST-26]
+
+  https://logiclab.jira.com/browse/BDKPST-26
+
+- Added kwalitee.t implementing Test::Kwalitee tests [BDKPST-27]
+
+  https://logiclab.jira.com/browse/BDKPST-27
+
+
 0.07 2013-08-07
 
 - Data release, update recommended
@@ -13,7 +24,7 @@ http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.sys
 - Updated with data from 9th. july 2013 [BDKPST-22]
 
 - Added changes.t implementing Test::CPAN::Changes test. Introducing dependency
-  on Test::CPAN::Changes [BDKPST-23]
+  on Test::CPAN::Changes, see also BDKPST-21 [BDKPST-23]
 
 
 0.06 2013-07-27
