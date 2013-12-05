@@ -1,0 +1,286 @@
+NAME
+    Business::DK::Postalcode - validation of Danish postal codes
+
+VERSION
+    This documentation describes version 0.03
+
+SYNOPSIS
+        # basic validation of string
+        use Business::DK::Postalcode qw(validate);
+    
+        if (validate($postalcode)) {
+            print "We have a valid Danish postalcode\n";
+        } else {
+            print "Not a valid Danish postalcode\n";
+        }
+
+
+        # basic validation of string, using less intrusive subroutine
+        use Business::DK::Postalcode qw(validate_postalcode);
+    
+        if (validate_postalcode($postalcode)) {
+            print "We have a valid Danish postal code\n";
+        } else {
+            print "Not a valid Danish postal code\n";
+        }
+
+    
+        # using the untainted return value
+        use Business::DK::Postalcode qw(validate_postalcode);
+    
+        if (my $untainted = validate_postalcode($postalcode)) {
+            print "We have a valid Danish postal code: $untainted\n";
+        } else {
+            print "Not a valid Danish postal code\n";
+        }
+
+    
+        # extracting a regex for validation of Danish postal codes
+        use Business::DK::Postalcode qw(create_regex);
+
+        my $regex_ref = ${create_regex()};
+
+        if ($postalcode =~ m/$regex/) {
+            print "We have a valid Danish postalcode\n";
+        } else {
+            print "Not a valid Danish postalcode\n";
+        }
+
+
+        # All postal codes for use outside this module
+        use Business::DK::Postalcode qw(get_all_postalcodes);
+    
+        my @postalcodes = @{get_all_postalcodes()};
+
+    
+        # All postal codes and data for use outside this module
+        use Business::DK::Postalcode qw(get_all_data);
+    
+        my $postalcodes = get_all_data();
+    
+        foreach (@{postalcodes}) {
+            printf
+                'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
+        }
+
+FEATURES
+    *   Providing list of Danish postal codes and related area names
+
+DESCRIPTION
+  Data
+    *   city
+
+    *   street/desc
+
+    *   company
+
+    *   province
+
+    *   country
+
+SUBROUTINES AND METHODS
+  validate
+    A simple validator for Danish postal codes.
+
+    Takes a string representing a possible Danish postal code and returns
+    either 1 or 0 indicating either validity or invalidity.
+
+  validate_postalcode
+    A less intrusive subroutine for import. Acts as a wrapper of "validate".
+
+  get_all_data
+    Returns a reference to a a list of strings, separated by tab characters.
+    See "Data" for a description of the fields.
+
+  get_all_postalcodes
+    Returns a reference to an array containing all valid Danish postal
+    codes.
+
+  create_regex
+    This method returns a generated regular expression for validation of a
+    string representing a possible Danish postal code.
+
+PRIVATE SUBROUTINES AND METHODS
+   _retrieve_postalcode
+    Internal method
+
+   _build_tree
+    Internal method to assist create_regex in generating the regular
+    expression.
+
+    Takes a Tree::Simple object and a reference to an array of data
+    elements.
+
+DIAGNOSTICS
+CONFIGURATION AND ENVIRONMENT
+    This distribution requires no special configuration or environment.
+
+DEPENDENCIES
+    *   Exporter
+
+    *   Tree::Simple
+
+    *   Params::Validate
+
+BUGS AND LIMITATIONS
+    There are no known bugs at this time.
+
+BUG REPORTING
+    Please report issues via CPAN RT:
+
+      http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode
+
+    or by sending mail to
+
+      bug-Business-DK-Postalcode@rt.cpan.org
+
+INCOMPATIBILITIES
+    There are no known incompatibilities at this time.
+
+TEST AND QUALITY
+  Perl::Critic
+    This version of the code is complying with Perl::Critic a severity: 1
+
+    The following policies have been disabled.
+
+    *   Perl::Critic::Policy::Variables::ProhibitPackageVars
+
+        Disabled locally using 'no critic' pragma.
+
+        The module uses a package variable as a cache, this might not prove
+        usefull in the long term, so when this is adressed and this might
+        address this policy.
+
+    *   Perl::Critic::Policy::Subroutines::RequireArgUnpacking
+
+        Disabled locally using 'no critic' pragma.
+
+        This policy is violated when using Params::Validate at some point
+        this will be investigated further, this might be an issue due to
+        referral to @_.
+
+    *   Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatchin
+        g
+
+        Disabled locally using 'no critic' pragma.
+
+        This is disabled for some two basic regular expressions.
+
+    *   Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting
+
+        Disabled locally using 'no critic' pragma.
+
+        This is disabled for some two basic regular expressions.
+
+    *   Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything
+
+        Disabled locally using 'no critic' pragma.
+
+        This is disabled for some two basic regular expressions.
+
+    *   Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma
+
+        Constants are good, - see the link below.
+
+    *   <https://logiclab.jira.com/wiki/display/OPEN/Perl-Critic-Policy-Valu
+        esAndExpressions-ProhibitConstantPragma>
+
+    *   Perl::Critic::Policy::Documentation::RequirePodAtEnd
+
+        This one interfers with our DATA section, perhaps DATA should go
+        before POD, well it is not important so I have disabled the policy.
+
+    *   Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops
+
+        This would require a re-write of part of the code. Currently I rely
+        on use of the iterator in the for loop, so it would require
+        significant changes.
+
+    *   Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText
+
+        Temporarily disabled, marked for follow-up
+
+    Please see t/perlcriticrc for details.
+
+  TEST COVERAGE
+    Test coverage report is generated using Devel::Cover via Module::Build.
+
+        ---------------------------- ------ ------ ------ ------ ------ ------ ------
+        File                           stmt   bran   cond    sub    pod   time  total
+        ---------------------------- ------ ------ ------ ------ ------ ------ ------
+        ...Business/DK/Postalcode.pm  100.0   87.5   33.3  100.0  100.0   99.4   97.0
+        ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0    0.6  100.0
+        Total                         100.0   90.6   33.3  100.0  100.0  100.0   97.8
+        ---------------------------- ------ ------ ------ ------ ------ ------ ------
+
+        $ ./Build testcover
+
+SEE ALSO
+    *   Geo::Postcodes::DK
+
+    *   <http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendrin
+        ger_postnumre_1.htm>
+
+    *   <https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
+
+    *   Business::DK::CVR
+
+    *   Business::DK::CPR
+
+    *   Business::DK::FI
+
+    *   Business::DK::PO
+
+Resources
+    *   Website: <http://logicLAB.jira.com/browse/BDKPST>
+
+    *   Bugtracker:
+        <http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode>
+
+    *   SVN repository: <http://logicLAB.jira.com/svn/BDKPST>
+
+TODO
+    Please see the project TODO file.
+
+AUTHOR
+    Jonas B. Nielsen, (jonasbn) - "<jonasbn@cpan.org>"
+
+MOTIVATION
+    Back in 2006 I was working on a project where I needed to do some
+    presentation and validation of Danish postal codes. I looked at
+    Regex::Common::Zip (see:
+    <https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->)
+
+    The implementation at the time of writing looked as follows:
+
+        Denmark     =>  "(?k:(?k:[1-9])(?k:[0-9])(?k:[0-9]{2}))",
+        # Postal codes of the form: 'DDDD', with the first
+        # digit representing the distribution region, the
+        # second digit the distribution district. Postal
+        # codes do not start with a zero. Postal codes 
+        # starting with '39' are in Greenland.
+
+    This pattern holds some issues:
+
+    *   Doing some fast math you can see that you will allow 9000 valid
+        postal codes where the exact number is 1254 and 0 is actually
+        allowed for a set of postal codes used by the postal service in
+        Denmark
+
+    *   Greenland specified as starting with '39' is not a part of Denmark,
+        but should be under Greenland and the ISO code 'GL'
+
+    So I decided to write a regular expression, which would be better than
+    the one above, but I did not want to maintain it I wanted to write a
+    piece of software, which could generate the pattern for me based on a
+    finite data set.
+
+COPYRIGHT
+    Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2013
+
+LICENSE
+    Business-DK-Postalcode and related is released under the Artistic
+    License 2.0
+
+    *   http://www.opensource.org/licenses/Artistic-2.0
+
