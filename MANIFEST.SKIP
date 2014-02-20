@@ -47,3 +47,6 @@ prototypes
 notes
 ^MYMETA.yml$
 ^MYMETA\.json$
+
+# Github - Travis integration
+\.travis\.yml
