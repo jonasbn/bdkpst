@@ -13,8 +13,19 @@ use Env qw($TEST_VERBOSE);
 sub startup : Test(startup => 1) {
     my $self = shift;
 
-    use_ok( 'Business::DK::Postalcode', qw(validate_postalcode get_all_postalcodes create_regex) );
+    use_ok( 'Business::DK::Postalcode', qw(validate_postalcode get_all_postalcodes create_regex get_all_data) );
 };
+
+sub test_get_all_postalcodes : Test(2) {
+    ok(my $postalcodes_ref = get_all_postalcodes(), 'calling get all postalcodes');
+    is(scalar(@{$postalcodes_ref}), 1285), 'asserting number of postalcodes';
+}
+
+sub test_get_all_data : Test(2) {
+    ok(my $postalcodes_ref = get_all_data(), 'calling get_all_data');
+
+    is(scalar(@{$postalcodes_ref}), 1285, 'asserting number of postalcodes');    
+}
 
 sub test_validate : Test(5) {
     my $self = shift;
