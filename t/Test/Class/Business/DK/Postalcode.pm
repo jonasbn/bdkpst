@@ -24,7 +24,7 @@ sub test_get_all_postalcodes : Test(2) {
 sub test_get_all_data : Test(2) {
     ok(my $postalcodes_ref = get_all_data(), 'calling get_all_data');
 
-    is(scalar(@{$postalcodes_ref}), 1285, 'asserting number of postalcodes');    
+    is(scalar(@{$postalcodes_ref}), 1285, 'asserting number of postalcodes');
 }
 
 sub test_validate : Test(5) {
@@ -32,7 +32,7 @@ sub test_validate : Test(5) {
 
     my @invalids = qw();
     my @valids = qw();
-    
+
     foreach (1 .. 9999) {
         my $number = sprintf '%04d', $_;
         if (not validate_postalcode($number)) {
@@ -41,7 +41,7 @@ sub test_validate : Test(5) {
             push @valids, $number;
         }
     }
-    
+
     is(scalar @invalids, 8808);
     is(scalar @valids, 1191);
 }
@@ -52,48 +52,48 @@ sub test_create_regex : Test(3695) {
 
     foreach my $postalcode (@{$postalcodes}) {
         ok($postalcode =~ m/$$regex/cg, "$postalcode tested");
-    }   
+    }
 };
 
 sub test_build_tree : Test(1293) {
-        
+
     my $tree = Tree::Simple->new();
-    
+
     ok(Business::DK::Postalcode::_build_tree($tree, 4321));
-    
+
     is($tree->size, 5);
-    
+
     if ($TEST_VERBOSE) {
         $tree->traverse(sub {
             my ($_tree) = @_;
             print (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
         });
     }
-    
+
     $tree = Tree::Simple->new();
-    
+
     my @data = qw(0800 0500 0911 0577);
     foreach my $postalcode (@data) {
         ok(Business::DK::Postalcode::_build_tree($tree, $postalcode));
     }
-    
+
     is($tree->size, 13);
-    
+
     if ($TEST_VERBOSE) {
         $tree->traverse(sub {
             my ($_tree) = @_;
             print (("\t" x $_tree->getDepth()), $_tree->getNodeValue(), "\n");
         });
     }
-    
+
     $tree = Tree::Simple->new();
-    
+
     my $postalcodes = Business::DK::Postalcode::get_all_postalcodes();
-    
+
     foreach my $postalcode (@{$postalcodes}) {
         ok(Business::DK::Postalcode::_build_tree($tree, $postalcode));
     }
-    
+
     $tree = Tree::Simple->new();
     dies_ok { Business::DK::Postalcode::_build_tree($tree, 'BADDATA'); } 'test with bad data';
 };
