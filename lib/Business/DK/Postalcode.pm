@@ -266,7 +266,7 @@ This documentation describes version 0.03
 
     # basic validation of string
     use Business::DK::Postalcode qw(validate);
-    
+
     if (validate($postalcode)) {
         print "We have a valid Danish postalcode\n";
     } else {
@@ -276,24 +276,24 @@ This documentation describes version 0.03
 
     # basic validation of string, using less intrusive subroutine
     use Business::DK::Postalcode qw(validate_postalcode);
-    
+
     if (validate_postalcode($postalcode)) {
         print "We have a valid Danish postal code\n";
     } else {
         print "Not a valid Danish postal code\n";
     }
 
-    
+
     # using the untainted return value
     use Business::DK::Postalcode qw(validate_postalcode);
-    
+
     if (my $untainted = validate_postalcode($postalcode)) {
         print "We have a valid Danish postal code: $untainted\n";
     } else {
         print "Not a valid Danish postal code\n";
     }
 
-    
+
     # extracting a regex for validation of Danish postal codes
     use Business::DK::Postalcode qw(create_regex);
 
@@ -308,15 +308,15 @@ This documentation describes version 0.03
 
     # All postal codes for use outside this module
     use Business::DK::Postalcode qw(get_all_postalcodes);
-    
+
     my @postalcodes = @{get_all_postalcodes()};
 
-    
+
     # All postal codes and data for use outside this module
     use Business::DK::Postalcode qw(get_all_data);
-    
+
     my $postalcodes = get_all_data();
-    
+
     foreach (@{postalcodes}) {
         printf
             'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
@@ -327,7 +327,7 @@ This documentation describes version 0.03
 
 =over
 
-=item * Providing list of Danish postal codes and related area names 
+=item * Providing list of Danish postal codes and related area names
 
 =back
 
@@ -555,7 +555,7 @@ The implementation at the time of writing looked as follows:
     # Postal codes of the form: 'DDDD', with the first
     # digit representing the distribution region, the
     # second digit the distribution district. Postal
-    # codes do not start with a zero. Postal codes 
+    # codes do not start with a zero. Postal codes
     # starting with '39' are in Greenland.
 
 This pattern holds some issues:
