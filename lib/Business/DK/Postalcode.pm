@@ -22,7 +22,7 @@ my $regex;
 
 $VERSION = '0.07';
 @EXPORT_OK
-    = qw(get_all_postalcodes get_all_data create_regex validate_postalcode validate);
+    = qw(get_all_postalcodes get_all_cities get_all_data create_regex validate_postalcode validate);
 
 # TODO: we have to disable this policy here for some reason?
 ## no critic (Subroutines::RequireArgUnpacking)
@@ -61,6 +61,15 @@ sub get_all_data {
     return \@postal_data;
 }
 
+sub get_all_cities {
+    my @cities = ();
+
+    _retrieve_cities( \@cities );
+
+    return \@cities;
+
+}
+
 sub get_all_postalcodes {
     my ($parameter_data) = @_;
     my @postalcodes = ();
@@ -76,6 +85,22 @@ sub get_all_postalcodes {
     }
 
     return \@postalcodes;
+}
+
+sub _retrieve_cities {
+    my ( $cities ) = @_;
+
+    #this is used internally, but we stick it in here just to make sure we
+    #get what we want
+    validate_pos( @_, { type => ARRAYREF }, );
+
+    foreach my $line (@postal_data) {
+        my @entries = split /\t/x, $line, NUM_OF_DATA_ELEMENTS;
+
+        push @{$cities}, $entries[1];
+    }
+
+    return;
 }
 
 sub _retrieve_postalcode {
