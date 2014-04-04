@@ -8,6 +8,8 @@ http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.sys
 
 HEAD
 
+- Added new subroutine get_all_cities
+
 - Improved cleaning step in Build.PL [BDKPST-26]
 
   https://logiclab.jira.com/browse/BDKPST-26
