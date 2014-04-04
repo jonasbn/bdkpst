@@ -111,7 +111,7 @@ sub _retrieve_postalcode {
     validate_pos( @_, { type => ARRAYREF }, { type => SCALAR }, );
 
     ## no critic qw(RegularExpressions::RequireLineBoundaryMatching RegularExpressions::RequireExtendedFormatting RegularExpressions::RequireDotMatchAnything)
-    my @entries = split /(\t|\s{2,})/x, $string, NUM_OF_DATA_ELEMENTS;
+    my @entries = split /\t/x, $string, NUM_OF_DATA_ELEMENTS;
 
     if ($entries[0] =~ m{
         ^ #beginning of string
