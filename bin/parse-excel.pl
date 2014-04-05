@@ -44,15 +44,23 @@ for my $worksheet ( $workbook->worksheets() ) {
         my $record;
 
         my $string = '';
+        my $sep = '';
         for my $col ( $col_min .. $col_max ) {
 
             my $cell = $worksheet->get_cell( $row, $col );
             #print STDERR "Retrieving cell: $row, $col\n";
 
+            if ($col == $col_max) {
+                $sep = "\n";
+            } else {
+                $sep = "\t";
+            }
+
             if (not $cell) {
-                $string .= "\t";
+                $string .= $sep;
                 next;
             }
+
 
             if ($col == 5) {
 
@@ -65,12 +73,8 @@ for my $worksheet ( $workbook->worksheets() ) {
                     next ROW;
                 }
             }
-            $string .= $cell->value || '';
-            if ($col == $col_max) {
-                $string .= "\n";
-            } else {
-                $string .= "\t";
-            }
+
+            $string .= ($cell->value || '' ). $sep;
         }
         if (any { $string eq decode('UTF-8', $_) } @{$postalcodes}) {
             if ($verbose) {
@@ -78,9 +82,6 @@ for my $worksheet ( $workbook->worksheets() ) {
             }
         } else {
             print "new record: ", encode('UTF-8', $string);
-            if ($string !~ m/\n$/) {
-                print "\n";
-            }
         }
     }
 
