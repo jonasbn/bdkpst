@@ -44,20 +44,20 @@ for my $worksheet ( $workbook->worksheets() ) {
         my $record;
 
         my $string = '';
-        my $sep = '';
+        my $seperator = '';
         for my $col ( $col_min .. $col_max ) {
 
             my $cell = $worksheet->get_cell( $row, $col );
             #print STDERR "Retrieving cell: $row, $col\n";
 
             if ($col == $col_max) {
-                $sep = "\n";
+                $seperator = "\n";
             } else {
-                $sep = "\t";
+                $seperator = "\t";
             }
 
             if (not $cell) {
-                $string .= $sep;
+                $string .= $seperator;
                 next;
             }
 
@@ -74,7 +74,7 @@ for my $worksheet ( $workbook->worksheets() ) {
                 }
             }
 
-            $string .= ($cell->value || '' ). $sep;
+            $string .= ($cell->value || '' ). $seperator;
         }
         if (any { $string eq decode('UTF-8', $_) } @{$postalcodes}) {
             if ($verbose) {
