@@ -6,20 +6,29 @@ use Spreadsheet::ParseExcel;
 use Encode qw(from_to decode encode);
 use FindBin;
 use lib "$FindBin::Bin/../lib";
-use Business::DK::Postalcode qw(get_all_data);
 use Getopt::Long;
 use List::MoreUtils qw(any);
+use Module::Load; #load
 
 use utf8;
 
 my $file;
 my $verbose;
-my $country = 1;
+my $country = 'DK';
+
+my %countries = (
+    DK => 1,
+    FO => 2,
+    GL => 3,
+);
 
 GetOptions ('file=s'   => \$file,      # string
             'verbose'  => \$verbose,   # flag
-            'country'  => \$country)
+            'country=s'  => \$country)
 or die("Error in command line arguments\n");
+
+#translating to internal representation
+my $country_internal = $countries{$country};
 
 my $parser = Spreadsheet::ParseExcel->new();
 
@@ -29,11 +38,10 @@ if ( not defined $workbook ) {
     die $parser->error(), ".\n";
 }
 
-my $postalcodes = get_all_data;
+my $module = 'Business::'.$country.'::Postalcode';
+load $module, 'get_all_data';
 
-foreach my $p (@{$postalcodes}) {
-    $p =~ s/\t/\t/g;
-}
+my $postalcodes = get_all_data();
 
 for my $worksheet ( $workbook->worksheets() ) {
 
@@ -48,7 +56,6 @@ for my $worksheet ( $workbook->worksheets() ) {
         for my $col ( $col_min .. $col_max ) {
 
             my $cell = $worksheet->get_cell( $row, $col );
-            #print STDERR "Retrieving cell: $row, $col\n";
 
             if ($col == $col_max) {
                 $seperator = "\n";
@@ -66,9 +73,9 @@ for my $worksheet ( $workbook->worksheets() ) {
 
                 my $col_country = $cell->value();
 
-                if ($col_country ne $country) {
+                if ($col_country ne $country_internal) {
                     if ($verbose) {
-                        print STDERR "Skipping row ($row)\n";
+                        print STDERR "Skipping row ($row), another country\n";
                     }
                     next ROW;
                 }
@@ -78,10 +85,10 @@ for my $worksheet ( $workbook->worksheets() ) {
         }
         if (any { $string eq decode('UTF-8', $_) } @{$postalcodes}) {
             if ($verbose) {
-                print "we know record: ", encode('UTF-8', $string);
+                print "Known record: ", encode('UTF-8', $string);
             }
         } else {
-            print "new record: ", encode('UTF-8', $string);
+            print "New record: ", encode('UTF-8', $string);
         }
     }
 
