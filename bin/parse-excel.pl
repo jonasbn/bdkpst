@@ -86,22 +86,21 @@ for my $worksheet ( $workbook->worksheets() ) {
 
             $string .= ($cell->value || '' ). $separator;
         }
-        my $tmp_postalcode;
-        if (any { $string eq decode('UTF-8', $_) } @{$postalcodes} ) {
+        if (any { decode('UTF-8', $string) eq decode('UTF-8', $_) } @{$postalcodes} ) {
             if (exists $postalcode_remainders{$string}) {
                 delete $postalcode_remainders{$string};
             }
             if ($verbose) {
-                print "Known record: ", encode('UTF-8', $string);
+                print "Known record:\n\t", encode('UTF-8', $string);
             }
         } else {
-            print "New record: ", encode('UTF-8', $string);
+            print "New record:\n\t", encode('UTF-8', $string);
         }
     }
 }
 
 foreach my $remainder (keys %postalcode_remainders) {
-    print "Obsolete record: ", encode('UTF-8', $remainder);
+    print "Obsolete record:\n\t", encode('UTF-8', $remainder);
 }
 
 exit 0;
