@@ -42,6 +42,9 @@ my $module = 'Business::'.$country.'::Postalcode';
 load $module, 'get_all_data';
 
 my $postalcodes = get_all_data();
+my %postalcode_remainders;
+
+$postalcode_remainders{$_}++ for (@{$postalcodes});
 
 for my $worksheet ( $workbook->worksheets() ) {
 
@@ -83,7 +86,11 @@ for my $worksheet ( $workbook->worksheets() ) {
 
             $string .= ($cell->value || '' ). $separator;
         }
-        if (any { $string eq decode('UTF-8', $_) } @{$postalcodes}) {
+        my $tmp_postalcode;
+        if (any { $string eq decode('UTF-8', $_) } @{$postalcodes} ) {
+            if (exists $postalcode_remainders{$string}) {
+                delete $postalcode_remainders{$string};
+            }
             if ($verbose) {
                 print "Known record: ", encode('UTF-8', $string);
             }
@@ -91,8 +98,10 @@ for my $worksheet ( $workbook->worksheets() ) {
             print "New record: ", encode('UTF-8', $string);
         }
     }
+}
 
-
+foreach my $remainder (keys %postalcode_remainders) {
+    print "Obsolete record: ", encode('UTF-8', $remainder);
 }
 
 exit 0;
