@@ -18,8 +18,8 @@ my $country = 'DK';
 
 my %countries = (
     DK => 1,
-    FO => 2,
-    GL => 3,
+    GL => 2,
+    FO => 3,
 );
 
 GetOptions ('file=s'   => \$file,      # string
@@ -52,19 +52,19 @@ for my $worksheet ( $workbook->worksheets() ) {
         my $record;
 
         my $string = '';
-        my $seperator = '';
+        my $separator = '';
         for my $col ( $col_min .. $col_max ) {
 
             my $cell = $worksheet->get_cell( $row, $col );
 
             if ($col == $col_max) {
-                $seperator = "\n";
+                $separator = "\n";
             } else {
-                $seperator = "\t";
+                $separator = ";";
             }
 
             if (not $cell) {
-                $string .= $seperator;
+                $string .= $separator;
                 next;
             }
 
@@ -81,7 +81,7 @@ for my $worksheet ( $workbook->worksheets() ) {
                 }
             }
 
-            $string .= ($cell->value || '' ). $seperator;
+            $string .= ($cell->value || '' ). $separator;
         }
         if (any { $string eq decode('UTF-8', $_) } @{$postalcodes}) {
             if ($verbose) {
