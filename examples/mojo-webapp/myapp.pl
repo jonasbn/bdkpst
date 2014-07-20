@@ -126,19 +126,22 @@ __DATA__
     });
 
     function reset_select() {
-        console.log("Resetting select to original form");
-        $("select[name='zipcode']").remove("select[name='zipcode']");
+        console.log("resetting select to original form (input)");
 
-        var new_input = document.createElement('input');
-        new_input.type = 'text';
-        new_input.name = 'zipcode';
-        new_input.className = 'form-control';
+        if ($(document).find("select[name='zipcode']").length) {
+          $("select[name='zipcode']").remove("select[name='zipcode']");
 
-        $("label[name='zipcode']").after(new_input);
+          var new_input = document.createElement('input');
+          new_input.type = 'text';
+          new_input.name = 'zipcode';
+          new_input.className = 'form-control';
+
+          $("label[name='zipcode']").after(new_input);
+        }
     }
 
     function reset_validation_classes() {
-      console.log("Resetting validation classes");
+      console.log("resetting validation classes");
 
       $('#zipcode-group').removeClass('has-success');
       $('#zipcode-group').removeClass('has-error');
@@ -173,14 +176,14 @@ __DATA__
                 $('#zipcode-group').addClass('has-success');
 
               } else {
-                console.log( "We need to change the inputtype" );
+                console.log( "changing the input type for zipcode" );
                 $("input[name='zipcode']").remove("input[name='zipcode']");
 
-                var new_input = document.createElement('select');
-                new_input.name = 'zipcode';
-                new_input.className = 'form-control';
+                var new_select = document.createElement('select');
+                new_select.name = 'zipcode';
+                new_select.className = 'form-control';
 
-                $("label[name='zipcode']").after(new_input);
+                $("label[name='zipcode']").after(new_select);
 
                 var zipcode_select = $('select');
                 $(textStatus.postalcodes).each(function() {
