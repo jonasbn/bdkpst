@@ -49,7 +49,7 @@ __DATA__
 
 @@ index.html.ep
 % layout 'default';
-% title 'Business::DK::Postalcode Web application/Ajax demo';
+% title 'Business::DK::Postalcode web application/ajax demo';
 
 <form action="/" method="post" role="form" class="form-inline">
 
@@ -128,6 +128,7 @@ __DATA__
     function reset_select() {
         console.log("resetting select to original form (input)");
 
+        // selection is present so we remove it for input text
         if ($(document).find("select[name='zipcode']").length) {
           $("select[name='zipcode']").remove("select[name='zipcode']");
 
