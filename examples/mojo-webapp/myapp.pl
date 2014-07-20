@@ -130,7 +130,7 @@ __DATA__
 
         // selection is present so we remove it for input text
         if ($(document).find("select[name='zipcode']").length) {
-          $("select[name='zipcode']").remove("select[name='zipcode']");
+          $("select[name='zipcode']").remove();
 
           var new_input = document.createElement('input');
           new_input.type = 'text';
@@ -225,7 +225,12 @@ __DATA__
 
                 } else {
                   console.log( "changing the input type for zipcode" );
-                  $("input[name='zipcode']").remove("input[name='zipcode']");
+
+                  if ($(document).find("select[name='zipcode']").length) {
+                    $("select[name='zipcode']").remove();
+                  } else {
+                    $("input[name='zipcode']").remove();
+                  }
 
                   var new_select = document.createElement('select');
                   new_select.name = 'zipcode';
