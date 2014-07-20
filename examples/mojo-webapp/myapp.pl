@@ -146,8 +146,10 @@ __DATA__
 
       $('#zipcode-group').removeClass('has-success');
       $('#zipcode-group').removeClass('has-error');
+      $('#zipcode-group').removeClass('has-warning');
       $('#city-group').removeClass('has-success');
       $('#city-group').removeClass('has-error');
+      $('#city-group').removeClass('has-warning');
     }
 
     function lookup_city() {
