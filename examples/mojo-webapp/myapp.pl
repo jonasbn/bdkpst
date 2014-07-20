@@ -171,6 +171,7 @@ __DATA__
               if (textStatus.postalcodes.length == 0) {
                 console.log( "No data found");
                 $('#city-group').addClass('has-error');
+                $('#zipcode').val('');
 
               } else if (textStatus.postalcodes.length == 1) {
                 $('#zipcode').val(textStatus.postalcodes[0]);
@@ -221,6 +222,7 @@ __DATA__
 
               if (textStatus.city_name == '') {
                 $('#zipcode-group').addClass('has-error');
+                $('#city').val('');
 
               } else {
                 $('#city').val(textStatus.city_name);
