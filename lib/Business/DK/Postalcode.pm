@@ -8,6 +8,8 @@ use Tree::Simple;
 use vars qw($VERSION @EXPORT_OK);
 use base qw(Exporter);
 use Params::Validate qw(validate_pos SCALAR ARRAYREF OBJECT);
+use Data::Dumper;
+use utf8;
 
 use constant DEBUG                       => 0;
 use constant TRUE                        => 1;
@@ -18,11 +20,13 @@ use constant NUM_OF_DIGITS_IN_POSTALCODE => 4;
 ## no critic (Variables::ProhibitPackageVars)
 our @postal_data = <DATA>;
 
+no strict 'refs';
+
 my $regex;
 
 $VERSION = '0.07';
 @EXPORT_OK
-    = qw(get_all_postalcodes get_all_cities get_all_data create_regex validate_postalcode validate);
+    = qw(get_all_postalcodes get_all_cities get_all_data create_regex validate_postalcode validate get_city_from_postalcode get_postalcode_from_city);
 
 # TODO: we have to disable this policy here for some reason?
 ## no critic (Subroutines::RequireArgUnpacking)
@@ -70,11 +74,55 @@ sub get_all_cities {
 
 }
 
+sub get_city_from_postalcode {
+    my ($parameter_data) = @_;
+    my $city = '';
+
+    validate( @_, {
+        zipcode => { type => SCALAR, optional => FALSE }, });
+
+    my $postaldata = get_all_data();
+
+    foreach my $line (@{$postaldata}) {
+        my @entries = split /\t/x, $line, NUM_OF_DATA_ELEMENTS;
+
+        if ($entries[0] eq $parameter_data) {
+            $city = $entries[1];
+            last;
+        }
+    }
+
+    return $city;
+}
+
+sub get_postalcode_from_city {
+    my ($parameter_data) = @_;
+    my @postalcodes;
+
+    validate( @_, {
+        city => { type => SCALAR, optional => FALSE }, });
+
+    my $postaldata = get_all_data();
+
+    foreach my $line (@{$postaldata}) {
+        my @entries = split /\t/x, $line, NUM_OF_DATA_ELEMENTS;
+
+        if ($entries[1] =~ m/$parameter_data$/i) {
+            push @postalcodes, $entries[0];
+        }
+    }
+
+    print STDERR Dumper \@postalcodes;
+
+    return @postalcodes;
+}
+
+
 sub get_all_postalcodes {
     my ($parameter_data) = @_;
     my @postalcodes = ();
 
-    validate_pos( @_, { type => ARRAYREF, optional => 1 }, );
+    validate_pos( @_, { type => ARRAYREF, optional => TRUE }, );
 
     if ( not $parameter_data ) {
         @{$parameter_data} = @postal_data;
