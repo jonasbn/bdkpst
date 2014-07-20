@@ -79,7 +79,7 @@ sub get_city_from_postalcode {
     my $city = '';
 
     validate( @_, {
-        zipcode => { type => SCALAR, optional => FALSE }, });
+        zipcode => { type => SCALAR }, });
 
     my $postaldata = get_all_data();
 
@@ -100,7 +100,7 @@ sub get_postalcode_from_city {
     my @postalcodes;
 
     validate( @_, {
-        city => { type => SCALAR, optional => FALSE }, });
+        city => { type => SCALAR }, });
 
     my $postaldata = get_all_data();
 
