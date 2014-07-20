@@ -55,12 +55,12 @@ __DATA__
 
   <div id="zipcode-group" class="form-group">
   <label for="zipcode" class="form-control" name="zipcode">Zipcode:</label>
-  <input class="form-control" id="zipcode" type="text" name="zipcode" onchange="lookup_zipcode()">
+  <input class="form-control" id="zipcode" type="text" name="zipcode" placeholder="enter zipcode" onchange="lookup_zipcode()">
   </div>
 
   <div id="city-group" class="form-group">
   <label class="form-control" name="city" for="city">City:</label>
-  <input class="form-control" id="city" type="text" name="city" onchange="lookup_city()">
+  <input class="form-control" id="city" type="text" name="city" placeholder="enter city" onchange="lookup_city()">
   </div>
 
   <button class="btn btn-default" type="reset">
@@ -155,57 +155,64 @@ __DATA__
         var city;
         city = $('#city').val();
 
-        $.ajax({
-              type: 'GET',
-              url: 'lookup_city/' + city,
-              dataType: 'json',
-              crossDomain: false,
-              contentType: "application/json",
-              timeout: 1000, // milliseconds
-            })
-            .done(function(textStatus, data, jqXHR) {
-              console.log( "request success: " + jqXHR.status );
+        if (city.length > 0) {
 
-              reset_validation_classes();
+          $.ajax({
+                type: 'GET',
+                url: 'lookup_city/' + city,
+                dataType: 'json',
+                crossDomain: false,
+                contentType: "application/json",
+                timeout: 1000, // milliseconds
+              })
+              .done(function(textStatus, data, jqXHR) {
+                console.log( "request success: " + jqXHR.status );
 
-              if (textStatus.postalcodes.length == 0) {
-                console.log( "No data found");
+                reset_validation_classes();
+
+                if (textStatus.postalcodes.length == 0) {
+                  console.log( "No data found");
+                  $('#city-group').addClass('has-error');
+                  $('#zipcode').val('');
+
+                } else if (textStatus.postalcodes.length == 1) {
+                  $('#zipcode').val(textStatus.postalcodes[0]);
+                  $('#zipcode-group').addClass('has-success');
+
+                } else {
+                  console.log( "changing the input type for zipcode" );
+                  $("input[name='zipcode']").remove("input[name='zipcode']");
+
+                  var new_select = document.createElement('select');
+                  new_select.name = 'zipcode';
+                  new_select.className = 'form-control';
+
+                  $("label[name='zipcode']").after(new_select);
+
+                  var zipcode_select = $('select');
+                  $(textStatus.postalcodes).each(function() {
+                   zipcode_select.append($("<option>").attr('value',this).text(this));
+                  });
+                }
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log( "request error: " + jqXHR.status );
                 $('#city-group').addClass('has-error');
-                $('#zipcode').val('');
-
-              } else if (textStatus.postalcodes.length == 1) {
-                $('#zipcode').val(textStatus.postalcodes[0]);
-                $('#zipcode-group').addClass('has-success');
-
-              } else {
-                console.log( "changing the input type for zipcode" );
-                $("input[name='zipcode']").remove("input[name='zipcode']");
-
-                var new_select = document.createElement('select');
-                new_select.name = 'zipcode';
-                new_select.className = 'form-control';
-
-                $("label[name='zipcode']").after(new_select);
-
-                var zipcode_select = $('select');
-                $(textStatus.postalcodes).each(function() {
-                 zipcode_select.append($("<option>").attr('value',this).text(this));
-                });
-              }
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-              console.log( "request error: " + jqXHR.status );
-              $('#city-group').addClass('has-error');
-            })
-            .always(function() {
-              console.log( "request complete" );
-            });
-        }
+              })
+              .always(function() {
+                console.log( "request complete" );
+              });
+           } else {
+            $('#city-group').addClass('has-warning');
+           }
+          }
 
     function lookup_zipcode() {
 
-        var zipcode;
-        zipcode = $('#zipcode').val();
+      var zipcode;
+      zipcode = $('#zipcode').val();
+
+      if (zipcode.length > 0) {
 
         $.ajax({
               type: 'GET',
@@ -236,6 +243,9 @@ __DATA__
             .always(function() {
               console.log( "request complete" );
             });
+          } else {
+            $('#zipcode-group').addClass('has-warning');
+          }
         }
     </script>
 
