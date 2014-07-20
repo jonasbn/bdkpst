@@ -49,7 +49,7 @@ __DATA__
 
 @@ index.html.ep
 % layout 'default';
-% title 'Business::DK::Postalcode Webapplication/Ajax demo';
+% title 'Business::DK::Postalcode Web application/Ajax demo';
 
 <form action="/" method="post" role="form" class="form-inline">
 
