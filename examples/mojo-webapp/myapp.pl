@@ -147,9 +147,50 @@ __DATA__
       $('#zipcode-group').removeClass('has-success');
       $('#zipcode-group').removeClass('has-error');
       $('#zipcode-group').removeClass('has-warning');
+      $('#zipcode-group').removeClass('has-feedback');
+
       $('#city-group').removeClass('has-success');
       $('#city-group').removeClass('has-error');
       $('#city-group').removeClass('has-warning');
+      $('#city-group').removeClass('has-feedback');
+    }
+
+    function add_warning(designated_class) {
+      reset_validation_classes();
+      $('span').remove();
+
+      $(designated_class).addClass('has-warning');
+      $(designated_class).addClass('has-feedback');
+
+      var new_glyph_element = document.createElement('span');
+      new_glyph_element.className = 'glyphicon glyphicon-warning-sign form-control-feedback';
+
+      $(designated_class).append(new_glyph_element);
+    }
+
+
+    function add_success(designated_class) {
+      reset_validation_classes();
+
+      $(designated_class).addClass('has-success');
+      $(designated_class).addClass('has-feedback');
+
+      var new_glyph_element = document.createElement('span');
+      new_glyph_element.className = 'glyphicon glyphicon-ok form-control-feedback';
+
+      $(designated_class).append(new_glyph_element);
+    }
+
+    function add_error(designated_class) {
+      reset_validation_classes();
+
+      $(designated_class).addClass('has-error');
+      $(designated_class).addClass('has-feedback');
+
+      var new_glyph_element = document.createElement('span');
+      new_glyph_element.className = 'glyphicon glyphicon-remove form-control-feedback';
+
+      $(designated_class).append(new_glyph_element);
     }
 
     function lookup_city() {
@@ -174,12 +215,13 @@ __DATA__
 
                 if (textStatus.postalcodes.length == 0) {
                   console.log( "No data found");
-                  $('#city-group').addClass('has-error');
+                  add_error('#city-group');
+
                   $('#zipcode').val('');
 
                 } else if (textStatus.postalcodes.length == 1) {
                   $('#zipcode').val(textStatus.postalcodes[0]);
-                  $('#zipcode-group').addClass('has-success');
+                  add_success('#zipcode-group');
 
                 } else {
                   console.log( "changing the input type for zipcode" );
@@ -199,13 +241,13 @@ __DATA__
               })
               .fail(function(jqXHR, textStatus, errorThrown) {
                 console.log( "request error: " + jqXHR.status );
-                $('#city-group').addClass('has-error');
+                add_error('#city-group');
               })
               .always(function() {
                 console.log( "request complete" );
               });
            } else {
-            $('#city-group').addClass('has-warning');
+            add_warning('#city-group');
            }
           }
 
@@ -230,23 +272,23 @@ __DATA__
               reset_validation_classes();
 
               if (textStatus.city_name == '') {
-                $('#zipcode-group').addClass('has-error');
+                add_error('#zipcode-group');
                 $('#city').val('');
 
               } else {
                 $('#city').val(textStatus.city_name);
-                $('#city-group').addClass('has-success');
+                add_success('#city-group');
               }
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
               console.log( "request error: " + jqXHR.status );
-              $('#zipcode').addClass('has-error');
+              add_error('#zipcode-group');
             })
             .always(function() {
               console.log( "request complete" );
             });
           } else {
-            $('#zipcode-group').addClass('has-warning');
+            add_warning('#zipcode-group');
           }
         }
     </script>
