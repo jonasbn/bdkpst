@@ -112,8 +112,6 @@ sub get_postalcode_from_city {
         }
     }
 
-    print STDERR Dumper \@postalcodes;
-
     return @postalcodes;
 }
 
