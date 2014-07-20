@@ -135,6 +135,7 @@ __DATA__
           var new_input = document.createElement('input');
           new_input.type = 'text';
           new_input.name = 'zipcode';
+          new_input.setAttribute("id", "zipcode");
           new_input.className = 'form-control';
 
           $("label[name='zipcode']").after(new_input);
@@ -143,6 +144,8 @@ __DATA__
 
     function reset_validation_classes() {
       console.log("resetting validation classes");
+
+      $('span').remove();
 
       $('#zipcode-group').removeClass('has-success');
       $('#zipcode-group').removeClass('has-error');
@@ -157,7 +160,6 @@ __DATA__
 
     function add_warning(designated_class) {
       reset_validation_classes();
-      $('span').remove();
 
       $(designated_class).addClass('has-warning');
       $(designated_class).addClass('has-feedback');
@@ -220,6 +222,8 @@ __DATA__
                   $('#zipcode').val('');
 
                 } else if (textStatus.postalcodes.length == 1) {
+                  reset_select();
+
                   $('#zipcode').val(textStatus.postalcodes[0]);
                   add_success('#zipcode-group');
 
