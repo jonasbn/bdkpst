@@ -9,12 +9,27 @@ use Test::More;
 use Tree::Simple;
 use Test::Exception;
 use Env qw($TEST_VERBOSE);
+use utf8;
 
 sub startup : Test(startup => 1) {
     my $self = shift;
 
-    use_ok( 'Business::DK::Postalcode', qw(validate_postalcode get_all_postalcodes get_all_cities create_regex get_all_data) );
+    use_ok( 'Business::DK::Postalcode', qw(validate_postalcode get_all_postalcodes get_all_cities create_regex get_all_data get_city_from_postalcode get_postalcode_from_city) );
 };
+
+sub test_get_postalcode_from_city : Test(3) {
+    ok(my @postalcodes = get_postalcode_from_city('Vallensbæk Strand'), 'get_city_from_postalcode');
+
+    is((scalar @postalcodes), 1, 'asserting number of postalcodes');
+
+    dies_ok { get_postalcode_from_city(); } 'get_postalcode_from_city';
+}
+
+sub test_get_city_from_postalcode : Test(3) {
+    is('København S', get_city_from_postalcode(2300), 'get_city_from_postalcode');
+    is('', get_city_from_postalcode(2301), 'get_city_from_postalcode');
+    dies_ok { get_city_from_postalcode(); } 'get_city_from_postalcode';
+}
 
 sub test_get_all_cities : Test(2) {
     ok(my $cities_ref = get_all_cities(), 'calling get all cities');
