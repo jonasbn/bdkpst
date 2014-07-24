@@ -375,6 +375,8 @@ This documentation describes version 0.03
 
 =item * Providing list of Danish postal codes and related area names
 
+=item * Look up methods for Danish postal codes for web application and the like
+
 =back
 
 =head1 DESCRIPTION
@@ -415,7 +417,29 @@ L</Data> for a description of the fields.
 
 =head2 get_all_postalcodes
 
+Takes no parameters.
+
 Returns a reference to an array containing all valid Danish postal codes.
+
+=head2 get_all_cities
+
+Takes no parameters.
+
+Returns a reference to an array containing all Danish city names having a postal code.
+
+=head2 get_city_from_postalcode
+
+Takes a string representing a Danish postal code.
+
+Returns a single string representing the related city name or an empty string indicating nothing was found.
+
+=head2 get_postalcode_from_city
+
+Takes a string representing a Danish city name.
+
+Returns a reference to an array containing zero or more postal codes related to that city name. Zero indicates nothing was found.
+
+Please note that city names are not unique, hence the possibility of a list of postal codes.
 
 =head2 create_regex
 
