@@ -563,9 +563,9 @@ Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
     File                           stmt   bran   cond    sub    pod   time  total
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
-    ...Business/DK/Postalcode.pm  100.0   87.5   33.3  100.0  100.0   99.4   97.0
-    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0    0.6  100.0
-    Total                         100.0   90.6   33.3  100.0  100.0  100.0   97.8
+    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0   98.7  100.0
+    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0    1.2  100.0
+    Total                         100.0  100.0    n/a  100.0  100.0  100.0  100.0
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
     $ ./Build testcover
