@@ -188,19 +188,16 @@ sub create_regex {
 
     my $generated_regex = [];
 
-    if ( $tree->isRoot && $tree->getChildCount > 1 ) {
+    my $no_of_children = $tree->getChildCount();
 
-        my $no_of_children = $tree->getChildCount();
-
-        foreach my $child ( $tree->getAllChildren() ) {
-            if ( $child->getIndex() < ( $tree->getChildCount() - 1 ) ) {
-                $child->insertSibling( $child->getIndex() + 1,
-                    Tree::Simple->new(q{|}) );
-            }
+    foreach my $child ( $tree->getAllChildren() ) {
+        if ( $child->getIndex() < ( $tree->getChildCount() - 1 ) ) {
+            $child->insertSibling( $child->getIndex() + 1,
+                Tree::Simple->new(q{|}) );
         }
-        $tree->insertChild( 0, Tree::Simple->new('(') );
-        $tree->addChild( Tree::Simple->new(')') );
     }
+    $tree->insertChild( 0, Tree::Simple->new('(') );
+    $tree->addChild( Tree::Simple->new(')') );
 
     $tree->traverse(
         sub {
