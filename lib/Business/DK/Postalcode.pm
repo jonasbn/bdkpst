@@ -115,7 +115,6 @@ sub get_postalcode_from_city {
     return @postalcodes;
 }
 
-
 sub get_all_postalcodes {
     my ($parameter_data) = @_;
     my @postalcodes = ();
@@ -154,7 +153,7 @@ sub _retrieve_postalcode {
 
     #this is used internally, but we stick it in here just to make sure we
     #get what we want
-    validate_pos( @_, { type => ARRAYREF }, { type => SCALAR }, );
+    validate_pos( @_, { type => ARRAYREF }, { type => SCALAR, regex => qr/[\w\t]+/, }, );
 
     ## no critic qw(RegularExpressions::RequireLineBoundaryMatching RegularExpressions::RequireExtendedFormatting RegularExpressions::RequireDotMatchAnything)
     my @entries = split /\t/x, $string, NUM_OF_DATA_ELEMENTS;
@@ -169,7 +168,7 @@ sub _retrieve_postalcode {
         push @{$postalcodes}, $entries[0];
     }
 
-    return;
+    return 1;
 }
 
 sub create_regex {
