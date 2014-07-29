@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) [![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master)](https://coveralls.io/r/jonasbn/bdkpst?branch=master)
+[![CPAN version](https://badge.fury.io/pl/Business-DK-Postalcode.svg)](http://badge.fury.io/pl/Business-DK-Postalcode) [![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) [![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master)](https://coveralls.io/r/jonasbn/bdkpst?branch=master)
 
 # NAME
 
