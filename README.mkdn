@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst)
+
 # NAME
 
 Business::DK::Postalcode - validation of Danish postal codes
