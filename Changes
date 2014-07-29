@@ -8,7 +8,10 @@ http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.sys
 
 HEAD
 
-- Added new subroutine get_all_cities
+- Added new subroutines:
+    - get_all_cities
+    - get_postalcode_from_city
+    - get_city_from_postalcode
 
 - Improved cleaning step in Build.PL [BDKPST-26]
 
