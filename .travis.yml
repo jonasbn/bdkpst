@@ -7,7 +7,7 @@ perl:
   - "5.10"
 
 install:
-    cpanm --quiet --installdeps --notest --mirror http://cpan.mirrors.travis-ci.org . && cpanm --quiet --notest Devel::Cover::Report::Coveralls
+    cpanm --quiet --installdeps --notest . && cpanm --quiet --notest Devel::Cover::Report::Coveralls
 
 script:
     - PERL5OPT=-MDevel::Cover=-coverage,statement,branch,condition,path,subroutine prove -lrsv t
