@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) [![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png)](https://coveralls.io/r/jonasbn/bdkpst)
+[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) [![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master)](https://coveralls.io/r/jonasbn/bdkpst?branch=master)
 
 # NAME
 
