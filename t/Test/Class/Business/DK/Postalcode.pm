@@ -34,9 +34,11 @@ sub test_get_city_from_postalcode : Test(3) {
 sub test_get_all_cities : Test(2) {
     ok(my $cities_ref = get_all_cities(), 'calling get all cities');
     is(scalar(@{$cities_ref}), 1285), 'asserting number of cities';
+}
 
-    use Data::Dumper;
-    print STDERR Dumper $cities_ref;
+sub test_get_all_postalcodes_with_param : Test(2) {
+    ok(my $postalcodes_ref = get_all_postalcodes([qw(2300 2665)]), 'calling get all postalcodes');
+    is(scalar(@{$postalcodes_ref}), 2), 'asserting number of postalcodes';
 }
 
 sub test_get_all_postalcodes : Test(2) {
@@ -46,8 +48,29 @@ sub test_get_all_postalcodes : Test(2) {
 
 sub test_get_all_data : Test(2) {
     ok(my $postalcodes_ref = get_all_data(), 'calling get_all_data');
-
     is(scalar(@{$postalcodes_ref}), 1285, 'asserting number of postalcodes');
+}
+
+sub test_retrieve_postalcode : Test(2) {
+    my @postalcodes = ();
+    ok(Business::DK::Postalcode::_retrieve_postalcode(\@postalcodes, "0555\tScanning\tData Scanning A/S\tTrue\t1\n"), 'calling _retrieve_postalcode');
+    is(scalar @postalcodes, 1, 'asserting number of postalcodes');
+}
+
+sub test_retrieve_postalcode_with_empty_data : Test(1) {
+    my @postalcodes = ();
+    dies_ok { Business::DK::Postalcode::_retrieve_postalcode(\@postalcodes, ''); }, 'feeding with empty data';
+}
+
+sub test_retrieve_postalcode_with_bad_data : Test(2) {
+    my @postalcodes = ();
+    ok(Business::DK::Postalcode::_retrieve_postalcode(\@postalcodes, 'BAD DATA'), 'feeding with bad data');
+    is(scalar @postalcodes, 0, 'asserting number of postalcodes');
+}
+
+sub test_retrieve_postalcode_with_no_data : Test(1) {
+    my @postalcodes = ();
+    dies_ok { Business::DK::Postalcode::_retrieve_postalcode(\@postalcodes); }, 'feeding with no data';
 }
 
 sub test_validate : Test(5) {

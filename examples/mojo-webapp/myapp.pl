@@ -54,12 +54,12 @@ __DATA__
 <form action="/" method="post" role="form" class="form-inline">
 
   <div id="zipcode-group" class="form-group">
-  <label for="zipcode" class="form-control" name="zipcode">Zipcode:</label>
+  <label for="zipcode" class="control-label" name="zipcodelabel">Zipcode:</label>
   <input class="form-control" id="zipcode" type="text" name="zipcode" placeholder="enter zipcode" onchange="lookup_zipcode()">
   </div>
 
   <div id="city-group" class="form-group">
-  <label class="form-control" name="city" for="city">City:</label>
+  <label class="control-label" name="citylabel" for="city">City:</label>
   <input class="form-control" id="city" type="text" name="city" placeholder="enter city" onchange="lookup_city()">
   </div>
 
@@ -138,7 +138,7 @@ __DATA__
           new_input.setAttribute("id", "zipcode");
           new_input.className = 'form-control';
 
-          $("label[name='zipcode']").after(new_input);
+          $("label[name='zipcodelabel']").after(new_input);
         }
     }
 
@@ -240,7 +240,7 @@ __DATA__
                   new_select.name = 'zipcode';
                   new_select.className = 'form-control';
 
-                  $("label[name='zipcode']").after(new_select);
+                  $("label[name='zipcodelabel']").after(new_select);
 
                   var zipcode_select = $('select');
                   $(textStatus.postalcodes).each(function() {

@@ -115,7 +115,6 @@ sub get_postalcode_from_city {
     return @postalcodes;
 }
 
-
 sub get_all_postalcodes {
     my ($parameter_data) = @_;
     my @postalcodes = ();
@@ -154,7 +153,7 @@ sub _retrieve_postalcode {
 
     #this is used internally, but we stick it in here just to make sure we
     #get what we want
-    validate_pos( @_, { type => ARRAYREF }, { type => SCALAR }, );
+    validate_pos( @_, { type => ARRAYREF }, { type => SCALAR, regex => qr/[\w\t]+/, }, );
 
     ## no critic qw(RegularExpressions::RequireLineBoundaryMatching RegularExpressions::RequireExtendedFormatting RegularExpressions::RequireDotMatchAnything)
     my @entries = split /\t/x, $string, NUM_OF_DATA_ELEMENTS;
@@ -169,7 +168,7 @@ sub _retrieve_postalcode {
         push @{$postalcodes}, $entries[0];
     }
 
-    return;
+    return 1;
 }
 
 sub create_regex {
@@ -189,19 +188,16 @@ sub create_regex {
 
     my $generated_regex = [];
 
-    if ( $tree->isRoot && $tree->getChildCount > 1 ) {
+    my $no_of_children = $tree->getChildCount();
 
-        my $no_of_children = $tree->getChildCount();
-
-        foreach my $child ( $tree->getAllChildren() ) {
-            if ( $child->getIndex() < ( $tree->getChildCount() - 1 ) ) {
-                $child->insertSibling( $child->getIndex() + 1,
-                    Tree::Simple->new(q{|}) );
-            }
+    foreach my $child ( $tree->getAllChildren() ) {
+        if ( $child->getIndex() < ( $tree->getChildCount() - 1 ) ) {
+            $child->insertSibling( $child->getIndex() + 1,
+                Tree::Simple->new(q{|}) );
         }
-        $tree->insertChild( 0, Tree::Simple->new('(') );
-        $tree->addChild( Tree::Simple->new(')') );
     }
+    $tree->insertChild( 0, Tree::Simple->new('(') );
+    $tree->addChild( Tree::Simple->new(')') );
 
     $tree->traverse(
         sub {
@@ -375,6 +371,8 @@ This documentation describes version 0.03
 
 =item * Providing list of Danish postal codes and related area names
 
+=item * Look up methods for Danish postal codes for web application and the like
+
 =back
 
 =head1 DESCRIPTION
@@ -415,7 +413,29 @@ L</Data> for a description of the fields.
 
 =head2 get_all_postalcodes
 
+Takes no parameters.
+
 Returns a reference to an array containing all valid Danish postal codes.
+
+=head2 get_all_cities
+
+Takes no parameters.
+
+Returns a reference to an array containing all Danish city names having a postal code.
+
+=head2 get_city_from_postalcode
+
+Takes a string representing a Danish postal code.
+
+Returns a single string representing the related city name or an empty string indicating nothing was found.
+
+=head2 get_postalcode_from_city
+
+Takes a string representing a Danish city name.
+
+Returns a reference to an array containing zero or more postal codes related to that city name. Zero indicates nothing was found.
+
+Please note that city names are not unique, hence the possibility of a list of postal codes.
 
 =head2 create_regex
 
@@ -543,9 +563,9 @@ Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
     File                           stmt   bran   cond    sub    pod   time  total
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
-    ...Business/DK/Postalcode.pm  100.0   87.5   33.3  100.0  100.0   99.4   97.0
-    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0    0.6  100.0
-    Total                         100.0   90.6   33.3  100.0  100.0  100.0   97.8
+    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0   98.7  100.0
+    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0    1.2  100.0
+    Total                         100.0  100.0    n/a  100.0  100.0  100.0  100.0
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
     $ ./Build testcover
