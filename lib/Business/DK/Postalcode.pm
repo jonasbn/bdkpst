@@ -296,6 +296,22 @@ sub _build_tree {
 
 =pod
 
+=begin markdown
+
+[![CPAN version](https://badge.fury.io/pl/Business-DK-Postalcode.svg)](http://badge.fury.io/pl/Business-DK-Postalcode) 
+[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) 
+[![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master)](https://coveralls.io/r/jonasbn/bdkpst?branch=master)
+
+=end markdown
+
+=begin html
+
+<a href="http://badge.fury.io/pl/Business-DK-Postalcode"><img src="https://badge.fury.io/pl/Business-DK-Postalcode.svg" alt="CPAN version" height="18"></a>
+<a href="https://travis-ci.org/jonasbn/bdkpst.svg?branch=master"><img src="https://travis-ci.org/jonasbn/bdkpst.svg?branch=master" alt="Travil build status"></a>
+<a href="https://coveralls.io/r/jonasbn/bdkpst?branch=master"><img src="https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master"></a>
+
+=end html
+
 =head1 NAME
 
 Business::DK::Postalcode - validation of Danish postal codes
