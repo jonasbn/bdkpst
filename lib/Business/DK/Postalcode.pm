@@ -387,7 +387,7 @@ This documentation describes version 0.03
 
 =item * Providing list of Danish postal codes and related area names
 
-=item * Look up methods for Danish postal codes for web application and the like
+=item * Look up methods for Danish postal codes for web applications and the like
 
 =back
 
