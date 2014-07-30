@@ -460,9 +460,15 @@ representing a possible Danish postal code.
 
 =head1 PRIVATE SUBROUTINES AND METHODS
 
+=head2 _retrieve_cities
+
+Takes a reference to an array based on the DATA section and return a reference
+to an array containing only city names.
+
 =head3 _retrieve_postalcode
 
-Internal method
+Takes a reference to an array based on the DATA section and return a reference
+to an array containing only postal codes.
 
 =head3 _build_tree
 
@@ -496,7 +502,7 @@ There are no known bugs at this time.
 
 Please report issues via CPAN RT:
 
-  http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode
+    http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode
 
 or by sending mail to
 
@@ -536,7 +542,7 @@ Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-=item * L<Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
+=item * L<Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting|https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
 
 Disabled locally using 'no critic' pragma.
 
