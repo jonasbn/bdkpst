@@ -88,16 +88,16 @@ The documentation describes version 0.01 of Data::FormValidator::Constraints::Bu
 =head1 DESCRIPTION
 
 This module exposes a set of subroutines which are compatible with
-L<Data::FormValidator>. The module implements contraints as specified in
-L<Data::FormValidator::Constraints>.
+L<Data::FormValidator|https://metacpan.org/pod/Data::FormValidator>. The module implements contraints as specified in
+L<Data::FormValidator::Constraints|https://metacpan.org/pod/Data::FormValidator::Constraints>.
 
-For a more through description of Danish postal codes please see: L<Business::DK::Postalcode>.
+For a more through description of Danish postal codes please see: L<Business::DK::Postalcode|https://metacpan.org/pod/Business::DK::Postalcode>.
 
 =head1 SUBROUTINES AND METHODS
 
 =head2 valid_postalcode
 
-Checks whether a Postalcode is valid (see: SYNOPSIS) and L<Business::DK::Postalcode>
+Checks whether a Postalcode is valid (see: SYNOPSIS) and L<Business::DK::Postalcode|https://metacpan.org/pod/Business::DK::Postalcode>
 
 =head2 match_postalcode
 
@@ -123,7 +123,7 @@ Data::FormValidator::Constraints::Business::DK::Postalcode exports on request:
 
 =over
 
-=item * Please refer to L<Data::FormValidator> for documentation on this
+=item * Please refer to L<Data::FormValidator|https://metacpan.org/pod/Data::FormValidator> for documentation on this
 
 =back
 
@@ -135,9 +135,9 @@ The module requires no special configuration or environment to run.
 
 =over
 
-=item * L<Data::FormValidator>
+=item * L<Data::FormValidator|https://metacpan.org/pod/Data::FormValidator>
 
-=item * L<Business::DK::Postalcode>
+=item * L<Business::DK::Postalcode|https://metacpan.org/pod/Business::DK::Postalcode>
 
 =back
 
@@ -148,7 +148,7 @@ The module has no known incompatibilities.
 =head1 BUGS AND LIMITATIONS
 
 The tests seem to reflect that untainting is taking place, but the L</match_postalcode>
-is not called at all, so how this untaiting is expected to be integrated into L<Data::FormValidator>
+is not called at all, so how this untaiting is expected to be integrated into L<Data::FormValidator|https://metacpan.org/pod/Data::FormValidator>
 is still not clear to ne (SEE: TODO)
 
 =head1 TEST AND QUALITY
@@ -169,23 +169,23 @@ Coverage of the test suite is at 57.6%
 
 =over
 
-=item * L<Data::FormValidator>
+=item * L<Data::FormValidator|https://metacpan.org/pod/Data::FormValidator>
 
-=item * L<Data::FormValidator::Constraints>
+=item * L<Data::FormValidator::Constraints|https://metacpan.org/pod/Data::FormValidator::Constraints>
 
-=item * L<Data::FormValidator::Result>
+=item * L<Data::FormValidator::Result|https://metacpan.org/pod/Data::FormValidator::Result>
 
-=item * L<Business::DK::Postalcode>
+=item * L<Business::DK::Postalcode|https://metacpan.org/pod/Business::DK::Postalcode>
 
-=item * L<Data::FormValidator::Constraints::Business::DK::CVR>
+=item * L<Data::FormValidator::Constraints::Business::DK::CVR|https://metacpan.org/pod/Data::FormValidator::Constraints::Business::DK::CVR>
 
-=item * L<Data::FormValidator::Constraints::Business::DK::CPR>
+=item * L<Data::FormValidator::Constraints::Business::DK::CPR|https://metacpan.org/pod/Data::FormValidator::Constraints::Business::DK::CPR>
 
-=item * L<Data::FormValidator::Constraints::Business::DK::FI>
+=item * L<Data::FormValidator::Constraints::Business::DK::FI|https://metacpan.org/pod/Data::FormValidator::Constraints::Business::DK::FI>
 
-=item * L<Data::FormValidator::Constraints::Business::DK::PO>
+=item * L<Data::FormValidator::Constraints::Business::DK::PO|https://metacpan.org/pod/Data::FormValidator::Constraints::Business::DK::PO>
 
-=item * L<Data::FormValidator::Constraints::Business::DK::Phonenumber>
+=item * L<Data::FormValidator::Constraints::Business::DK::Phonenumber|https://metacpan.org/pod/Data::FormValidator::Constraints::Business::DK::Phonenumber>
 
 =back
 
