@@ -472,9 +472,9 @@ to an array containing only postal codes.
 
 =head3 _build_tree
 
-Internal method to assist L<create_regex> in generating the regular expression.
+Internal method to assist L<create_regex|https://metacpan.org/pod/create_regex> in generating the regular expression.
 
-Takes a L<Tree::Simple> object and a reference to an array of data elements.
+Takes a L<Tree::Simple|https://metacpan.org/pod/Tree::Simple> object and a reference to an array of data elements.
 
 =head1 DIAGNOSTICS
 
@@ -486,11 +486,11 @@ This distribution requires no special configuration or environment.
 
 =over
 
-=item * L<Exporter>
+=item * L<Exporter|https://metacpan.org/pod/Exporter>
 
-=item * L<Tree::Simple>
+=item * L<Tree::Simple|https://metacpan.org/pod/Tree::Simple>
 
-=item * L<Params::Validate>
+=item * L<Params::Validate|https://metacpan.org/pod/Params::Validate>
 
 =back
 
@@ -522,55 +522,55 @@ The following policies have been disabled.
 
 =over
 
-=item * L<Perl::Critic::Policy::Variables::ProhibitPackageVars>
+=item * L<Perl::Critic::Policy::Variables::ProhibitPackageVars|https://metacpan.org/pod/Perl::Critic::Policy::Variables::ProhibitPackageVars>
 
 Disabled locally using 'no critic' pragma.
 
 The module  uses a package variable as a cache, this might not prove usefull in
 the long term, so when this is adressed and this might address this policy.
 
-=item * L<Perl::Critic::Policy::Subroutines::RequireArgUnpacking>
+=item * L<Perl::Critic::Policy::Subroutines::RequireArgUnpacking|https://metacpan.org/pod/Perl::Critic::Policy::Subroutines::RequireArgUnpacking>
 
 Disabled locally using 'no critic' pragma.
 
-This policy is violated when using L<Params::Validate> at some point this will
+This policy is violated when using L<Params::Validate|https://metacpan.org/pod/Params::Validate> at some point this will
 be investigated further, this might be an issue due to referral to @_.
 
-=item * L<Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching>
+=item * L<Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching|https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching>
 
 Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-=item * L<Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting|https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
+ƒ=item * L<Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting|https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
 
 Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-=item * L<Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything>
+=item * L<Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything|https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything>
 
 Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-=item * L<Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma>
+=item * L<Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma|https://metacpan.org/pod/Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma>
 
 Constants are good, - see the link below.
 
 =item * L<https://logiclab.jira.com/wiki/display/OPEN/Perl-Critic-Policy-ValuesAndExpressions-ProhibitConstantPragma>
 
-=item * L<Perl::Critic::Policy::Documentation::RequirePodAtEnd>
+=item * L<Perl::Critic::Policy::Documentation::RequirePodAtEnd|https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodAtEnd>
 
 This one interfers with our DATA section, perhaps DATA should go before POD,
 well it is not important so I have disabled the policy.
 
-=item * L<Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops>
+=item * L<Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops|https://metacpan.org/pod/Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops>
 
 This would require a re-write of part of the code. Currently I rely on use of the iterator in the F<for> loop, so it would require significant
 changes.
 
-=item * L<Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText>
+=item * L<Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText|https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText>
 
 Temporarily disabled, marked for follow-up
 
@@ -580,7 +580,7 @@ Please see F<t/perlcriticrc> for details.
 
 =head2 TEST COVERAGE
 
-Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
+Test coverage report is generated using L<Devel::Cover|https://metacpan.org/pod/Devel::Cover> via L<Module::Build|https://metacpan.org/pod/Module::Build>.
 
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
     File                           stmt   bran   cond    sub    pod   time  total
@@ -596,19 +596,19 @@ Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
 
 =over
 
-=item * L<Geo::Postcodes::DK>
+=item * L<Geo::Postcodes::DK|https://metacpan.org/pod/Geo::Postcodes::DK>
 
 =item * L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
 
 =item * L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
 
-=item * L<Business::DK::CVR>
+=item * L<Business::DK::CVR|https://metacpan.org/pod/Business::DK::CVR>
 
-=item * L<Business::DK::CPR>
+=item * L<Business::DK::CPR|https://metacpan.org/pod/Business::DK::CPR>
 
-=item * L<Business::DK::FI>
+=item * L<Business::DK::FI|https://metacpan.org/pod/Business::DK::FI>
 
-=item * L<Business::DK::PO>
+=item * L<Business::DK::PO|https://metacpan.org/pod/Business::DK::PO>
 
 =back
 
