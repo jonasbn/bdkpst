@@ -659,7 +659,7 @@ which could generate the pattern for me based on a finite data set.
 
 =head1 COPYRIGHT
 
-Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2013
+Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2014
 
 =head1 LICENSE
 
