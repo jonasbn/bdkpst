@@ -542,7 +542,7 @@ Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-ƒ=item * L<https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
 
 Disabled locally using 'no critic' pragma.
 
