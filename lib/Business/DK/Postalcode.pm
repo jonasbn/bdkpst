@@ -418,9 +418,21 @@ A simple validator for Danish postal codes.
 Takes a string representing a possible Danish postal code and returns either
 B<1> or B<0> indicating either validity or invalidity.
 
+    if (validate($postalcode)) {
+        print "We have a valid Danish postalcode\n";
+    } else {
+        print "Not a valid Danish postalcode\n";
+    }
+
 =head2 validate_postalcode
 
 A less intrusive subroutine for import. Acts as a wrapper of L</validate>.
+
+    if (validate_postalcode($postalcode)) {
+        print "We have a valid Danish postal code\n";
+    } else {
+        print "Not a valid Danish postal code\n";
+    }
 
 =head2 get_all_data
 
@@ -457,6 +469,16 @@ Please note that city names are not unique, hence the possibility of a list of p
 
 This method returns a generated regular expression for validation of a string
 representing a possible Danish postal code.
+
+    use Business::DK::Postalcode qw(create_regex);
+
+    my $regex_ref = ${create_regex()};
+
+    if ($postalcode =~ m/$regex/) {
+        print "We have a valid Danish postalcode\n";
+    } else {
+        print "Not a valid Danish postalcode\n";
+    }
 
 =head1 PRIVATE SUBROUTINES AND METHODS
 
@@ -502,11 +524,13 @@ There are no known bugs at this time.
 
 Please report issues via CPAN RT:
 
-    http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode
+=over
 
-or by sending mail to
+=item * L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode>
 
-  bug-Business-DK-Postalcode@rt.cpan.org
+=item * or via email: L<bug-Business-DK-Postalcode@rt.cpan.org>
+
+=back
 
 =head1 INCOMPATIBILITIES
 
@@ -516,7 +540,7 @@ There are no known incompatibilities at this time.
 
 =head2 Perl::Critic
 
-This version of the code is complying with Perl::Critic a severity: 1
+This version of the code is complying with L<https://metacpan.org/pod/Perl::Critic> a severity: 1
 
 The following policies have been disabled.
 
@@ -620,7 +644,7 @@ Test coverage report is generated using L<https://metacpan.org/pod/Devel::Cover>
 
 =item * Bugtracker: L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode>
 
-=item * SVN repository: L<http://logicLAB.jira.com/svn/BDKPST>
+=item * Git repository: L<https://github.com/jonasbn/bdkpst>
 
 =back
 
@@ -635,7 +659,7 @@ Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
 =head1 MOTIVATION
 
 Back in 2006 I was working on a project where I needed to do some presentation
-and validation of Danish postal codes. I looked at Regex::Common::Zip (see: L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->)
+and validation of Danish postal codes. I looked at L<https://metacpan.org/pod/Regex::Common::Zip>
 
 The implementation at the time of writing looked as follows:
 
@@ -673,7 +697,7 @@ Business-DK-Postalcode and related is released under the Artistic License 2.0
 
 =over
 
-=item * http://www.opensource.org/licenses/Artistic-2.0
+=item * L<http://www.opensource.org/licenses/Artistic-2.0>
 
 =back
 
