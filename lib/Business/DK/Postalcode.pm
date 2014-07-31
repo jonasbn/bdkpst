@@ -1,7 +1,5 @@
 package Business::DK::Postalcode;
 
-# $Id: Postalcode.pm 2 2008-09-06 19:38:09Z jonasbn $
-
 use strict;
 use warnings;
 use Tree::Simple;
