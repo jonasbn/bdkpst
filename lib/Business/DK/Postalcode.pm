@@ -3,7 +3,6 @@ package Business::DK::Postalcode;
 use strict;
 use warnings;
 use Tree::Simple;
-use vars qw($VERSION @EXPORT_OK);
 use base qw(Exporter);
 use Params::Validate qw(validate_pos SCALAR ARRAYREF OBJECT);
 use Data::Dumper;
@@ -22,8 +21,8 @@ no strict 'refs';
 
 my $regex;
 
-$VERSION = '0.07';
-@EXPORT_OK
+our $VERSION = '0.07';
+our @EXPORT_OK
     = qw(get_all_postalcodes get_all_cities get_all_data create_regex validate_postalcode validate get_city_from_postalcode get_postalcode_from_city);
 
 # TODO: we have to disable this policy here for some reason?
