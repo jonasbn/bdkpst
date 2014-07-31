@@ -415,17 +415,21 @@ A simple validator for Danish postal codes.
 Takes a string representing a possible Danish postal code and returns either
 B<1> or B<0> indicating either validity or invalidity.
 
-    if (validate($postalcode)) {
-        print "We have a valid Danish postalcode\n";
-    } else {
-        print "Not a valid Danish postalcode\n";
+    my $rv = validate(2665);
+
+    if ($rv == 1) {
+        print "We have a valid Danish postal code\n";
+    } ($rv == 0) {
+        print "Not a valid Danish postal code\n";
     }
 
 =head2 validate_postalcode
 
 A less intrusive subroutine for import. Acts as a wrapper of L</validate>.
 
-    if (validate_postalcode($postalcode)) {
+    my $rv = validate_postalcode(2300);
+
+    if ($rv) {
         print "We have a valid Danish postal code\n";
     } else {
         print "Not a valid Danish postal code\n";
