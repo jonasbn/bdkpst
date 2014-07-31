@@ -8,8 +8,8 @@ use base qw(Exporter);
 use Params::Validate qw(validate_pos SCALAR ARRAYREF OBJECT);
 use Data::Dumper;
 use utf8;
+use Env qw($DEBUG);
 
-use constant DEBUG                       => 0;
 use constant TRUE                        => 1;
 use constant FALSE                       => 0;
 use constant NUM_OF_DATA_ELEMENTS        => 6;
@@ -202,7 +202,7 @@ sub create_regex {
             my ($_tree) = shift;
 
             #DEBUG section - outputs tree to STDERR
-            if (DEBUG) {
+            if ($DEBUG) {
                 warn "\n";
                 $tree->traverse(
                     sub {
