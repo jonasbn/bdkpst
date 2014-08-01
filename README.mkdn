@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) [![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png)](https://coveralls.io/r/jonasbn/bdkpst)
+[![CPAN version](https://badge.fury.io/pl/Business-DK-Postalcode.svg)](http://badge.fury.io/pl/Business-DK-Postalcode) 
+[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) 
+[![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master)](https://coveralls.io/r/jonasbn/bdkpst?branch=master)
 
 # NAME
 
@@ -71,6 +73,7 @@ This documentation describes version 0.03
 # FEATURES
 
 - Providing list of Danish postal codes and related area names
+- Look up methods for Danish postal codes for web application and the like
 
 # DESCRIPTION
 
@@ -102,7 +105,29 @@ Returns a reference to a a list of strings, separated by tab characters. See
 
 ## get\_all\_postalcodes
 
+Takes no parameters.
+
 Returns a reference to an array containing all valid Danish postal codes.
+
+## get\_all\_cities
+
+Takes no parameters.
+
+Returns a reference to an array containing all Danish city names having a postal code.
+
+## get\_city\_from\_postalcode
+
+Takes a string representing a Danish postal code.
+
+Returns a single string representing the related city name or an empty string indicating nothing was found.
+
+## get\_postalcode\_from\_city
+
+Takes a string representing a Danish city name.
+
+Returns a reference to an array containing zero or more postal codes related to that city name. Zero indicates nothing was found.
+
+Please note that city names are not unique, hence the possibility of a list of postal codes.
 
 ## create\_regex
 
@@ -219,9 +244,9 @@ Test coverage report is generated using [Devel::Cover](https://metacpan.org/pod/
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
     File                           stmt   bran   cond    sub    pod   time  total
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
-    ...Business/DK/Postalcode.pm  100.0   87.5   33.3  100.0  100.0   99.4   97.0
-    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0    0.6  100.0
-    Total                         100.0   90.6   33.3  100.0  100.0  100.0   97.8
+    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0   98.7  100.0
+    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0    1.2  100.0
+    Total                         100.0  100.0    n/a  100.0  100.0  100.0  100.0
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
     $ ./Build testcover
@@ -278,7 +303,7 @@ which could generate the pattern for me based on a finite data set.
 
 # COPYRIGHT
 
-Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2013
+Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2014
 
 # LICENSE
 

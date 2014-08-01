@@ -1,17 +1,14 @@
 package Business::DK::Postalcode;
 
-# $Id: Postalcode.pm 2 2008-09-06 19:38:09Z jonasbn $
-
 use strict;
 use warnings;
 use Tree::Simple;
-use vars qw($VERSION @EXPORT_OK);
 use base qw(Exporter);
 use Params::Validate qw(validate_pos SCALAR ARRAYREF OBJECT);
 use Data::Dumper;
 use utf8;
+use Env qw($DEBUG);
 
-use constant DEBUG                       => 0;
 use constant TRUE                        => 1;
 use constant FALSE                       => 0;
 use constant NUM_OF_DATA_ELEMENTS        => 6;
@@ -24,8 +21,8 @@ no strict 'refs';
 
 my $regex;
 
-$VERSION = '0.07';
-@EXPORT_OK
+our $VERSION = '0.07';
+our @EXPORT_OK
     = qw(get_all_postalcodes get_all_cities get_all_data create_regex validate_postalcode validate get_city_from_postalcode get_postalcode_from_city);
 
 # TODO: we have to disable this policy here for some reason?
@@ -204,7 +201,7 @@ sub create_regex {
             my ($_tree) = shift;
 
             #DEBUG section - outputs tree to STDERR
-            if (DEBUG) {
+            if ($DEBUG) {
                 warn "\n";
                 $tree->traverse(
                     sub {
@@ -296,6 +293,22 @@ sub _build_tree {
 
 =pod
 
+=begin markdown
+
+[![CPAN version](https://badge.fury.io/pl/Business-DK-Postalcode.svg)](http://badge.fury.io/pl/Business-DK-Postalcode) 
+[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) 
+[![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master)](https://coveralls.io/r/jonasbn/bdkpst?branch=master)
+
+=end markdown
+
+=begin html
+
+<a href="http://badge.fury.io/pl/Business-DK-Postalcode"><img src="https://badge.fury.io/pl/Business-DK-Postalcode.svg" alt="CPAN version" height="18"></a>
+<a href="https://travis-ci.org/jonasbn/bdkpst.svg?branch=master"><img src="https://travis-ci.org/jonasbn/bdkpst.svg?branch=master" alt="Travil build status"></a>
+<a href="https://coveralls.io/r/jonasbn/bdkpst?branch=master"><img src="https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master"></a>
+
+=end html
+
 =head1 NAME
 
 Business::DK::Postalcode - validation of Danish postal codes
@@ -371,7 +384,7 @@ This documentation describes version 0.03
 
 =item * Providing list of Danish postal codes and related area names
 
-=item * Look up methods for Danish postal codes for web application and the like
+=item * Look up methods for Danish postal codes for web applications and the like
 
 =back
 
@@ -402,9 +415,25 @@ A simple validator for Danish postal codes.
 Takes a string representing a possible Danish postal code and returns either
 B<1> or B<0> indicating either validity or invalidity.
 
+    my $rv = validate(2665);
+
+    if ($rv == 1) {
+        print "We have a valid Danish postal code\n";
+    } ($rv == 0) {
+        print "Not a valid Danish postal code\n";
+    }
+
 =head2 validate_postalcode
 
 A less intrusive subroutine for import. Acts as a wrapper of L</validate>.
+
+    my $rv = validate_postalcode(2300);
+
+    if ($rv) {
+        print "We have a valid Danish postal code\n";
+    } else {
+        print "Not a valid Danish postal code\n";
+    }
 
 =head2 get_all_data
 
@@ -442,17 +471,33 @@ Please note that city names are not unique, hence the possibility of a list of p
 This method returns a generated regular expression for validation of a string
 representing a possible Danish postal code.
 
+    use Business::DK::Postalcode qw(create_regex);
+
+    my $regex_ref = ${create_regex()};
+
+    if ($postalcode =~ m/$regex/) {
+        print "We have a valid Danish postalcode\n";
+    } else {
+        print "Not a valid Danish postalcode\n";
+    }
+
 =head1 PRIVATE SUBROUTINES AND METHODS
+
+=head2 _retrieve_cities
+
+Takes a reference to an array based on the DATA section and return a reference
+to an array containing only city names.
 
 =head3 _retrieve_postalcode
 
-Internal method
+Takes a reference to an array based on the DATA section and return a reference
+to an array containing only postal codes.
 
 =head3 _build_tree
 
-Internal method to assist L<create_regex> in generating the regular expression.
+Internal method to assist L</create_regex> in generating the regular expression.
 
-Takes a L<Tree::Simple> object and a reference to an array of data elements.
+Takes a L<https://metacpan.org/pod/Tree::Simple> object and a reference to an array of data elements.
 
 =head1 DIAGNOSTICS
 
@@ -464,11 +509,11 @@ This distribution requires no special configuration or environment.
 
 =over
 
-=item * L<Exporter>
+=item * L<https://metacpan.org/pod/Exporter>
 
-=item * L<Tree::Simple>
+=item * L<https://metacpan.org/pod/Tree::Simple>
 
-=item * L<Params::Validate>
+=item * L<https://metacpan.org/pod/Params::Validate>
 
 =back
 
@@ -480,11 +525,13 @@ There are no known bugs at this time.
 
 Please report issues via CPAN RT:
 
-  http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode
+=over
 
-or by sending mail to
+=item * L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode>
 
-  bug-Business-DK-Postalcode@rt.cpan.org
+=item * or via email: L<bug-Business-DK-Postalcode@rt.cpan.org>
+
+=back
 
 =head1 INCOMPATIBILITIES
 
@@ -494,61 +541,61 @@ There are no known incompatibilities at this time.
 
 =head2 Perl::Critic
 
-This version of the code is complying with Perl::Critic a severity: 1
+This version of the code is complying with L<https://metacpan.org/pod/Perl::Critic> a severity: 1
 
 The following policies have been disabled.
 
 =over
 
-=item * L<Perl::Critic::Policy::Variables::ProhibitPackageVars>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::Variables::ProhibitPackageVars>
 
 Disabled locally using 'no critic' pragma.
 
 The module  uses a package variable as a cache, this might not prove usefull in
 the long term, so when this is adressed and this might address this policy.
 
-=item * L<Perl::Critic::Policy::Subroutines::RequireArgUnpacking>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::Subroutines::RequireArgUnpacking>
 
 Disabled locally using 'no critic' pragma.
 
-This policy is violated when using L<Params::Validate> at some point this will
+This policy is violated when using L<https://metacpan.org/pod/Params::Validate> at some point this will
 be investigated further, this might be an issue due to referral to @_.
 
-=item * L<Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching>
 
 Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-=item * L<Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
 
 Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-=item * L<Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything>
 
 Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-=item * L<Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma>
 
 Constants are good, - see the link below.
 
 =item * L<https://logiclab.jira.com/wiki/display/OPEN/Perl-Critic-Policy-ValuesAndExpressions-ProhibitConstantPragma>
 
-=item * L<Perl::Critic::Policy::Documentation::RequirePodAtEnd>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodAtEnd>
 
 This one interfers with our DATA section, perhaps DATA should go before POD,
 well it is not important so I have disabled the policy.
 
-=item * L<Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops>
 
 This would require a re-write of part of the code. Currently I rely on use of the iterator in the F<for> loop, so it would require significant
 changes.
 
-=item * L<Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText>
 
 Temporarily disabled, marked for follow-up
 
@@ -558,7 +605,7 @@ Please see F<t/perlcriticrc> for details.
 
 =head2 TEST COVERAGE
 
-Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
+Test coverage report is generated using L<https://metacpan.org/pod/Devel::Cover> via L<https://metacpan.org/pod/Module::Build>.
 
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
     File                           stmt   bran   cond    sub    pod   time  total
@@ -574,19 +621,19 @@ Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
 
 =over
 
-=item * L<Geo::Postcodes::DK>
+=item * L<https://metacpan.org/pod/Geo::Postcodes::DK>
 
 =item * L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
 
 =item * L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
 
-=item * L<Business::DK::CVR>
+=item * L<https://metacpan.org/pod/Business::DK::CVR>
 
-=item * L<Business::DK::CPR>
+=item * L<https://metacpan.org/pod/Business::DK::CPR>
 
-=item * L<Business::DK::FI>
+=item * L<https://metacpan.org/pod/Business::DK::FI>
 
-=item * L<Business::DK::PO>
+=item * L<https://metacpan.org/pod/Business::DK::PO>
 
 =back
 
@@ -598,7 +645,7 @@ Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
 
 =item * Bugtracker: L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode>
 
-=item * SVN repository: L<http://logicLAB.jira.com/svn/BDKPST>
+=item * Git repository: L<https://github.com/jonasbn/bdkpst>
 
 =back
 
@@ -613,7 +660,7 @@ Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
 =head1 MOTIVATION
 
 Back in 2006 I was working on a project where I needed to do some presentation
-and validation of Danish postal codes. I looked at Regex::Common::Zip (see: L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->)
+and validation of Danish postal codes. I looked at L<https://metacpan.org/pod/Regex::Common::Zip>
 
 The implementation at the time of writing looked as follows:
 
@@ -643,7 +690,7 @@ which could generate the pattern for me based on a finite data set.
 
 =head1 COPYRIGHT
 
-Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2013
+Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2014
 
 =head1 LICENSE
 
@@ -651,7 +698,7 @@ Business-DK-Postalcode and related is released under the Artistic License 2.0
 
 =over
 
-=item * http://www.opensource.org/licenses/Artistic-2.0
+=item * L<http://www.opensource.org/licenses/Artistic-2.0>
 
 =back
 
