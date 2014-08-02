@@ -6,6 +6,7 @@ use Tree::Simple;
 use base qw(Exporter);
 use Params::Validate qw(validate_pos SCALAR ARRAYREF OBJECT);
 use utf8;
+use 5.010; #5.10.0
 
 use constant TRUE                        => 1;
 use constant FALSE                       => 0;
