@@ -637,7 +637,7 @@ Please note that the above list does not reflect requirements for:
 
 =over
 
-=item * Additional components in this distribution, see F<lib/>. Additional 
+=item * Additional components in this distribution, see F<lib/>. Additional
 components list own requirements
 
 =item * Test and build system, please see: F<Build.PL> for details
@@ -753,31 +753,31 @@ for the version described in this documentation (See L<VERSION>).
 
 =head1 SEE ALSO
 
-=over
+=item * Alternative implementation: L<https://metacpan.org/pod/Geo::Postcodes::DK>
 
-=item * L<https://metacpan.org/pod/Geo::Postcodes::DK>
+=item * Information resource on data source: L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
 
-=item * L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
+=item * Alternative validation: L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
 
-=item * L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
+=item * Related complementary implementation: L<https://metacpan.org/pod/Business::GL::Postalcode>
 
-=item * L<https://metacpan.org/pod/Business::GL::Postalcode>
+=item * Related complementary implementation: L<https://metacpan.org/pod/Business::FO::Postalcode>
 
-=item * L<https://metacpan.org/pod/Business::FO::Postalcode>
+=item * Related implementation, same author: L<https://metacpan.org/pod/Business::DK::CVR>
 
-=item * L<https://metacpan.org/pod/Business::DK::CVR>
+=item * Related implementation, same author: L<https://metacpan.org/pod/Business::DK::CPR>
 
-=item * L<https://metacpan.org/pod/Business::DK::CPR>
+=item * Related implementation, same author: L<https://metacpan.org/pod/Business::DK::FI>
 
-=item * L<https://metacpan.org/pod/Business::DK::FI>
-
-=item * L<https://metacpan.org/pod/Business::DK::PO>
+=item * Related implementation, same author: L<https://metacpan.org/pod/Business::DK::PO>
 
 =back
 
-=head1 Resources
+=head1 RESOURCES
 
 =over
+
+=item * MetaCPAN: L<https://metacpan.org/pod/Business::DK::Postalcode>
 
 =item * Website: L<http://logicLAB.jira.com/browse/BDKPST>
 
@@ -789,7 +789,7 @@ for the version described in this documentation (See L<VERSION>).
 
 =head1 TODO
 
-Please see the project F<TODO> file.
+Please see the project F<TODO> file, or the bugtracker (RT), website or issues resource at Github.
 
 =head1 AUTHOR
 
