@@ -201,16 +201,15 @@ sub create_regex {
             my ($_tree) = shift;
 
             #DEBUG section - outputs tree to STDERR
-            if ($DEBUG) {
-                warn "\n";
-                $tree->traverse(
-                    sub {
-                        my ($traversal_tree) = @_;
-                        warn( "\t" x $traversal_tree->getDepth() )
-                            . $traversal_tree->getNodeValue() . "\n";
-                    }
-                );
-            }
+            # warn "\n";
+            # $tree->traverse(
+            #     sub {
+            #         my ($traversal_tree) = @_;
+            #         warn( "\t" x $traversal_tree->getDepth() )
+            #             . $traversal_tree->getNodeValue() . "\n";
+            #     }
+            # );
+
             my $no_of_children = $_tree->getChildCount();
 
             if ( $no_of_children > 1 ) {
