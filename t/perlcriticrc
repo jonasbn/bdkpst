@@ -7,14 +7,11 @@ verbose = 8
 #------------------------------------------------------------------------------
 
 #https://logiclab.jira.com/wiki/display/OPEN/Perl-Critic-Policy-CodeLayout-RequireTidyCode
-[CodeLayout::RequireTidyCode]
+[-CodeLayout::RequireTidyCode]
 
 [Documentation::RequirePodSections]
 lib_sections    = NAME|VERSION|SYNOPSIS|DESCRIPTION|SUBROUTINES AND METHODS|DIAGNOSTICS|CONFIGURATION AND ENVIRONMENT|DEPENDENCIES|INCOMPATIBILITIES|BUGS AND LIMITATIONS|TEST AND QUALITY|TODO|SEE ALSO|BUG REPORTING|AUTHOR|COPYRIGHT|LICENSE
 script_sections = NAME|VERSION|SYNOPSIS|DESCRIPTION|SUBROUTINES AND METHODS|DIAGNOSTICS|CONFIGURATION AND ENVIRONMENT|DEPENDENCIES|INCOMPATIBILITIES|BUGS AND LIMITATIONS|TEST AND QUALITY|TODO|SEE ALSO|BUG REPORTING|AUTHOR|COPYRIGHT|LICENSE
-
-[Miscellanea::RequireRcsKeywords]
-keywords = Id
 
 [CodeLayout::ProhibitHardTabs]
 allow_leading_tabs = 0
@@ -36,3 +33,62 @@ exclude_functions = print
 
 [-Bangs::ProhibitFlagComments]
 
+[-CodeLayout::RequireFinalSemicolon]
+
+[-CodeLayout::RequireASCII]
+
+[-Compatibility::PodMinimumVersion]
+
+[-Compatibility::PerlMinimumVersionAndWhy]
+
+[-Modules::RequirePerlVersion]
+
+[-Editor::RequireEmacsFileVariables]
+
+[-Documentation::RequireLinkedURLs]
+
+[-RegularExpressions::RequireExtendedFormatting]
+
+[-RegularExpressions::RequireLineBoundaryMatching]
+
+[-RegularExpressions::RequireDotMatchAnything]
+
+[-Bangs::ProhibitCommentedOutCode]
+
+[-CodeLayout::RequireTrailingCommaAtNewline]
+
+[-ValuesAndExpressions::ProhibitEmptyQuotes]
+
+[-TestingAndDebugging::ProhibitNoStrict]
+
+[-Miscellanea::ProhibitUselessNoCritic]
+
+[-Variables::ProhibitReusedNames]
+
+[-TestingAndDebugging::ProhibitProlongedStrictureOverride]
+
+[-ErrorHandling::RequireUseOfExceptions]
+
+[-Modules::RequireVersionVar]
+
+[-ErrorHandling::RequireCarping]
+
+[-NamingConventions::ProhibitAmbiguousNames]
+
+[-CodeLayout::ProhibitParensWithBuiltins]
+
+[-InputOutput::RequireBracedFileHandleWithPrint]
+
+[-ControlStructures::ProhibitDeepNests]
+
+[-ValuesAndExpressions::ProhibitMagicNumbers]
+
+[-Miscellanea::RequireRcsKeywords]
+
+[-ControlStructures::ProhibitPostfixControls]
+
+[-ValuesAndExpressions::ProhibitNoisyQuotes]
+
+[-ValuesAndExpressions::ProhibitInterpolationOfLiterals]
+
+[-Variables::ProhibitUnusedVariables]
