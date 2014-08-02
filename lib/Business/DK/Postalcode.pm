@@ -377,7 +377,6 @@ This documentation describes version 0.03
             'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
     }
 
-
 =head1 FEATURES
 
 =over
@@ -390,21 +389,73 @@ This documentation describes version 0.03
 
 =head1 DESCRIPTION
 
-=head2 Data
+This distribution is not the original resource for the included data, but simply
+acts as a simple distribution for Perl use. The central source is monitored so this
+distribution can contain the newest data. The monitor script (F<postdanmark.pl>) is
+included in the distribution.
+
+The data are converted for inclusion in this module. You can use different extraction
+subroutines depending on your needs:
 
 =over
 
-=item * city
+=item * L</get_all_data>, to retrieve all data, data description below in L</Data>.
 
-=item * street/desc
+=item * L</get_all_postalcodes>, to retrieve all postal codes
 
-=item * company
+=item * L</get_all_citites>, to retieve all cities
 
-=item * province
+=item * L</get_postalcode_from_city>, to retrieve one or more postal codes from a city name
 
-=item * country
+=item * L</get_city_from_postalcode>, to retieve a city name from a postal code
 
 =back
+
+=head2 Data
+
+=head3 city name
+
+A non-unique, case-sensite representation of a city name in Danish.
+
+=head3 street/description
+
+This field is either a streetname or g a description, is it only provided for
+a few special records.
+
+=head3 company name
+
+This field is only provided for a few special records.
+
+=head3 province
+
+This field is a bit special and it's use is expected to be related to ditribution
+all entries inside Copenhagen are marked as 'False' in this column and 'True' for
+all entries outside Copenhagen - and this of course with exceptions. The data are
+included since they are a part of the original data.
+
+=head3 country
+
+Since the original source contains data on 3 different countries:
+
+=over
+
+=item * Denmark
+
+=item * Greenland
+
+=item * Faroe Islands
+
+=back
+
+Only the data representing Denmark has been included in this distribtion, so this
+field is always containing a one.
+
+For access to the data on Greenland or Faroe Islands please refer to: L<Business::GL::Postalcode> 
+and L<Business::FO::Postalcode> respectfully.
+
+=head2 Encoding
+
+The data distributed are in Danish for descriptions and names and these are encoded in UTF-8.
 
 =head1 SUBROUTINES AND METHODS
 
