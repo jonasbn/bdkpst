@@ -527,9 +527,11 @@ Please report issues via CPAN RT:
 
 =over
 
-=item * L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode>
+=item * Web (RT): L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode>
 
-=item * or via email: L<bug-Business-DK-Postalcode@rt.cpan.org>
+=item * Web (Github): L<https://github.com/jonasbn/bdkpst/issues>
+
+=item * Email (RT): L<bug-Business-DK-Postalcode@rt.cpan.org>
 
 =back
 
@@ -605,7 +607,8 @@ Please see F<t/perlcriticrc> for details.
 
 =head2 TEST COVERAGE
 
-Test coverage report is generated using L<https://metacpan.org/pod/Devel::Cover> via L<https://metacpan.org/pod/Module::Build>.
+Test coverage report is generated using L<https://metacpan.org/pod/Devel::Cover> via L<https://metacpan.org/pod/Module::Build>,
+for the version described in this documentation (See L<VERSION>).
 
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
     File                           stmt   bran   cond    sub    pod   time  total
@@ -626,6 +629,10 @@ Test coverage report is generated using L<https://metacpan.org/pod/Devel::Cover>
 =item * L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
 
 =item * L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
+
+=item * L<https://metacpan.org/pod/Business::GL::Postalcode>
+
+=item * L<https://metacpan.org/pod/Business::FO::Postalcode>
 
 =item * L<https://metacpan.org/pod/Business::DK::CVR>
 
@@ -676,11 +683,19 @@ This pattern holds some issues:
 =over
 
 =item * Doing some fast math you can see that you will allow 9000 valid postal
-codes where the exact number is 1254 and 0 is actually allowed for a set of
-postal codes used by the postal service in Denmark
+codes where the number should be about 1254
+
+=item * 0 is actually allowed for a set of postal codes used by the postal service
+in Denmark, in some situations these should perhaps be allowed as valid data
 
 =item * Greenland specified as starting with '39' is not a part of Denmark, but
-should be under Greenland and the ISO code 'GL'
+should be under Greenland and the ISO code 'GL', see also:
+
+=over
+
+=item * L<https://metacpan.org/pod/Business::GL::Postalcode>
+
+=back
 
 =back
 
