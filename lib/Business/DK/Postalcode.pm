@@ -621,11 +621,30 @@ This distribution requires no special configuration or environment.
 
 =over
 
-=item * L<https://metacpan.org/pod/Exporter>
+=item * L<https://metacpan.org/pod/Carp> (core)
+
+=item * L<https://metacpan.org/pod/Exporter> (core)
 
 =item * L<https://metacpan.org/pod/Tree::Simple>
 
 =item * L<https://metacpan.org/pod/Params::Validate>
+
+=back
+
+=head2 Test
+
+Please note that the above list does not reflect requirements for:
+
+=over
+
+=item * Additional components in this distribution, see F<lib/>. Additional 
+components list own requirements
+
+=item * Test and build system, please see: F<Build.PL> for details
+
+=item * Requirements for scripts in the F<bin/> directory
+
+=item * Requirements for examples in the F<examples/> directory
 
 =back
 
