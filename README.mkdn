@@ -1,5 +1,5 @@
-[![CPAN version](https://badge.fury.io/pl/Business-DK-Postalcode.svg)](http://badge.fury.io/pl/Business-DK-Postalcode) 
-[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) 
+[![CPAN version](https://badge.fury.io/pl/Business-DK-Postalcode.svg)](http://badge.fury.io/pl/Business-DK-Postalcode)
+[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst)
 [![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master)](https://coveralls.io/r/jonasbn/bdkpst?branch=master)
 
 # NAME
@@ -207,6 +207,10 @@ Returns a reference to an array containing all Danish city names having a postal
 
     foreach my $city (@{$cities}) { ... }
 
+Please note that this data source used in this distribution by no means is authorative 
+when it comes to cities located in Denmark, it might have all cities listed, but
+unfortunately also other post distribution data.
+
 ## get\_city\_from\_postalcode
 
 Takes a string representing a Danish postal code.
@@ -215,7 +219,15 @@ Returns a single string representing the related city name or an empty string in
 
     use Business::DK::Postalcode qw(get_city_from_postalcode);
 
-    my $city = get_city_from_postalcode(2300);
+    my $zipcode = '2300';
+
+    my $city = get_city_from_postalcode($zipcode);
+
+    if ($city) {
+        print "We found a city for $zipcode\n";
+    } else {
+        warn "No city found for $zipcode";
+    }
 
 ## get\_postalcode\_from\_city
 
@@ -225,15 +237,15 @@ Returns a reference to an array containing zero or more postal codes related to 
 
 Please note that city names are not unique, hence the possibility of a list of postal codes.
 
-    use Business::DK::Postalcode qw(get_city_from_postalcode);
+    use Business::DK::Postalcode qw(get_postalcode_from_city);
 
     my $city = 'København K';
 
     my $postalcodes = get_postalcode_from_city($city);
 
-    if (scalar @{$cities} > 1) {
+    if (scalar @{$cities} == 1) {
         print "$city is unique\n";
-    } elsif (scalar @{$cities} == 1) {
+    } elsif (scalar @{$cities} > 1) {
         warn "$city is NOT unique\n";
     } else {
         die "$city not found\n";
@@ -283,13 +295,28 @@ This distribution requires no special configuration or environment.
 
 # DEPENDENCIES
 
-- [https://metacpan.org/pod/Exporter](https://metacpan.org/pod/Exporter)
+- [https://metacpan.org/pod/Carp](https://metacpan.org/pod/Carp) (core)
+- [https://metacpan.org/pod/Exporter](https://metacpan.org/pod/Exporter) (core)
 - [https://metacpan.org/pod/Tree::Simple](https://metacpan.org/pod/Tree::Simple)
 - [https://metacpan.org/pod/Params::Validate](https://metacpan.org/pod/Params::Validate)
+
+## Test
+
+Please note that the above list does not reflect requirements for:
+
+- Additional components in this distribution, see `lib/`. Additional
+components list own requirements
+- Test and build system, please see: `Build.PL` for details
+- Requirements for scripts in the `bin/` directory
+- Requirements for examples in the `examples/` directory
 
 # BUGS AND LIMITATIONS
 
 There are no known bugs at this time.
+
+The data source used in this distribution by no means is authorative when it
+comes to cities located in Denmark, it might have all cities listed, but
+unfortunately also other post distribution data.
 
 # BUG REPORTING
 
@@ -381,25 +408,27 @@ for the version described in this documentation (See [VERSION](https://metacpan.
 
 # SEE ALSO
 
-- [https://metacpan.org/pod/Geo::Postcodes::DK](https://metacpan.org/pod/Geo::Postcodes::DK)
-- [http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer\_postnumre\_1.htm](http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm)
-- [https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark-](https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark-)
-- [https://metacpan.org/pod/Business::GL::Postalcode](https://metacpan.org/pod/Business::GL::Postalcode)
-- [https://metacpan.org/pod/Business::FO::Postalcode](https://metacpan.org/pod/Business::FO::Postalcode)
-- [https://metacpan.org/pod/Business::DK::CVR](https://metacpan.org/pod/Business::DK::CVR)
-- [https://metacpan.org/pod/Business::DK::CPR](https://metacpan.org/pod/Business::DK::CPR)
-- [https://metacpan.org/pod/Business::DK::FI](https://metacpan.org/pod/Business::DK::FI)
-- [https://metacpan.org/pod/Business::DK::PO](https://metacpan.org/pod/Business::DK::PO)
+- Main data source: [http://www.postdanmark.dk/da/Documents/Lister/postnummerfil-excel.xls](http://www.postdanmark.dk/da/Documents/Lister/postnummerfil-excel.xls)
+- Information resource on data source: [http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer\_postnumre\_1.htm](http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm)
+- Alternative implementation: [https://metacpan.org/pod/Geo::Postcodes::DK](https://metacpan.org/pod/Geo::Postcodes::DK)
+- Alternative validation: [https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark-](https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark-)
+- Related complementary implementation: [https://metacpan.org/pod/Business::GL::Postalcode](https://metacpan.org/pod/Business::GL::Postalcode)
+- Related complementary implementation: [https://metacpan.org/pod/Business::FO::Postalcode](https://metacpan.org/pod/Business::FO::Postalcode)
+- Related implementation, same author: [https://metacpan.org/pod/Business::DK::CVR](https://metacpan.org/pod/Business::DK::CVR)
+- Related implementation, same author: [https://metacpan.org/pod/Business::DK::CPR](https://metacpan.org/pod/Business::DK::CPR)
+- Related implementation, same author: [https://metacpan.org/pod/Business::DK::FI](https://metacpan.org/pod/Business::DK::FI)
+- Related implementation, same author: [https://metacpan.org/pod/Business::DK::PO](https://metacpan.org/pod/Business::DK::PO)
 
-# Resources
+# RESOURCES
 
+- MetaCPAN: [https://metacpan.org/pod/Business::DK::Postalcode](https://metacpan.org/pod/Business::DK::Postalcode)
 - Website: [http://logicLAB.jira.com/browse/BDKPST](http://logicLAB.jira.com/browse/BDKPST)
 - Bugtracker: [http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode](http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode)
 - Git repository: [https://github.com/jonasbn/bdkpst](https://github.com/jonasbn/bdkpst)
 
 # TODO
 
-Please see the project `TODO` file.
+Please see the project `TODO` file, or the bugtracker (RT), website or issues resource at Github.
 
 # AUTHOR
 
