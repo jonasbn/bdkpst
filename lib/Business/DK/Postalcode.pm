@@ -317,7 +317,7 @@ Business::DK::Postalcode - validation of Danish postal codes
 
 =head1 VERSION
 
-This documentation describes version 0.03
+This documentation describes version 0.08
 
 =head1 SYNOPSIS
 
