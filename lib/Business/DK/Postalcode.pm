@@ -543,7 +543,15 @@ Returns a single string representing the related city name or an empty string in
 
     use Business::DK::Postalcode qw(get_city_from_postalcode);
 
-    my $city = get_city_from_postalcode(2300);
+    my $zipcode = '2300';
+
+    my $city = get_city_from_postalcode($zipcode);
+
+    if ($city) {
+        print "We found a city for $zipcode\n";
+    } else {
+        warn "No city found for $zipcode";
+    }
 
 =head2 get_postalcode_from_city
 
@@ -553,7 +561,7 @@ Returns a reference to an array containing zero or more postal codes related to 
 
 Please note that city names are not unique, hence the possibility of a list of postal codes.
 
-    use Business::DK::Postalcode qw(get_city_from_postalcode);
+    use Business::DK::Postalcode qw(get_postalcode_from_city);
 
     my $city = 'København K';
 
