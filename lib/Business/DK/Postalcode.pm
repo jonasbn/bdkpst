@@ -327,7 +327,7 @@ This documentation describes version 0.08
     if (validate($postalcode)) {
         print "We have a valid Danish postalcode\n";
     } else {
-        print "Not a valid Danish postalcode\n";
+        warn "Not a valid Danish postalcode\n";
     }
 
 
@@ -337,7 +337,7 @@ This documentation describes version 0.08
     if (validate_postalcode($postalcode)) {
         print "We have a valid Danish postal code\n";
     } else {
-        print "Not a valid Danish postal code\n";
+        warn "Not a valid Danish postal code\n";
     }
 
 
@@ -347,7 +347,7 @@ This documentation describes version 0.08
     if (my $untainted = validate_postalcode($postalcode)) {
         print "We have a valid Danish postal code: $untainted\n";
     } else {
-        print "Not a valid Danish postal code\n";
+        warn "Not a valid Danish postal code\n";
     }
 
 
