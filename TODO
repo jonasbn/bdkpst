@@ -8,6 +8,11 @@ http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.sys
 
 - Move Regexp::Common related code to its own module
 
-- Implement filtering
+- Implement filtering? - if possible, perhaps correlation with some source on 
+danish cities?
 
 - Implement case-insensitive searching
+
+- Extend example with auto-complete in Javascript
+
+- Add OO implementation
