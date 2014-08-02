@@ -291,6 +291,8 @@ sub _build_tree {
 
 1;
 
+=encoding UTF-8
+
 =pod
 
 =begin markdown
@@ -413,6 +415,10 @@ subroutines depending on your needs:
 
 =head2 Data
 
+Here follows a description of the included data, based on the description from
+the original source and the authors interpretation of the data, including
+details on the distribution of the data.
+
 =head3 city name
 
 A non-unique, case-sensite representation of a city name in Danish.
@@ -457,6 +463,11 @@ and L<Business::FO::Postalcode> respectfully.
 
 The data distributed are in Danish for descriptions and names and these are encoded in UTF-8.
 
+=head1 EXAMPLES
+
+A web application example is included in the examples directory following this distribution
+or available at L<https://metacpan.org/pod/Business::DK::Postalcode>.
+
 =head1 SUBROUTINES AND METHODS
 
 =head2 validate
@@ -491,11 +502,26 @@ A less intrusive subroutine for import. Acts as a wrapper of L</validate>.
 Returns a reference to a a list of strings, separated by tab characters. See
 L</Data> for a description of the fields.
 
+    use Business::DK::Postalcode qw(get_all_data);
+
+    my $postalcodes = get_all_data();
+
+    foreach (@{postalcodes}) {
+        printf
+            'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
+    }
+
 =head2 get_all_postalcodes
 
 Takes no parameters.
 
 Returns a reference to an array containing all valid Danish postal codes.
+
+    use Business::DK::Postalcode qw(get_all_postalcodes);
+
+    my $postalcodes = get_all_postalcodes;
+
+    foreach my $postalcode (@{$postalcodes}) { ... }
 
 =head2 get_all_cities
 
@@ -503,11 +529,21 @@ Takes no parameters.
 
 Returns a reference to an array containing all Danish city names having a postal code.
 
+    use Business::DK::Postalcode qw(get_all_cities);
+
+    my $cities = get_all_cities;
+
+    foreach my $city (@{$cities}) { ... }
+
 =head2 get_city_from_postalcode
 
 Takes a string representing a Danish postal code.
 
 Returns a single string representing the related city name or an empty string indicating nothing was found.
+
+    use Business::DK::Postalcode qw(get_city_from_postalcode);
+
+    my $city = get_city_from_postalcode(2300);
 
 =head2 get_postalcode_from_city
 
@@ -516,6 +552,20 @@ Takes a string representing a Danish city name.
 Returns a reference to an array containing zero or more postal codes related to that city name. Zero indicates nothing was found.
 
 Please note that city names are not unique, hence the possibility of a list of postal codes.
+
+    use Business::DK::Postalcode qw(get_city_from_postalcode);
+
+    my $city = 'København K';
+
+    my $postalcodes = get_postalcode_from_city($city);
+
+    if (scalar @{$cities} > 1) {
+        print "$city is unique\n";
+    } elsif (scalar @{$cities} == 1) {
+        warn "$city is NOT unique\n";
+    } else {
+        die "$city not found\n";
+    }
 
 =head2 create_regex
 
@@ -551,6 +601,9 @@ Internal method to assist L</create_regex> in generating the regular expression.
 Takes a L<https://metacpan.org/pod/Tree::Simple> object and a reference to an array of data elements.
 
 =head1 DIAGNOSTICS
+
+There are not special diagnostics apart from the ones related to the different
+subroutines.
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
