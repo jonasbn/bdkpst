@@ -8,7 +8,7 @@ Business::DK::Postalcode - validation of Danish postal codes
 
 # VERSION
 
-This documentation describes version 0.03
+This documentation describes version 0.08
 
 # SYNOPSIS
 
@@ -73,17 +73,72 @@ This documentation describes version 0.03
 # FEATURES
 
 - Providing list of Danish postal codes and related area names
-- Look up methods for Danish postal codes for web application and the like
+- Look up methods for Danish postal codes for web applications and the like
 
 # DESCRIPTION
 
+This distribution is not the original resource for the included data, but simply
+acts as a simple distribution for Perl use. The central source is monitored so this
+distribution can contain the newest data. The monitor script (`postdanmark.pl`) is
+included in the distribution.
+
+The data are converted for inclusion in this module. You can use different extraction
+subroutines depending on your needs:
+
+- ["get\_all\_data"](#get_all_data), to retrieve all data, data description below in ["Data"](#data).
+- ["get\_all\_postalcodes"](#get_all_postalcodes), to retrieve all postal codes
+- ["get\_all\_citites"](#get_all_citites), to retieve all cities
+- ["get\_postalcode\_from\_city"](#get_postalcode_from_city), to retrieve one or more postal codes from a city name
+- ["get\_city\_from\_postalcode"](#get_city_from_postalcode), to retieve a city name from a postal code
+
 ## Data
 
-- city
-- street/desc
-- company
-- province
-- country
+Here follows a description of the included data, based on the description from
+the original source and the authors interpretation of the data, including
+details on the distribution of the data.
+
+### city name
+
+A non-unique, case-sensite representation of a city name in Danish.
+
+### street/description
+
+This field is either a streetname or g a description, is it only provided for
+a few special records.
+
+### company name
+
+This field is only provided for a few special records.
+
+### province
+
+This field is a bit special and it's use is expected to be related to ditribution
+all entries inside Copenhagen are marked as 'False' in this column and 'True' for
+all entries outside Copenhagen - and this of course with exceptions. The data are
+included since they are a part of the original data.
+
+### country
+
+Since the original source contains data on 3 different countries:
+
+- Denmark
+- Greenland
+- Faroe Islands
+
+Only the data representing Denmark has been included in this distribtion, so this
+field is always containing a one.
+
+For access to the data on Greenland or Faroe Islands please refer to: [Business::GL::Postalcode](https://metacpan.org/pod/Business::GL::Postalcode) 
+and [Business::FO::Postalcode](https://metacpan.org/pod/Business::FO::Postalcode) respectfully.
+
+## Encoding
+
+The data distributed are in Danish for descriptions and names and these are encoded in UTF-8.
+
+# EXAMPLES
+
+A web application example is included in the examples directory following this distribution
+or available at [https://metacpan.org/pod/Business::DK::Postalcode](https://metacpan.org/pod/Business::DK::Postalcode).
 
 # SUBROUTINES AND METHODS
 
@@ -94,14 +149,39 @@ A simple validator for Danish postal codes.
 Takes a string representing a possible Danish postal code and returns either
 __1__ or __0__ indicating either validity or invalidity.
 
+    my $rv = validate(2665);
+
+    if ($rv == 1) {
+        print "We have a valid Danish postal code\n";
+    } ($rv == 0) {
+        print "Not a valid Danish postal code\n";
+    }
+
 ## validate\_postalcode
 
 A less intrusive subroutine for import. Acts as a wrapper of ["validate"](#validate).
+
+    my $rv = validate_postalcode(2300);
+
+    if ($rv) {
+        print "We have a valid Danish postal code\n";
+    } else {
+        print "Not a valid Danish postal code\n";
+    }
 
 ## get\_all\_data
 
 Returns a reference to a a list of strings, separated by tab characters. See
 ["Data"](#data) for a description of the fields.
+
+    use Business::DK::Postalcode qw(get_all_data);
+
+    my $postalcodes = get_all_data();
+
+    foreach (@{postalcodes}) {
+        printf
+            'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
+    }
 
 ## get\_all\_postalcodes
 
@@ -109,17 +189,33 @@ Takes no parameters.
 
 Returns a reference to an array containing all valid Danish postal codes.
 
+    use Business::DK::Postalcode qw(get_all_postalcodes);
+
+    my $postalcodes = get_all_postalcodes;
+
+    foreach my $postalcode (@{$postalcodes}) { ... }
+
 ## get\_all\_cities
 
 Takes no parameters.
 
 Returns a reference to an array containing all Danish city names having a postal code.
 
+    use Business::DK::Postalcode qw(get_all_cities);
+
+    my $cities = get_all_cities;
+
+    foreach my $city (@{$cities}) { ... }
+
 ## get\_city\_from\_postalcode
 
 Takes a string representing a Danish postal code.
 
 Returns a single string representing the related city name or an empty string indicating nothing was found.
+
+    use Business::DK::Postalcode qw(get_city_from_postalcode);
+
+    my $city = get_city_from_postalcode(2300);
 
 ## get\_postalcode\_from\_city
 
@@ -129,24 +225,57 @@ Returns a reference to an array containing zero or more postal codes related to 
 
 Please note that city names are not unique, hence the possibility of a list of postal codes.
 
+    use Business::DK::Postalcode qw(get_city_from_postalcode);
+
+    my $city = 'København K';
+
+    my $postalcodes = get_postalcode_from_city($city);
+
+    if (scalar @{$cities} > 1) {
+        print "$city is unique\n";
+    } elsif (scalar @{$cities} == 1) {
+        warn "$city is NOT unique\n";
+    } else {
+        die "$city not found\n";
+    }
+
 ## create\_regex
 
 This method returns a generated regular expression for validation of a string
 representing a possible Danish postal code.
 
+    use Business::DK::Postalcode qw(create_regex);
+
+    my $regex_ref = ${create_regex()};
+
+    if ($postalcode =~ m/$regex/) {
+        print "We have a valid Danish postalcode\n";
+    } else {
+        print "Not a valid Danish postalcode\n";
+    }
+
 # PRIVATE SUBROUTINES AND METHODS
+
+## \_retrieve\_cities
+
+Takes a reference to an array based on the DATA section and return a reference
+to an array containing only city names.
 
 ### \_retrieve\_postalcode
 
-Internal method
+Takes a reference to an array based on the DATA section and return a reference
+to an array containing only postal codes.
 
 ### \_build\_tree
 
-Internal method to assist [create\_regex](https://metacpan.org/pod/create_regex) in generating the regular expression.
+Internal method to assist ["create\_regex"](#create_regex) in generating the regular expression.
 
-Takes a [Tree::Simple](https://metacpan.org/pod/Tree::Simple) object and a reference to an array of data elements.
+Takes a [https://metacpan.org/pod/Tree::Simple](https://metacpan.org/pod/Tree::Simple) object and a reference to an array of data elements.
 
 # DIAGNOSTICS
+
+There are not special diagnostics apart from the ones related to the different
+subroutines.
 
 # CONFIGURATION AND ENVIRONMENT
 
@@ -154,9 +283,9 @@ This distribution requires no special configuration or environment.
 
 # DEPENDENCIES
 
-- [Exporter](https://metacpan.org/pod/Exporter)
-- [Tree::Simple](https://metacpan.org/pod/Tree::Simple)
-- [Params::Validate](https://metacpan.org/pod/Params::Validate)
+- [https://metacpan.org/pod/Exporter](https://metacpan.org/pod/Exporter)
+- [https://metacpan.org/pod/Tree::Simple](https://metacpan.org/pod/Tree::Simple)
+- [https://metacpan.org/pod/Params::Validate](https://metacpan.org/pod/Params::Validate)
 
 # BUGS AND LIMITATIONS
 
@@ -166,11 +295,9 @@ There are no known bugs at this time.
 
 Please report issues via CPAN RT:
 
-    http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode
-
-or by sending mail to
-
-    bug-Business-DK-Postalcode@rt.cpan.org
+- Web (RT): [http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode](http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode)
+- Web (Github): [https://github.com/jonasbn/bdkpst/issues](https://github.com/jonasbn/bdkpst/issues)
+- Email (RT): [bug-Business-DK-Postalcode@rt.cpan.org](https://metacpan.org/pod/bug-Business-DK-Postalcode@rt.cpan.org)
 
 # INCOMPATIBILITIES
 
@@ -180,58 +307,58 @@ There are no known incompatibilities at this time.
 
 ## Perl::Critic
 
-This version of the code is complying with Perl::Critic a severity: 1
+This version of the code is complying with [https://metacpan.org/pod/Perl::Critic](https://metacpan.org/pod/Perl::Critic) a severity: 1
 
 The following policies have been disabled.
 
-- [Perl::Critic::Policy::Variables::ProhibitPackageVars](https://metacpan.org/pod/Perl::Critic::Policy::Variables::ProhibitPackageVars)
+- [https://metacpan.org/pod/Perl::Critic::Policy::Variables::ProhibitPackageVars](https://metacpan.org/pod/Perl::Critic::Policy::Variables::ProhibitPackageVars)
 
     Disabled locally using 'no critic' pragma.
 
     The module  uses a package variable as a cache, this might not prove usefull in
     the long term, so when this is adressed and this might address this policy.
 
-- [Perl::Critic::Policy::Subroutines::RequireArgUnpacking](https://metacpan.org/pod/Perl::Critic::Policy::Subroutines::RequireArgUnpacking)
+- [https://metacpan.org/pod/Perl::Critic::Policy::Subroutines::RequireArgUnpacking](https://metacpan.org/pod/Perl::Critic::Policy::Subroutines::RequireArgUnpacking)
 
     Disabled locally using 'no critic' pragma.
 
-    This policy is violated when using [Params::Validate](https://metacpan.org/pod/Params::Validate) at some point this will
+    This policy is violated when using [https://metacpan.org/pod/Params::Validate](https://metacpan.org/pod/Params::Validate) at some point this will
     be investigated further, this might be an issue due to referral to @\_.
 
-- [Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching](https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching)
+- [https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching](https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching)
 
     Disabled locally using 'no critic' pragma.
 
     This is disabled for some two basic regular expressions.
 
-- [Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting](https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting)
+- [https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting](https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting)
 
     Disabled locally using 'no critic' pragma.
 
     This is disabled for some two basic regular expressions.
 
-- [Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything](https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything)
+- [https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything](https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything)
 
     Disabled locally using 'no critic' pragma.
 
     This is disabled for some two basic regular expressions.
 
-- [Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma](https://metacpan.org/pod/Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma)
+- [https://metacpan.org/pod/Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma](https://metacpan.org/pod/Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma)
 
     Constants are good, - see the link below.
 
 - [https://logiclab.jira.com/wiki/display/OPEN/Perl-Critic-Policy-ValuesAndExpressions-ProhibitConstantPragma](https://logiclab.jira.com/wiki/display/OPEN/Perl-Critic-Policy-ValuesAndExpressions-ProhibitConstantPragma)
-- [Perl::Critic::Policy::Documentation::RequirePodAtEnd](https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodAtEnd)
+- [https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodAtEnd](https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodAtEnd)
 
     This one interfers with our DATA section, perhaps DATA should go before POD,
     well it is not important so I have disabled the policy.
 
-- [Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops](https://metacpan.org/pod/Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops)
+- [https://metacpan.org/pod/Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops](https://metacpan.org/pod/Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops)
 
     This would require a re-write of part of the code. Currently I rely on use of the iterator in the `for` loop, so it would require significant
     changes.
 
-- [Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText](https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText)
+- [https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText](https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText)
 
     Temporarily disabled, marked for follow-up
 
@@ -239,7 +366,8 @@ Please see `t/perlcriticrc` for details.
 
 ## TEST COVERAGE
 
-Test coverage report is generated using [Devel::Cover](https://metacpan.org/pod/Devel::Cover) via [Module::Build](https://metacpan.org/pod/Module::Build).
+Test coverage report is generated using [https://metacpan.org/pod/Devel::Cover](https://metacpan.org/pod/Devel::Cover) via [https://metacpan.org/pod/Module::Build](https://metacpan.org/pod/Module::Build),
+for the version described in this documentation (See [VERSION](https://metacpan.org/pod/VERSION)).
 
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
     File                           stmt   bran   cond    sub    pod   time  total
@@ -253,19 +381,21 @@ Test coverage report is generated using [Devel::Cover](https://metacpan.org/pod/
 
 # SEE ALSO
 
-- [Geo::Postcodes::DK](https://metacpan.org/pod/Geo::Postcodes::DK)
+- [https://metacpan.org/pod/Geo::Postcodes::DK](https://metacpan.org/pod/Geo::Postcodes::DK)
 - [http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer\_postnumre\_1.htm](http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm)
 - [https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark-](https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark-)
-- [Business::DK::CVR](https://metacpan.org/pod/Business::DK::CVR)
-- [Business::DK::CPR](https://metacpan.org/pod/Business::DK::CPR)
-- [Business::DK::FI](https://metacpan.org/pod/Business::DK::FI)
-- [Business::DK::PO](https://metacpan.org/pod/Business::DK::PO)
+- [https://metacpan.org/pod/Business::GL::Postalcode](https://metacpan.org/pod/Business::GL::Postalcode)
+- [https://metacpan.org/pod/Business::FO::Postalcode](https://metacpan.org/pod/Business::FO::Postalcode)
+- [https://metacpan.org/pod/Business::DK::CVR](https://metacpan.org/pod/Business::DK::CVR)
+- [https://metacpan.org/pod/Business::DK::CPR](https://metacpan.org/pod/Business::DK::CPR)
+- [https://metacpan.org/pod/Business::DK::FI](https://metacpan.org/pod/Business::DK::FI)
+- [https://metacpan.org/pod/Business::DK::PO](https://metacpan.org/pod/Business::DK::PO)
 
 # Resources
 
 - Website: [http://logicLAB.jira.com/browse/BDKPST](http://logicLAB.jira.com/browse/BDKPST)
 - Bugtracker: [http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode](http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode)
-- SVN repository: [http://logicLAB.jira.com/svn/BDKPST](http://logicLAB.jira.com/svn/BDKPST)
+- Git repository: [https://github.com/jonasbn/bdkpst](https://github.com/jonasbn/bdkpst)
 
 # TODO
 
@@ -278,7 +408,7 @@ Jonas B. Nielsen, (jonasbn) - `<jonasbn@cpan.org>`
 # MOTIVATION
 
 Back in 2006 I was working on a project where I needed to do some presentation
-and validation of Danish postal codes. I looked at Regex::Common::Zip (see: [https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark-](https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark-))
+and validation of Danish postal codes. I looked at [https://metacpan.org/pod/Regex::Common::Zip](https://metacpan.org/pod/Regex::Common::Zip)
 
 The implementation at the time of writing looked as follows:
 
@@ -292,10 +422,12 @@ The implementation at the time of writing looked as follows:
 This pattern holds some issues:
 
 - Doing some fast math you can see that you will allow 9000 valid postal
-codes where the exact number is 1254 and 0 is actually allowed for a set of
-postal codes used by the postal service in Denmark
+codes where the number should be about 1254
+- 0 is actually allowed for a set of postal codes used by the postal service
+in Denmark, in some situations these should perhaps be allowed as valid data
 - Greenland specified as starting with '39' is not a part of Denmark, but
-should be under Greenland and the ISO code 'GL'
+should be under Greenland and the ISO code 'GL', see also:
+    - [https://metacpan.org/pod/Business::GL::Postalcode](https://metacpan.org/pod/Business::GL::Postalcode)
 
 So I decided to write a regular expression, which would be better than the one
 above, but I did not want to maintain it I wanted to write a piece of software,
@@ -309,4 +441,4 @@ Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2014
 
 Business-DK-Postalcode and related is released under the Artistic License 2.0
 
-- http://www.opensource.org/licenses/Artistic-2.0
+- [http://www.opensource.org/licenses/Artistic-2.0](http://www.opensource.org/licenses/Artistic-2.0)
