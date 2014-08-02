@@ -38,6 +38,7 @@ my $build = Module::Build->new(
         'Tree::Simple'     => '0',
         'Params::Validate' => '0',
         'Scalar::Util'     => '0',
+        'perl'             => '5.10.0',
     },
     meta_merge => {
         resources => {
