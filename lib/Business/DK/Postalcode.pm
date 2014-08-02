@@ -761,6 +761,8 @@ for the version described in this documentation (See L<VERSION>).
 
 =head1 SEE ALSO
 
+=over
+
 =item * Main data source: L<http://www.postdanmark.dk/da/Documents/Lister/postnummerfil-excel.xls>
 
 =item * Information resource on data source: L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
