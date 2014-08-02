@@ -5,9 +5,7 @@ use warnings;
 use Tree::Simple;
 use base qw(Exporter);
 use Params::Validate qw(validate_pos SCALAR ARRAYREF OBJECT);
-use Data::Dumper;
 use utf8;
-use Env qw($DEBUG);
 
 use constant TRUE                        => 1;
 use constant FALSE                       => 0;
