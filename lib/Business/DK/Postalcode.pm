@@ -359,7 +359,7 @@ This documentation describes version 0.08
     if ($postalcode =~ m/$regex/) {
         print "We have a valid Danish postalcode\n";
     } else {
-        print "Not a valid Danish postalcode\n";
+        warn "Not a valid Danish postalcode\n";
     }
 
 
