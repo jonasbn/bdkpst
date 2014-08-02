@@ -535,6 +535,10 @@ Returns a reference to an array containing all Danish city names having a postal
 
     foreach my $city (@{$cities}) { ... }
 
+Please note that this data source used in this distribution by no means is authorative 
+when it comes to cities located in Denmark, it might have all cities listed, but
+unfortunately also other post distribution data.
+
 =head2 get_city_from_postalcode
 
 Takes a string representing a Danish postal code.
@@ -651,6 +655,10 @@ components list own requirements
 =head1 BUGS AND LIMITATIONS
 
 There are no known bugs at this time.
+
+The data source used in this distribution by no means is authorative when it
+comes to cities located in Denmark, it might have all cities listed, but
+unfortunately also other post distribution data.
 
 =head1 BUG REPORTING
 
