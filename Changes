@@ -8,6 +8,9 @@ http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.sys
 
 HEAD
 
+- Added postdanmark script, script to monitor the main data source (downloadable Excel) 
+  [BKDPST-24]
+
 - Added new subroutines:
     - get_all_cities
     - get_postalcode_from_city
