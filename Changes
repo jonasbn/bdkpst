@@ -1,14 +1,16 @@
 Changes file for Business::DK::Postalcode
 
-$Id: Changes,v 1.1 2006-04-23 10:21:24 jonasbn Exp $
-
 Project site changelog:
 
 http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel
 
-HEAD
+0.08 2014-08-02
 
-- Added postdanmark script, script to monitor the main data source (downloadable Excel) 
+- Maintenance release, update not necessary
+
+- Added example application in examples/
+
+- Added postdanmark script, script to monitor the main data source (downloadable Excel)
   [BKDPST-24]
 
 - Added new subroutines:
