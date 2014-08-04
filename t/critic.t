@@ -4,10 +4,6 @@
 # The severity parameter interpretation was added by jonasbn
 # See: http://logiclab.jira.com/wiki/display/OPEN/Test-Perl-Critic
 
-# $Id$
-
-# $HeadURL$
-
 use strict;
 use warnings;
 use File::Spec;
@@ -21,7 +17,8 @@ use constant BRUTAL => 1;
 our $VERSION = '1.03';
 
 if ( not $TEST_CRITIC ) {
-    my $msg = 'Perl::Critic test. Set $ENV{TEST_CRITIC} to enable: 1-5 for severity, above 5 for resource file';
+    my $msg
+        = 'Perl::Critic test. Set $ENV{TEST_CRITIC} to enable: 1-5 for severity, above 5 for resource file';
     plan( skip_all => $msg );
 
 } else {
@@ -31,41 +28,43 @@ if ( not $TEST_CRITIC ) {
     if ($@) {
         plan skip_all => 'Test::Perl::Critic not installed';
     }
-	
-	my $rcfile = File::Spec->catfile( 't', 'perlcriticrc' );
-	
-	if (! -f $rcfile) {
-		$rcfile = '';
-	}
 
-	if ($TEST_VERBOSE) {
-	    if (not $rcfile) {
-	        print STDERR "\nNo available Perl::Critic resource file in t/, falling back to ~/.perlcriticrc\n";
-	    } else {
-	        print STDERR "\nRunning Perl::Critic test with resourcefile: $rcfile\n";
-	    }
-	
-		if ($TEST_CRITIC <= GENTLE) {
-			print STDERR "\nRunning Perl::Critic test with severity: $TEST_CRITIC\n";
-		} else {
-			print STDERR "\nRunning Perl::Critic test with severity defined in resourcefile: $rcfile\n";
-		}
-	}
+    my $rcfile = File::Spec->catfile( 't', 'perlcriticrc' );
 
-	# We use the severity communicated via the environment variable
-	if ($TEST_CRITIC >= BRUTAL and $TEST_CRITIC <= GENTLE) {
-    	Test::Perl::Critic->import(
-        	-profile  => $rcfile,
-        	-severity => $TEST_CRITIC,
-    	);
+    if ( !-f $rcfile ) {
+        $rcfile = '';
+    }
 
-		# We use the severity defined in the rcfile
-	} else {
-    	Test::Perl::Critic->import(
-        	-profile  => $rcfile,
-    	);
-	}
-} 
+    if ($TEST_VERBOSE) {
+        if ( not $rcfile ) {
+            print STDERR
+                "\nNo available Perl::Critic resource file in t/, falling back to ~/.perlcriticrc\n";
+        } else {
+            print STDERR
+                "\nRunning Perl::Critic test with resourcefile: $rcfile\n";
+        }
+
+        if ( $TEST_CRITIC <= GENTLE ) {
+            print STDERR
+                "\nRunning Perl::Critic test with severity: $TEST_CRITIC\n";
+        } else {
+            print STDERR
+                "\nRunning Perl::Critic test with severity defined in resourcefile: $rcfile\n";
+        }
+    }
+
+    # We use the severity communicated via the environment variable
+    if ( $TEST_CRITIC >= BRUTAL and $TEST_CRITIC <= GENTLE ) {
+        Test::Perl::Critic->import(
+            -profile  => $rcfile,
+            -severity => $TEST_CRITIC,
+        );
+
+        # We use the severity defined in the rcfile
+    } else {
+        Test::Perl::Critic->import( -profile => $rcfile, );
+    }
+}
 
 all_critic_ok();
 
@@ -116,8 +115,8 @@ L<perlcritic>
 
 =item * logicLAB patches, jonasbn
 
-=item * original, Jeffrey Ryan Thalhammer 
+=item * original, Jeffrey Ryan Thalhammer
 
-=back 
+=back
 
 =cut
