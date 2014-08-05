@@ -355,9 +355,9 @@ This documentation describes version 0.08
     my $regex_ref = ${create_regex()};
 
     if ($postalcode =~ m/$regex/) {
-        print "We have a valid Danish postalcode\n";
+        print "We have a valid Danish postal code\n";
     } else {
-        warn "Not a valid Danish postalcode\n";
+        warn "Not a valid Danish postal code\n";
     }
 
 
@@ -374,7 +374,7 @@ This documentation describes version 0.08
 
     foreach (@{postalcodes}) {
         printf
-            'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
+            'postal code: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
     }
 
 =head1 FEATURES
