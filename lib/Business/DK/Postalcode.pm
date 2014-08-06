@@ -311,7 +311,7 @@ sub _build_tree {
 
 =head1 NAME
 
-Business::DK::Postalcode - validation of Danish postal codes
+Business::DK::Postalcode - validation and listing of Danish postal codes
 
 =head1 VERSION
 
@@ -633,7 +633,7 @@ This distribution requires no special configuration or environment.
 
 =back
 
-=head2 Test
+=head2 TEST
 
 Please note that the above list does not reflect requirements for:
 
