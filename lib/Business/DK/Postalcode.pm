@@ -403,7 +403,7 @@ subroutines depending on your needs:
 
 =item * L</get_all_postalcodes>, to retrieve all postal codes
 
-=item * L</get_all_citites>, to retieve all cities
+=item * L</get_all_cities>, to retieve all cities
 
 =item * L</get_postalcode_from_city>, to retrieve one or more postal codes from a city name
 
