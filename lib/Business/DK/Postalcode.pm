@@ -423,7 +423,7 @@ A non-unique, case-sensite representation of a city name in Danish.
 
 =head3 street/description
 
-This field is either a streetname or g a description, is it only provided for
+This field is either a streetname or a description, is it only provided for
 a few special records.
 
 =head3 company name
