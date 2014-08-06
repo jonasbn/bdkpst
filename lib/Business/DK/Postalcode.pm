@@ -569,9 +569,9 @@ Please note that city names are not unique, hence the possibility of a list of p
 
     my $postalcodes = get_postalcode_from_city($city);
 
-    if (scalar @{$cities} == 1) {
+    if (scalar @{$postalcodes} == 1) {
         print "$city is unique\n";
-    } elsif (scalar @{$cities} > 1) {
+    } elsif (scalar @{$postalcodes} > 1) {
         warn "$city is NOT unique\n";
     } else {
         die "$city not found\n";
