@@ -419,7 +419,7 @@ details on the distribution of the data.
 
 =head3 city name
 
-A non-unique, case-sensite representation of a city name in Danish.
+A non-unique, case-sensitive representation of a city name in Danish.
 
 =head3 street/description
 
