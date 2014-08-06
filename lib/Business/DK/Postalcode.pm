@@ -432,7 +432,7 @@ This field is only provided for a few special records.
 
 =head3 province
 
-This field is a bit special and it's use is expected to be related to ditribution
+This field is a bit special and it's use is expected to be related to distribution
 all entries inside Copenhagen are marked as 'False' in this column and 'True' for
 all entries outside Copenhagen - and this of course with exceptions. The data are
 included since they are a part of the original data.
