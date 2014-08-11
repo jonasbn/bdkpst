@@ -22,3 +22,5 @@ MYMETA.json
 Makefile.PL
 examples/mojo-webapp/public
 README
+*.sublime-project
+*.sublime-workspace
