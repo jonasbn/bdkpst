@@ -14,7 +14,7 @@ use base 'Exporter';
 
 use constant INVALID => undef;
 
-$VERSION = '0.01';
+our $VERSION = '0.09';
 
 sub postalcode {
     return sub {

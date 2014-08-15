@@ -20,7 +20,7 @@ no strict 'refs';
 
 my $regex;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 our @EXPORT_OK
     = qw(get_all_postalcodes get_all_cities get_all_data create_regex validate_postalcode validate get_city_from_postalcode get_postalcode_from_city);
 

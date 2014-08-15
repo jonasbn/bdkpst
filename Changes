@@ -4,6 +4,14 @@ Project site changelog:
 
 http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel
 
+0.09 2014-08-15
+
+- Maintenance release, update not necessary
+
+- Addressing Kwalitee, aligning version for version consistency in
+  modules in distribution
+
+
 0.08 2014-08-02
 
 - Maintenance release, update not necessary
