@@ -50,3 +50,7 @@ notes
 
 # Github - Travis integration
 \.travis\.yml
+
+# SublimeText2 project files
+\.sublime-project
+\.sublime-workspace
