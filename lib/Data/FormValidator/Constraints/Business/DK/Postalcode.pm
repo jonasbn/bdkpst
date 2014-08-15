@@ -1,7 +1,5 @@
 package Data::FormValidator::Constraints::Business::DK::Postalcode;
 
-# $Id$
-
 use strict;
 use warnings;
 use vars qw(@ISA $VERSION @EXPORT_OK);
