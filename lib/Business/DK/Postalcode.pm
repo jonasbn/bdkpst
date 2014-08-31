@@ -303,7 +303,7 @@ sub _build_tree {
 
 =head1 NAME
 
-Business::DK::Postalcode - validation and listing of Danish postal codes
+Business::DK::Postalcode - Danish postal code validator and container 
 
 =head1 VERSION
 
