@@ -464,7 +464,7 @@ which could generate the pattern for me based on a finite data set.
 
 # COPYRIGHT
 
-Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2014
+Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2015
 
 # LICENSE
 
