@@ -24,3 +24,4 @@ examples/mojo-webapp/public
 README
 *.sublime-project
 *.sublime-workspace
+.DS_Store

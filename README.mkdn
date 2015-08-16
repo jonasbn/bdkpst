@@ -1,10 +1,10 @@
-[![CPAN version](https://badge.fury.io/pl/Business-DK-Postalcode.svg)](http://badge.fury.io/pl/Business-DK-Postalcode)
-[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst)
+[![CPAN version](https://badge.fury.io/pl/Business-DK-Postalcode.svg)](http://badge.fury.io/pl/Business-DK-Postalcode) 
+[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) 
 [![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master)](https://coveralls.io/r/jonasbn/bdkpst?branch=master)
 
 # NAME
 
-Business::DK::Postalcode - validation of Danish postal codes
+Business::DK::Postalcode - Danish postal code validator and container 
 
 # VERSION
 
@@ -18,7 +18,7 @@ This documentation describes version 0.08
     if (validate($postalcode)) {
         print "We have a valid Danish postalcode\n";
     } else {
-        print "Not a valid Danish postalcode\n";
+        warn "Not a valid Danish postalcode\n";
     }
 
 
@@ -28,7 +28,7 @@ This documentation describes version 0.08
     if (validate_postalcode($postalcode)) {
         print "We have a valid Danish postal code\n";
     } else {
-        print "Not a valid Danish postal code\n";
+        warn "Not a valid Danish postal code\n";
     }
 
 
@@ -38,7 +38,7 @@ This documentation describes version 0.08
     if (my $untainted = validate_postalcode($postalcode)) {
         print "We have a valid Danish postal code: $untainted\n";
     } else {
-        print "Not a valid Danish postal code\n";
+        warn "Not a valid Danish postal code\n";
     }
 
 
@@ -48,9 +48,9 @@ This documentation describes version 0.08
     my $regex_ref = ${create_regex()};
 
     if ($postalcode =~ m/$regex/) {
-        print "We have a valid Danish postalcode\n";
+        print "We have a valid Danish postal code\n";
     } else {
-        print "Not a valid Danish postalcode\n";
+        warn "Not a valid Danish postal code\n";
     }
 
 
@@ -67,7 +67,7 @@ This documentation describes version 0.08
 
     foreach (@{postalcodes}) {
         printf
-            'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
+            'postal code: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
     }
 
 # FEATURES
@@ -87,7 +87,7 @@ subroutines depending on your needs:
 
 - ["get\_all\_data"](#get_all_data), to retrieve all data, data description below in ["Data"](#data).
 - ["get\_all\_postalcodes"](#get_all_postalcodes), to retrieve all postal codes
-- ["get\_all\_citites"](#get_all_citites), to retieve all cities
+- ["get\_all\_cities"](#get_all_cities), to retieve all cities
 - ["get\_postalcode\_from\_city"](#get_postalcode_from_city), to retrieve one or more postal codes from a city name
 - ["get\_city\_from\_postalcode"](#get_city_from_postalcode), to retieve a city name from a postal code
 
@@ -99,11 +99,11 @@ details on the distribution of the data.
 
 ### city name
 
-A non-unique, case-sensite representation of a city name in Danish.
+A non-unique, case-sensitive representation of a city name in Danish.
 
 ### street/description
 
-This field is either a streetname or g a description, is it only provided for
+This field is either a streetname or a description, is it only provided for
 a few special records.
 
 ### company name
@@ -112,7 +112,7 @@ This field is only provided for a few special records.
 
 ### province
 
-This field is a bit special and it's use is expected to be related to ditribution
+This field is a bit special and it's use is expected to be related to distribution
 all entries inside Copenhagen are marked as 'False' in this column and 'True' for
 all entries outside Copenhagen - and this of course with exceptions. The data are
 included since they are a part of the original data.
@@ -147,7 +147,7 @@ or available at [https://metacpan.org/pod/Business::DK::Postalcode](https://meta
 A simple validator for Danish postal codes.
 
 Takes a string representing a possible Danish postal code and returns either
-__1__ or __0__ indicating either validity or invalidity.
+**1** or **0** indicating either validity or invalidity.
 
     my $rv = validate(2665);
 
@@ -239,13 +239,13 @@ Please note that city names are not unique, hence the possibility of a list of p
 
     use Business::DK::Postalcode qw(get_postalcode_from_city);
 
-    my $city = 'København K';
+    my $city = 'KÃ¸benhavn K';
 
     my $postalcodes = get_postalcode_from_city($city);
 
-    if (scalar @{$cities} == 1) {
+    if (scalar @{$postalcodes} == 1) {
         print "$city is unique\n";
-    } elsif (scalar @{$cities} > 1) {
+    } elsif (scalar @{$postalcodes} > 1) {
         warn "$city is NOT unique\n";
     } else {
         die "$city not found\n";
@@ -300,7 +300,7 @@ This distribution requires no special configuration or environment.
 - [https://metacpan.org/pod/Tree::Simple](https://metacpan.org/pod/Tree::Simple)
 - [https://metacpan.org/pod/Params::Validate](https://metacpan.org/pod/Params::Validate)
 
-## Test
+## TEST
 
 Please note that the above list does not reflect requirements for:
 

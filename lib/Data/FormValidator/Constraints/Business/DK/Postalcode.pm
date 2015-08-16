@@ -14,7 +14,7 @@ use base 'Exporter';
 
 use constant INVALID => undef;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 sub postalcode {
     return sub {
@@ -60,7 +60,7 @@ Data::FormValidator::Constraints::Business::DK::Postalcode - constraint for Dani
 
 =head1 VERSION
 
-The documentation describes version 0.01 of Data::FormValidator::Constraints::Business::DK::Postalcode
+The documentation describes version 0.10 of Data::FormValidator::Constraints::Business::DK::Postalcode
 
 =head1 SYNOPSIS
 
@@ -204,7 +204,7 @@ Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
 =head1 COPYRIGHT
 
 Data::FormValidator::Constraints::Business::DK::Postalcode is (C) by
-Jonas B. Nielsen, (jonasbn) 2006-2012
+Jonas B. Nielsen, (jonasbn) 2006-2015
 
 =head1 LICENSE
 

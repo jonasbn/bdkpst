@@ -31,8 +31,6 @@ exclude_functions = print
 
 [-ControlStructures::ProhibitCStyleForLoops]
 
-[-Bangs::ProhibitFlagComments]
-
 [-CodeLayout::RequireFinalSemicolon]
 
 [-CodeLayout::RequireASCII]
@@ -52,8 +50,6 @@ exclude_functions = print
 [-RegularExpressions::RequireLineBoundaryMatching]
 
 [-RegularExpressions::RequireDotMatchAnything]
-
-[-Bangs::ProhibitCommentedOutCode]
 
 [-CodeLayout::RequireTrailingCommaAtNewline]
 
