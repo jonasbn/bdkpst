@@ -20,7 +20,7 @@ no strict 'refs';
 
 my $regex;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 our @EXPORT_OK
     = qw(get_all_postalcodes get_all_cities get_all_data create_regex validate_postalcode validate get_city_from_postalcode get_postalcode_from_city);
 
@@ -838,7 +838,7 @@ which could generate the pattern for me based on a finite data set.
 
 =head1 COPYRIGHT
 
-Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2014
+Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2015
 
 =head1 LICENSE
 

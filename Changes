@@ -4,6 +4,11 @@ Project site changelog:
 
 http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel
 
+0.11 2015-08-16 Maintenance release, update not necessary
+
+- Re-release of 0.10, problem with dist build
+
+
 0.10 2015-08-16 Maintenance release, update not necessary
 
 - Migrated from Module::Build to Dist::Zilla
