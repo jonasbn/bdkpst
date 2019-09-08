@@ -4,6 +4,8 @@ Changes file for Business::DK::Postalcode
 
 - Minor POD fixes from Mohammad S Anwar
 
+- Cleaning up in repository and changing to contemporary versions of different configurations
+
 
 0.11 2015-08-16 Maintenance release, update not required
 
