@@ -1,8 +1,8 @@
-sudo: false # Migrating from legacy to container-based infrastructure for Travis
-            # Ref: http://docs.travis-ci.com/user/migrating-from-legacy/
+sudo: false
+dist: trusty
 language: perl
 perl:
-  - "5.28"
+  - "5.30"
   - "5.14"
 
 before_install:
