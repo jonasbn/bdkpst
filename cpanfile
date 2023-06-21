@@ -3,7 +3,7 @@ requires 'Carp';
 requires 'Scalar::Util';
 requires 'Params::Validate';
 requires 'Tree::Simple';
-requires 'perl', '5.010';
+requires 'perl', '5.37.11';
 
 on 'build', sub {
     requires 'Module::Build', '0.4234';
