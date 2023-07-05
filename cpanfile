@@ -19,12 +19,12 @@ on 'test', sub {
     requires 'Test::Class';
     requires 'Test::CPAN::Changes';
     requires 'Test::Exception';
-    requires 'Test::Kwalitee', '1.21';
+    requires 'Test::Kwalitee', '1.28';
     requires 'Test::More', '0.88';
-    requires 'Test::Pod', '1.41';
-    requires 'Test::Pod::Coverage', '1.08';
+    requires 'Test::Pod', '1.52';
+    requires 'Test::Pod::Coverage', '1.10';
     requires 'Test::Taint';
-    requires 'Test::Tester', '1.302111';
+    requires 'Test::Tester', '1.302195';
 };
 
 on 'configure', sub {
@@ -34,10 +34,10 @@ on 'configure', sub {
 
 on 'develop', sub {
     requires 'Pod::Coverage::TrustPod';
-    requires 'Test::CPAN::Changes', '0.19';
+    requires 'Test::CPAN::Changes', '0.400002';
     requires 'Test::CPAN::Meta::JSON', '0.16';
-    requires 'Test::Kwalitee', '1.21';
+    requires 'Test::Kwalitee', '1.28';
     requires 'Test::Perl::Critic';
-    requires 'Test::Pod', '1.41';
-    requires 'Test::Pod::Coverage', '1.08';
+    requires 'Test::Pod', '1.52';
+    requires 'Test::Pod::Coverage', '1.10';
 };
