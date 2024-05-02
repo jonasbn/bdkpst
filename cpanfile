@@ -34,7 +34,7 @@ on 'configure', sub {
 
 on 'develop', sub {
     requires 'Pod::Coverage::TrustPod';
-    requires 'Test::CPAN::Changes', '0.400002';
+    requires 'Test::CPAN::Changes', '0.500004';
     requires 'Test::CPAN::Meta::JSON', '0.16';
     requires 'Test::Kwalitee', '1.28';
     requires 'Test::Perl::Critic';
