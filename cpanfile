@@ -20,7 +20,7 @@ on 'test', sub {
     requires 'Test::CPAN::Changes';
     requires 'Test::Exception';
     requires 'Test::Kwalitee', '1.28';
-    requires 'Test::More', '1.302204';
+    requires 'Test::More', '1.302207';
     requires 'Test::Pod', '1.52';
     requires 'Test::Pod::Coverage', '1.10';
     requires 'Test::Taint';
