@@ -24,7 +24,7 @@ on 'test', sub {
     requires 'Test::Pod', '1.52';
     requires 'Test::Pod::Coverage', '1.10';
     requires 'Test::Taint';
-    requires 'Test::Tester', '1.302212';
+    requires 'Test::Tester', '1.302213';
 };
 
 on 'configure', sub {
